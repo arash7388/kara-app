@@ -13,6 +13,7 @@ using Xamarin.Forms;
 
 namespace Kara
 {
+    //test
     public class PrinterSettingModel
     {
         private string _Title;
