@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:GradientContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Kara.CustomRenderer"
+             x:Class="Kara.AddDiscounts">
+  <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Margin="0" Padding="0" Spacing="0">
+    <StackLayout x:Name="ArticlesListHeader" Orientation="Vertical" HorizontalOptions="FillAndExpand" Margin="0" Padding="0" Spacing="0" >
+    </StackLayout>
+    <ListView x:Name="ArticlesList" Margin="0" >
+    </ListView>
+    <Grid HorizontalOptions="FillAndExpand" VerticalOptions="End" Padding="5" RowSpacing="0" ColumnSpacing="0" >
+      <Grid.RowDefinitions>
+        <RowDefinition Height="30"/>
+        <RowDefinition Height="35"/>
+        <RowDefinition Height="30"/>
+        <RowDefinition Height="30"/>
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="3.5*"/>
+        <ColumnDefinition Width="0.75*"/>
+        <ColumnDefinition Width="1*"/>
+        <ColumnDefinition Width="1.5*"/>
+        <ColumnDefinition Width="1*"/>
+        <ColumnDefinition Width="0.75*"/>
+        <ColumnDefinition Width="3.5*"/>
+        <ColumnDefinition Width="3.5*"/>
+      </Grid.ColumnDefinitions>
+
+      <Label Grid.Row="0" Grid.Column="7" Text="جمع سطری:" TextColor="#222" HorizontalOptions="End" VerticalOptions="Center" FontSize="13" />
+      <Label Grid.Row="0" Grid.Column="6" x:Name="RowsDiscountAmountSum_Current" TextColor="#222" HorizontalOptions="End" VerticalOptions="Center" FontSize="14" />
+      <Label Grid.Row="0" Grid.Column="5" Text="+" TextColor="#222" HorizontalOptions="Center" VerticalOptions="Center" FontSize="14" />
+      <Label Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="3" x:Name="RowsDiscountAmountSum_Added" TextColor="#222" HorizontalOptions="End" VerticalOptions="Center" FontSize="14" />
+      <Label Grid.Row="0" Grid.Column="1" Text="=" TextColor="#222" HorizontalOptions="Center" VerticalOptions="Center" FontSize="14" />
+      <Label Grid.Row="0" Grid.Column="0" x:Name="RowsDiscountAmountSum_Total" TextColor="#222" HorizontalOptions="Center" VerticalOptions="Center" FontSize="14" />
+
+      <Label Grid.Row="1" Grid.Column="7" Text="درصد حجمی:" TextColor="#222" HorizontalOptions="End" VerticalOptions="Center" FontSize="13" />
+      <Label Grid.Row="1" Grid.Column="6" x:Name="CurrentOrderDiscountPercent" TextColor="#222" HorizontalOptions="End" VerticalOptions="Center" FontSize="16" />
+      <Label Grid.Row="1" Grid.Column="5" Text="+" TextColor="#222" HorizontalOptions="Center" VerticalOptions="Center" FontSize="14" />
+      <local:RightEntryCompanionLabel Grid.Row="1" Grid.Column="4" x:Name="OrderAddedDiscountPercentPlusLabel" Text="+" TextColor="#222" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalOptions="Center" FontSize="16" />
+      <local:MyLabel Grid.Row="1" Grid.Column="3" x:Name="OrderAddedDiscountPercent" TextColor="#222" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalOptions="Center" BackgroundColor="#fff" FontSize="16" />
+      <local:LeftEntryCompanionLabel  Grid.Row="1" Grid.Column="2" x:Name="OrderAddedDiscountPercentMinusLabel" Text="-" TextColor="#222" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalOptions="Center" FontSize="16" />
+
+      <Label Grid.Row="2" Grid.Column="7" Text="مبلغ حجمی:" TextColor="#222" HorizontalOptions="End" VerticalOptions="Center" FontSize="13" />
+      <Label Grid.Row="2" Grid.Column="6" x:Name="OrderDiscountAmountSum_Current" TextColor="#222" HorizontalOptions="End" VerticalOptions="Center" FontSize="14" />
+      <Label Grid.Row="2" Grid.Column="5" Text="+" TextColor="#222" HorizontalOptions="Center" VerticalOptions="Center" FontSize="14" />
+      <Label Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="3" x:Name="OrderDiscountAmountSum_Added" TextColor="#222" HorizontalOptions="End" VerticalOptions="Center" FontSize="14" />
+      <Label Grid.Row="2" Grid.Column="1" Text="=" TextColor="#222" HorizontalOptions="Center" VerticalOptions="Center" FontSize="14" />
+      <Label Grid.Row="2" Grid.Column="0" x:Name="OrderDiscountAmountSum_Total" TextColor="#222" HorizontalOptions="Center" VerticalOptions="Center" FontSize="14" />
+
+      <Label Grid.Row="3" Grid.Column="7" Text="کل تخفیفات:" TextColor="#222" HorizontalOptions="End" VerticalOptions="Center" FontSize="13" />
+      <Label Grid.Row="3" Grid.Column="6" x:Name="TotalDiscountAmountSum_Current" TextColor="#222" HorizontalOptions="End" VerticalOptions="Center" FontSize="14" />
+      <Label Grid.Row="3" Grid.Column="5" Text="+" TextColor="#222" HorizontalOptions="Center" VerticalOptions="Center" FontSize="14" />
+      <Label Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="3" x:Name="TotalDiscountAmountSum_Added" TextColor="#222" HorizontalOptions="End" VerticalOptions="Center" FontSize="14" />
+      <Label Grid.Row="3" Grid.Column="1" Text="=" TextColor="#222" HorizontalOptions="Center" VerticalOptions="Center" FontSize="14" />
+      <Label Grid.Row="3" Grid.Column="0" x:Name="TotalDiscountAmountSum_Total" TextColor="#222" HorizontalOptions="Center" VerticalOptions="Center" FontSize="14" />
+    </Grid>
+    <Grid x:Name="RowAddedDiscountPercentKeyboardHolder" IsVisible="false" BackgroundColor="#eee" >
+    </Grid>
+    <Grid x:Name="OrderAddedDiscountPercentKeyboardHolder" IsVisible="false" BackgroundColor="#eee" >
+    </Grid>
+  </StackLayout>
+</local:GradientContentPage>

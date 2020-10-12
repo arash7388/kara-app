@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:GradientContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Kara.CustomRenderer"
+             x:Class="Kara.FailedOrderInsertForm" IsBusy="true">
+  <Grid Padding="0" RowSpacing="0" ColumnSpacing="0">
+    <Grid.RowDefinitions>
+      <RowDefinition />
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition />
+    </Grid.ColumnDefinitions>
+
+    <StackLayout Orientation="Vertical" Spacing="10" Padding="10" Grid.Row="0" Grid.Column="0">
+      <Grid x:Name="PartnerSection" Padding="0" RowSpacing="8" ColumnSpacing="0" BackgroundColor="#e7e7e7" >
+        <Grid.RowDefinitions>
+          <RowDefinition Height="50" />
+          <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="50" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <local:RightRoundedLabel x:Name="PartnerLabel" Grid.Row="0" Grid.Column="1" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" />
+        <local:LeftEntryCompanionLabel x:Name="PartnerChangeButton" Grid.Row="0" Grid.Column="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" FontSize="18" Text="..." />
+
+        <Picker x:Name="FailedOrderReason" Grid.Row="1" Grid.Column="0" Title="" VerticalOptions="Center" HorizontalOptions="FillAndExpand" />
+
+        <local:RightRoundedLabel x:Name="FailedOrderReasonLabel" Grid.Row="1" Grid.Column="1" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="دلیل عدم سفارش" FontSize="18" />
+        <local:LeftEntryCompanionLabel x:Name="FailedOrderReasonChangeButton" Grid.Row="1" Grid.Column="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" FontSize="18" Text="..." />
+
+
+      </Grid>
+      <local:PlaceholderEditor x:Name="Description" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" Placeholder="سایر توضیحات">
+      </local:PlaceholderEditor>
+    </StackLayout>
+
+    <StackLayout x:Name="BusyIndicatorContainder" Orientation="Vertical" Spacing="0" Padding="0" Grid.Row="0" Grid.Column="0" IsVisible="False">
+      <ActivityIndicator x:Name="BusyIndicator" IsRunning="True" Grid.Row="0" Grid.Column="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+      </ActivityIndicator>
+    </StackLayout>
+  </Grid>
+</local:GradientContentPage>

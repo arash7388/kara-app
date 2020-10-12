@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:GradientContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Kara.CustomRenderer"
+             x:Class="Kara.OrderBeforePreviewForm">
+  <StackLayout Orientation="Vertical">
+    <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+      <Grid x:Name="PartnerSection" Padding="5, 5, 5, 0" RowSpacing="5" ColumnSpacing="0" BackgroundColor="#e7e7e7" >
+        <Grid.RowDefinitions>
+          <RowDefinition Height="50" />
+          <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="50" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <local:RightRoundedLabel x:Name="PartnerLabel" Grid.Row="0" Grid.Column="1" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" />
+        <local:LeftEntryCompanionLabel x:Name="PartnerChangeButton" Grid.Row="0" Grid.Column="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" FontSize="18" Text="..." />
+
+        <Picker x:Name="SettlementTypePicker" Grid.Row="1" Grid.Column="0" VerticalOptions="Start" HorizontalOptions="FillAndExpand" />
+
+        <local:RightRoundedLabel x:Name="SettlementTypeLabel" Grid.Row="1" Grid.Column="1" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="نحوه تسویه" FontSize="18" />
+        <local:LeftEntryCompanionLabel x:Name="SettlementTypeChangeButton" Grid.Row="1" Grid.Column="0" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" FontSize="18" Text="..." />
+      </Grid>
+      <local:PlaceholderEditor HeightRequest="100" x:Name="DescriptionEditor" VerticalOptions="Start" HorizontalOptions="FillAndExpand" Placeholder="توضیحات" TextChanged="DescriptionEditor_TextChanged">
+      </local:PlaceholderEditor>
+      <ListView x:Name="StuffItems">
+      </ListView>
+      <Grid x:Name="QuantityKeyboardHolder" IsVisible="false" BackgroundColor="#eee" >
+      </Grid>
+    </StackLayout>
+  </StackLayout>
+</local:GradientContentPage>

@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:GradientContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Kara.CustomRenderer"
+             x:Class="Kara.UpdateDBForm">
+  <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+    <ListView x:Name="UpdatableItems">
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <ViewCell>
+            <Grid Padding="5,0" RowSpacing="1" ColumnSpacing="1" HorizontalOptions="FillAndExpand" >
+              <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+              </Grid.RowDefinitions>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="4*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+              </Grid.ColumnDefinitions>
+              <ActivityIndicator Grid.Row="0" Grid.Column="4" IsRunning="{Binding IsUpdating}" HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="25" Color="#32A527" />
+              <Image Grid.Row="0" Grid.Column="4" Source="{Binding FinishedImageSource}" HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="25" />
+              <Switch Grid.Row="0" Grid.Column="3" IsToggled="{Binding Selected}" IsEnabled="{Binding UpdateOperationNotStarted}" HorizontalOptions="End" />
+              <Label Grid.Row="0" Grid.Column="2" Text="{Binding Title}" TextColor="#333333" HorizontalOptions="EndAndExpand" VerticalOptions="Center" />
+              <Label Grid.Row="0" Grid.Column="1" Text="{Binding ProgressPercent}" TextColor="#333333" HorizontalOptions="Start" VerticalOptions="Center" />
+              <ProgressBar Grid.Row="0" Grid.Column="0" Progress="{Binding Progress}" HorizontalOptions="FillAndExpand" />
+            </Grid>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+  </StackLayout>
+</local:GradientContentPage>

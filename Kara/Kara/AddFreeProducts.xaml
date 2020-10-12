@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:GradientContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Kara.CustomRenderer"
+             x:Class="Kara.AddFreeProducts">
+  <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Margin="0" Padding="0" Spacing="0">
+    <SearchBar x:Name="StuffsSearchBar" IsVisible="false" Placeholder="جستجو" HorizontalTextAlignment="End" Text="" HeightRequest="50">
+    </SearchBar>
+    <StackLayout x:Name="ArticlesListHeader" Orientation="Vertical" HorizontalOptions="FillAndExpand" Margin="0" Padding="0" Spacing="0" >
+    </StackLayout>
+    <ListView x:Name="ArticlesList" Margin="0" >
+    </ListView>
+    <Grid HorizontalOptions="FillAndExpand" VerticalOptions="End" Padding="5" RowSpacing="0" ColumnSpacing="0" >
+      <Grid.RowDefinitions>
+        <RowDefinition Height="32"/>
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Label x:Name="TotalAddedFreeProductsPrice" Grid.Row="0" Grid.Column="0" TextColor="#222" HorizontalOptions="End" VerticalOptions="Center" />
+    </Grid>
+    <Grid x:Name="RowAddedQuantityKeyboardHolder" IsVisible="false" BackgroundColor="#eee" >
+    </Grid>
+  </StackLayout>
+</local:GradientContentPage>

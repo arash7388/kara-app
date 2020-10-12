@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:GradientContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Kara.CustomRenderer"
+             x:Class="Kara.SettingsForm" Padding="10" >
+  <ScrollView>
+    <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="Start" Spacing="10" >
+
+      <Grid x:Name="ContentGrid" Padding="5, 5, 5, 0" RowSpacing="0" ColumnSpacing="0" HorizontalOptions="FillAndExpand" >
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+      </Grid>
+    </StackLayout>
+  </ScrollView>
+</local:GradientContentPage>

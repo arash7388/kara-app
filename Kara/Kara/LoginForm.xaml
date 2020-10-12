@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:GradientContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Kara.CustomRenderer"
+             x:Class="Kara.LoginForm">
+  <Grid x:Name="LoginLayoutGrid" Padding="5,0" RowSpacing="4" ColumnSpacing="0" >
+  </Grid>
+</local:GradientContentPage>

@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kara.MessageForm"
+            NavigationPage.HasNavigationBar="false">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label 
+                TextColor="Red"
+                FontAttributes="Bold"
+                FontSize="Medium"
+                Text="جهت استفاده از برنامه لطفا مکان یاب را روشن کنید"
+                VerticalOptions="CenterAndExpand" 
+                HorizontalTextAlignment="Center"
+                VerticalTextAlignment="Center"
+                HorizontalOptions="CenterAndExpand" />
+            <Button 
+                Text="تلاش مجدد"
+                FontSize="Medium"
+                Clicked="RetryButton_Clicked"
+                HeightRequest="80">
+                
+            </Button>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

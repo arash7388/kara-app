@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:GradientContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+                           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                           xmlns:local="clr-namespace:Kara.CustomRenderer"
+                           xmlns:views="clr-namespace:Kara.UserControls;assembly=Kara"
+                           x:Class="Kara.ReportForm">
+  <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+    <Grid x:Name="ReportMenuGrid" Padding="5,0" RowSpacing="1" ColumnSpacing="1" >
+    </Grid>
+    <views:PopUpDialogView x:Name="PopUpDialog" HeaderTitle="Test Dialog">
+      <Label Text="This is a content"></Label>
+    </views:PopUpDialogView>
+  </Grid>
+</local:GradientContentPage>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_margin="10dp"
+    android:background="#eeeeff">
+  <TextView
+      android:id="@+id/CustomerName"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textColor="@android:color/black"
+      android:textStyle="bold" />
+  <TextView
+      android:id="@+id/CustomerCode"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textColor="@android:color/black" />
+  <TextView
+      android:id="@+id/CustomerGroup"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textColor="@android:color/black" />
+  <TextView
+      android:id="@+id/CustomerZone"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textColor="@android:color/black" />
+  <TextView
+      android:id="@+id/CustomerAddress"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textColor="@android:color/black" />
+  <TextView
+      android:id="@+id/CustomerPhone"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textColor="@android:color/black" />
+  <TextView
+      android:id="@+id/DistanceFromMe"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textColor="@android:color/black" />
+</LinearLayout>

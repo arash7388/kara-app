@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Kara.UserControls.PersianCalendarGUI">
+    <ContentView.Content>
+        <Grid x:Name="LayoutGrid"  HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" RowSpacing="1" ColumnSpacing="1" BackgroundColor="#eee">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"></RowDefinition>
+                <RowDefinition Height="6*"></RowDefinition>
+                <RowDefinition Height="1.3*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+        </Grid>
+    </ContentView.Content>
+</ContentView>

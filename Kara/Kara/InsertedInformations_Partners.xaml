@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:GradientContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Kara.CustomRenderer"
+             x:Class="Kara.InsertedInformations_Partners">
+  <Grid Padding="0" RowSpacing="0" ColumnSpacing="0">
+    <Grid.RowDefinitions>
+      <RowDefinition />
+    </Grid.RowDefinitions>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition />
+    </Grid.ColumnDefinitions>
+
+    <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+      <SearchBar x:Name="VisitsSearchBar" IsVisible="false" Placeholder="جستجو" HorizontalTextAlignment="End" Text="" HeightRequest="50">
+      </SearchBar>
+      <StackLayout x:Name="FiltersSection" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Start" HeightRequest="50" >
+        <Label Text="فقط داده های امروز" HorizontalOptions="EndAndExpand" VerticalOptions="Center" />
+        <Switch x:Name="JustTodaySwitch" IsToggled="True" HorizontalOptions="End" VerticalOptions="Center" />
+        <Label Text="فقط داده های محلی" HorizontalOptions="End" VerticalOptions="Center" />
+        <Switch x:Name="JustLocalSwitch" IsToggled="True" HorizontalOptions="End" VerticalOptions="Center" />
+      </StackLayout>
+      <local:MyListView x:Name="PartnerItems">
+      </local:MyListView>
+    </StackLayout>
+
+    <StackLayout x:Name="BusyIndicatorContainder" Orientation="Vertical" Spacing="0" Padding="0" Grid.Row="0" Grid.Column="0" IsVisible="False">
+      <ActivityIndicator x:Name="BusyIndicator" IsRunning="True" Grid.Row="0" Grid.Column="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+      </ActivityIndicator>
+    </StackLayout>
+  </Grid>
+</local:GradientContentPage>

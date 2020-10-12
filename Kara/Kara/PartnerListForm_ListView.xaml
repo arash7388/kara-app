@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:GradientContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Kara.CustomRenderer"
+             x:Class="Kara.PartnerListForm_ListView">
+  <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+    <SearchBar x:Name="_PartnersSearchBar" IsVisible="false" Opacity="0" Placeholder="جستجوی مشتری" HorizontalTextAlignment="End" Text="" HeightRequest="50">
+    </SearchBar>
+    <StackLayout x:Name="_FiltersSection" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Start" HeightRequest="50" >
+      <Label Text="نمایش مشتریان ویزیت شده" HorizontalOptions="EndAndExpand" VerticalOptions="Center" />
+      <Switch x:Name="_IncludeVisitedsSwitch" IsToggled="False" HorizontalOptions="End" VerticalOptions="Center" />
+    </StackLayout>
+    <StackLayout x:Name="_NearbyCustomersSection" Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Start" HeightRequest="50" >
+      <Slider x:Name="_NearbyCustomers_DistanceSlider" HorizontalOptions="FillAndExpand" VerticalOptions="Center" />
+      <Label Text="" x:Name="_NearbyCustomers_DistanceDisplay" HorizontalOptions="End" VerticalOptions="Center" WidthRequest="70" />
+      <Label Text="فاصله:" HorizontalOptions="End" VerticalOptions="Center" />
+    </StackLayout>
+    <ListView x:Name="_PartnerItems" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+    </ListView>
+  </StackLayout>
+</local:GradientContentPage>
+
