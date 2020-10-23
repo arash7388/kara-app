@@ -24,6 +24,7 @@ namespace Kara
         public OrderBeforePreviewForm OrderBeforePreviewForm;
         public FailedOrderInsertForm FailedOrderInsertForm;
         public PartnerReportForm PartnerReportForm;
+        public TahsildarForm TahsildarForm;
 
         public PartnerListForm_ListView ListView;
         public PartnerListForm_MapView MapView;

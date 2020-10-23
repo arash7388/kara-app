@@ -57,6 +57,9 @@
     <Compile Include="MessageForm.xaml.cs">
       <DependentUpon>MessageForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TahsildarForm.xaml.cs">
+      <DependentUpon>TahsildarForm.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\PersianCalendarGUI.xaml.cs">
       <DependentUpon>PersianCalendarGUI.xaml</DependentUpon>
     </Compile>
@@ -533,6 +536,12 @@
   <ItemGroup>
     <Folder Include="Dll\" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TahsildarForm.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -543,4 +552,9 @@
   </Target>
   <Import Project="..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Import Project="..\..\packages\Xamarin.Forms.2.3.4.247\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.3.4.247\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties XamarinHotReloadXFormsNugetUpgradeInfoBarKaraHideInfoBar="True" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

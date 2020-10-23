@@ -18,16 +18,19 @@ namespace Kara.Assets
     {
         private static string ServerRoot { get { return "http://" + App.ServerAddress + "/MobileApp/General/"; } }
         private static HttpClient _HttpClient;
-        public static HttpClient HttpClient { get
+        public static HttpClient HttpClient
+        {
+            get
             {
-                if(_HttpClient == null)
+                if (_HttpClient == null)
                 {
                     _HttpClient = new HttpClient();
                     _HttpClient.Timeout = new TimeSpan(0, 1, 0);
                     _HttpClient.DefaultRequestHeaders.Add("Accept", "application/json");
                 }
                 return _HttpClient;
-            } }
+            }
+        }
 
         public static async Task<ResultSuccess<LoginResult>> Login(string Username, string Password)
         {
@@ -44,7 +47,7 @@ namespace Kara.Assets
                 return new ResultSuccess<LoginResult>(false, err.ProperMessage());
             }
         }
-        
+
         public static async Task<ResultSuccess> UpdateDB(UpdateItemModel UpdateItem)
         {
             var result1 = App.DB.InitTransaction();
@@ -62,7 +65,7 @@ namespace Kara.Assets
                 {
                     var PartialUpdateResultTask = UpdateItem.PartialDBUpdater.UpdateItemFromServer(RequestId, From, Count);
                     var PartialUpdateResult = await PartialUpdateResultTask;
-                    if(PartialUpdateResultTask.Exception != null)
+                    if (PartialUpdateResultTask.Exception != null)
                     {
                         var result2 = App.DB.RollbackTransaction();
                         if (!result2.Success)
@@ -204,6 +207,58 @@ namespace Kara.Assets
             }
         }
 
+        public class UnSettledOrderModel
+        {
+            public Guid OrderId { get; set; }
+            public string OrderCode { get; set; }
+            public string TotalCode { get; set; }
+            public string OrderPreCode { get; set; }
+            public string OrderDate { get; set; }
+            public string PartnerCode { get; set; }
+            public string PartnerName { get; set; }
+            public string DriverCode { get; set; }
+            public string DriverName { get; set; }
+            public string Settled_Reversion { get; set; }
+            public string Settled_Cash { get; set; }
+            public string Settled_Bank { get; set; }
+            public string Settled_Cheque { get; set; }
+            public string Settled_Total { get; set; }
+            public int Settled_Cheque_Count { get; set; }
+            public string VisitorCode { get; set; }
+            public string VisitorName { get; set; }
+            public string Remainder { get; set; }
+            public string Price { get; set; }
+        }
+        public static async Task<ResultSuccess<List<UnSettledOrderModel>>> GetUnSettledOrdersFromServerAsync(string UserName, string Password, string CurrentVersionNumber, string PartnerCode, string BOrderInsertDate, string EOrderInsertDate)
+        {
+            try
+            {
+                var resultTask = HttpClient.GetStringAsyncForUnicode(ServerRoot + $"GetUnSettledOrders?UserName={UserName}&Password={Password}&CurrentVersionNumber={CurrentVersionNumber}&PartnerCode={PartnerCode}");
+                var result = await resultTask;
+
+                if (resultTask.Exception != null)
+                {
+                    return new ResultSuccess<List<UnSettledOrderModel>>(false, resultTask.Exception.ProperMessage());
+                }
+
+                if (!result.Success)
+                    throw new Exception(result.Message);
+
+                var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<List<UnSettledOrderModel>>>(result.Data);
+                
+                if (!resultDeserialized.Success)
+                {
+                    return new ResultSuccess<List<UnSettledOrderModel>>(false, resultDeserialized.Message);
+                }
+
+                return new ResultSuccess<List<UnSettledOrderModel>>(true, "", resultDeserialized.Data);
+            }
+            catch (Exception ex)
+            {
+                return new ResultSuccess<List<UnSettledOrderModel>>(false, ex.ProperMessage());
+            }
+        }
+
         public class UncashedChequeListModel : INotifyPropertyChanged
         {
             string _BackNumber;
@@ -244,7 +299,7 @@ namespace Kara.Assets
                         State = a.State,
                         Description = a.Description
                     }).ToList();
-                    
+
                     return new ResultSuccess<List<UncashedChequeListModel>>(true, "", ReportData);
                 }
                 catch (Exception err)
@@ -348,7 +403,7 @@ namespace Kara.Assets
                 }
             });
         }
-        
+
         public class ReportGeneralModel
         {
             public string _Column1 { get; set; }
@@ -373,13 +428,13 @@ namespace Kara.Assets
                     if (resultTask.Exception != null)
                         return new ResultSuccess<ReportGeneralModel[]>(false, resultTask.Exception.ProperMessage());
 
-                    if(!result.Success)
+                    if (!result.Success)
                         return new ResultSuccess<ReportGeneralModel[]>(false, result.Message);
 
                     var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<ReportGeneralModel[]>>(result.Data);
                     if (!resultDeserialized.Success)
                         return new ResultSuccess<ReportGeneralModel[]>(false, resultDeserialized.Message);
-                    
+
 
                     return new ResultSuccess<ReportGeneralModel[]>(true, "", resultDeserialized.Data);
                 }
@@ -402,7 +457,7 @@ namespace Kara.Assets
 
                 if (!result.Success)
                     return new ResultSuccess<BackupModel[]>(false, result.Message);
-                
+
                 var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<BackupModel[]>>(result.Data);
                 if (!resultDeserialized.Success)
                     return new ResultSuccess<BackupModel[]>(false, resultDeserialized.Message);
@@ -424,8 +479,8 @@ namespace Kara.Assets
                 var URL = ServerRoot + "SubmitBackup?UserName=" + App.Username.Value + "&Password=" + App.Password.Value + "&CurrentVersionNumber=" + App.CurrentVersionNumber;
                 var FileName = App.DBFileName;
                 var uploadResult = await App.Uploader.UploadFile(URL, FileName, "", OnUploadFileCompleted, OnUploadProgressChanged);
-                    if(!uploadResult.Success)
-                        return new ResultSuccess(false, uploadResult.Message);
+                if (!uploadResult.Success)
+                    return new ResultSuccess(false, uploadResult.Message);
 
                 return new ResultSuccess(true, "");
             }
@@ -456,7 +511,7 @@ namespace Kara.Assets
                 return new ResultSuccess(false, err.ProperMessage());
             }
         }
-        
+
         public class PartnerSubmitResultDataModel
         {
             public string PartnerCode { get; set; }
@@ -501,7 +556,7 @@ namespace Kara.Assets
                     Partner.Sent = true;
                     Partner.Code = resultDeserialized.Data.PartnerCode;
                     var updateResult = await App.DB.InsertOrUpdateRecordAsync<Partner>(Partner);
-                    
+
                     SentCount++;
                 }
 
@@ -575,7 +630,7 @@ namespace Kara.Assets
             try
             {
                 var DeviceSettingChanges = App.DB.conn.Table<DeviceSettingChange>().Where(a => !a.Sent).ToList().Take(5).ToList();
-                if(DeviceSettingChanges.Any())
+                if (DeviceSettingChanges.Any())
                 {
                     var Data = DeviceSettingChanges.SelectMany((a, index) => new[] {
                         new KeyValuePair<string, string>("DeviceSettingChange_" + index + "_DateTime", a.DateTime.ToString("yyyy-MM-dd HH-mm-ss")),
@@ -589,7 +644,7 @@ namespace Kara.Assets
                         throw new Exception(resultTask.Exception.ProperMessage());
                     if (!result.Success)
                         throw new Exception(result.Message);
-                    
+
                     var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess>(result.Data);
                     if (!resultDeserialized.Success)
                         throw new Exception(resultDeserialized.Message);
@@ -600,7 +655,7 @@ namespace Kara.Assets
                         var updateResult = await App.DB.InsertOrUpdateRecordAsync(item);
                     }
                 }
-                
+
                 return new ResultSuccess(true, "");
             }
             catch (Exception err)
@@ -628,7 +683,7 @@ namespace Kara.Assets
                 var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess>(result.Data);
                 if (!resultDeserialized.Success)
                     throw new Exception(resultDeserialized.Message);
-                
+
                 return new ResultSuccess(true, "");
             }
             catch (Exception err)
@@ -661,10 +716,10 @@ namespace Kara.Assets
                     }
 
                     var SaleOrderStuffs = (await App.DB.GetSaleOrderStuffsAsync(SaleOrder.Id)).Data;
-                    
+
                     //temp
                     var allDiscounts = (await App.DB.GetAllSaleOrderCashDiscountsAsync()).Data;
-                    
+
                     var CashDiscounts = (await App.DB.GetSaleOrderCashDiscountsAsync(SaleOrder.Id)).Data;
 
                     var Data = new[]
@@ -738,7 +793,7 @@ namespace Kara.Assets
 
                     updateResult = await App.DB.DeleteAllRecordsAsync<Stock>();
                     updateResult = await App.DB.InsertAllRecordsAsync(resultDeserialized.Data.RefreshedStocks);
-                    
+
                     SentCount++;
                 }
 
@@ -756,11 +811,11 @@ namespace Kara.Assets
             try
             {
                 await SubmitDeviceSettingChange();
-                
+
                 var SendingLocations = Locations.Where(a => !a.SentToApplication).ToArray();
-                if(SendingLocations.Any())
+                if (SendingLocations.Any())
                     return await SendPointsViaTCP(SendingLocations);
-                
+
                 return new ResultSuccess();
 
 
@@ -799,7 +854,7 @@ namespace Kara.Assets
                 return new ResultSuccess(false, err.ProperMessage());
             }
         }
-        
+
         static Task<ResultSuccess> SendPointsViaTCP(LocationModel[] Points)
         {
             var IP = App.ServerAddress.Contains(":") ? App.ServerAddress.Split(':')[0] : App.ServerAddress;
@@ -820,11 +875,11 @@ namespace Kara.Assets
                     Accuracy = a.Accuracy
                 }).ToArray()
             };
-                
+
             return App.TCPClient.SubmitLocations(IP, Port, SubmitData);
         }
 
-        
+
 
         //TODO
         //static bool SubmitLocationScheduleIsRunning = false;
@@ -866,7 +921,7 @@ namespace Kara.Assets
         private static Random rnd = new Random();
 
         public event PropertyChangedEventHandler PropertyChanged;
-        
+
         private bool _UpdateOperationNotStarted;
         public bool UpdateOperationNotStarted { get { return _UpdateOperationNotStarted; } set { _UpdateOperationNotStarted = value; OnPropertyChanged("UpdateOperationNotStarted"); } }
         public Guid Id { get; set; }
@@ -928,7 +983,7 @@ namespace Kara.Assets
             throw new NotImplementedException();
         }
     }
-    
+
     public class PartialUpdateDB_Stuffs : PartialDBUpdater
     {
         private static List<Stuff> InitialStuffsData;
@@ -946,7 +1001,7 @@ namespace Kara.Assets
                     await App.DB.SetEnabledForAllRecordsAsync<Stuff>(false);
                     await App.DB.SetEnabledForAllRecordsAsync<StuffBatchNumber>(false);
                     await App.DB.SetEnabledForAllRecordsAsync<Package>(false);
-                    
+
                     await App.DB.DeleteAllRecordsAsync<Unit>();
                     await App.DB.DeleteAllRecordsAsync<StuffBasket>();
                     await App.DB.DeleteAllRecordsAsync<StuffBasketStuff>();
@@ -1016,7 +1071,7 @@ namespace Kara.Assets
                 var result9 = await App.DB.InsertOrUpdateAllRecordsAsync<StuffSettlementDay>(StuffSettlementDays);
                 if (!result9.Success)
                     return new ResultSuccess<int>(false, result9.Message);
-                
+
                 return new ResultSuccess<int>(true, "", resultDeserialized.Data.TotalCount);
             }
             catch (Exception err)
@@ -1052,13 +1107,13 @@ namespace Kara.Assets
                 StuffGroup ShouldBeDownloadedStuffGroup = null;
 
                 ShouldBeDownloadedStuff = ShouldBeDownloadedStuffsData.Skip(From - 1).FirstOrDefault();
-                if(ShouldBeDownloadedStuff == null)
+                if (ShouldBeDownloadedStuff == null)
                     ShouldBeDownloadedStuffGroup = ShouldBeDownloadedStuffGroupsData.Skip(From - ShouldBeDownloadedStuffsData.Count() - 1).FirstOrDefault();
 
                 var URL = "http://" + App.ServerAddress + "/Uploads/" + (ShouldBeDownloadedStuff != null ? "StuffPictures" : "StuffGroupPictures") + "/";
                 var FileName = ShouldBeDownloadedStuff != null ? (ShouldBeDownloadedStuff.Id + "." + ShouldBeDownloadedStuff.ImageFileExtension) : (ShouldBeDownloadedStuffGroup.Id + "." + ShouldBeDownloadedStuffGroup.ImageFileExtension);
                 var downloadResult = await App.Downloader.DownloadFile(URL, FileName, "StuffsGallery", null, null, null);
-                if(!downloadResult.Success)
+                if (!downloadResult.Success)
                     return new ResultSuccess<int>(false, downloadResult.Message);
 
                 ResultSuccess updateDBResult = new ResultSuccess();
@@ -1074,7 +1129,7 @@ namespace Kara.Assets
                 }
                 if (!updateDBResult.Success)
                     return new ResultSuccess<int>(false, updateDBResult.Message);
-                
+
                 return new ResultSuccess<int>(true, "", ShouldBeDownloadedStuffsData.Count() + ShouldBeDownloadedStuffGroupsData.Count());
             }
             catch (Exception err)
@@ -1093,7 +1148,7 @@ namespace Kara.Assets
                 if (From == 1)
                 {
                     await App.DB.SetEnabledForAllRecordsAsync<Partner>(false);
-                    
+
                     await App.DB.DeleteAllRecordsAsync<Zone>();
                     await App.DB.DeleteAllRecordsAsync<Credit>();
                     await App.DB.DeleteAllRecordsAsync<DynamicGroup>();
@@ -1186,7 +1241,7 @@ namespace Kara.Assets
                 var result1 = await App.DB.InsertAllRecordsAsync(Stocks);
                 if (!result1.Success)
                     return new ResultSuccess<int>(false, result1.Message);
-                
+
                 var result2 = await App.DB.InsertAllRecordsAsync(Warehouses);
                 if (!result2.Success)
                     return new ResultSuccess<int>(false, result2.Message);
@@ -1246,7 +1301,7 @@ namespace Kara.Assets
 
                 App.LastPriceListOrDiscountRuleVersionChanged = App.LastPriceListOrDiscountRuleVersionChanged || App.LastPriceListVersion.Value != resultDeserialized.Data.LastPriceListVersion;
                 App.LastPriceListVersion.Value = resultDeserialized.Data.LastPriceListVersion;
-                
+
                 return new ResultSuccess<int>(true, "", resultDeserialized.Data.TotalCount);
             }
             catch (Exception err)
@@ -1295,7 +1350,7 @@ namespace Kara.Assets
                 var DiscountRuleStuffBaskets = resultDeserialized.Data.DiscountRuleStuffBaskets;
                 var DiscountRuleStuffBasketDetails = resultDeserialized.Data.DiscountRuleStuffBasketDetails;
                 var DiscountRuleStepStuffBaskets = resultDeserialized.Data.DiscountRuleStepStuffBaskets;
-                
+
                 var result1 = await App.DB.InsertAllRecordsAsync<DiscountRule>(DiscountRules);
                 if (!result1.Success)
                     return new ResultSuccess<int>(false, result1.Message);
@@ -1322,7 +1377,7 @@ namespace Kara.Assets
 
                 App.LastPriceListOrDiscountRuleVersionChanged = App.LastPriceListOrDiscountRuleVersionChanged || App.LastDiscountRuleVersion.Value != resultDeserialized.Data.LastDiscountRuleVersion;
                 App.LastDiscountRuleVersion.Value = resultDeserialized.Data.LastDiscountRuleVersion;
-                
+
                 return new ResultSuccess<int>(true, "", resultDeserialized.Data.TotalCount);
             }
             catch (Exception err)
@@ -1342,7 +1397,7 @@ namespace Kara.Assets
                 {
                     await App.DB.SetEnabledForAllRecordsAsync<NotOrderReason>(false);
                     await App.DB.SetEnabledForAllRecordsAsync<SettlementType>(false);
-                    
+
                     await App.DB.DeleteAllRecordsAsync<Access>();
                 }
 
@@ -1373,7 +1428,7 @@ namespace Kara.Assets
                 if (!result3.Success)
                     return new ResultSuccess<int>(false, result3.Message);
 
-                if(AppSettings.Length == 1)
+                if (AppSettings.Length == 1)
                 {
                     App.VATPercent.Value = AppSettings[0].VATPercent;
                     App.CheckForNegativeStocksOnOrderInsertion.Value = AppSettings[0].CheckForNegativeStocksOnOrderInsertion;
@@ -1388,7 +1443,7 @@ namespace Kara.Assets
                     App.VisitorEndWorkTime.Value = AppSettings[0].VisitorEndWorkTime;
                     App.GPSShouldBeTurnedOnDuringWorkTime.Value = AppSettings[0].GPSShouldBeTurnedOnDuringWorkTime;
                     App.InternetShouldBeConnectedDuringWorkTime.Value = AppSettings[0].InternetShouldBeConnectedDuringWorkTime;
-                    
+
                     App.ShowSaleVisitProgramPartnersToVisitorHourShift.Value = AppSettings[0].ShowSaleVisitProgramPartnersToVisitorHourShift;
                     App.DayStartTime.Value = AppSettings[0].DayStartTime;
                     App.DayEndTime.Value = AppSettings[0].DayEndTime;

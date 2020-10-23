@@ -148,7 +148,7 @@ namespace Kara
                 PartnerListForm.RefreshToolbarItems(ToolbarItem_OrderInsert_Visible, ToolbarItem_FailedOrderInsert_Visible, ToolbarItem_NextDay_Visible, ToolbarItem_PreDay_Visible, ToolbarItem_PartnerEdit_Visible, ToolbarItem_PartnerAdd_Visible, ToolbarItem_PartnerReport_Visible);
         }
         
-        private void PartnerItems_ItemTapped(object sender, ItemTappedEventArgs e)
+        private async void PartnerItems_ItemTapped(object sender, ItemTappedEventArgs e)
         {
             var TappedItem = (DBRepository.PartnerListModel)e.Item;
             var ShowingPin = PartnerListForm.MapView.Map.ShowingPin;
@@ -186,22 +186,27 @@ namespace Kara
                 if (PartnerListForm.OrderInsertForm != null)
                 {
                     PartnerListForm.OrderInsertForm.SelectedPartner = TappedItem.PartnerData;
-                    try { Navigation.PopAsync(); } catch (Exception) { }
+                    try { await Navigation.PopAsync(); } catch (Exception) { }
                 }
                 else if (PartnerListForm.FailedOrderInsertForm != null)
                 {
                     PartnerListForm.FailedOrderInsertForm.SelectedPartner = TappedItem.PartnerData;
-                    try { Navigation.PopAsync(); } catch (Exception) { }
+                    try { await Navigation.PopAsync(); } catch (Exception) { }
                 }
                 else if (PartnerListForm.OrderBeforePreviewForm != null)
                 {
                     PartnerListForm.OrderBeforePreviewForm.SelectedPartner = TappedItem.PartnerData;
-                    try { Navigation.PopAsync(); } catch (Exception) { }
+                    try { await Navigation.PopAsync(); } catch (Exception) { }
                 }
                 else if (PartnerListForm.PartnerReportForm != null)
                 {
                     PartnerListForm.PartnerReportForm.SelectedPartnerId = TappedItem.PartnerData.Id;
-                    try { Navigation.PopAsync(); } catch (Exception) { }
+                    try { await Navigation.PopAsync(); } catch (Exception) { }
+                }
+                else if (PartnerListForm.TahsildarForm != null)
+                {
+                    PartnerListForm.TahsildarForm.SelectedPartner = TappedItem.PartnerData;
+                    try { await Navigation.PopAsync(); } catch (Exception) { }
                 }
                 else
                 {

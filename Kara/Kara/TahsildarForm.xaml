@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:GradientContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Kara.CustomRenderer"
+             xmlns:views="clr-namespace:Kara.UserControls;assembly=Kara"
+             x:Class="Kara.TahsildarForm">
+    <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" >
+        <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+            <Grid x:Name="PartnerSection" Padding="5, 5, 5, 0" RowSpacing="5" ColumnSpacing="0" BackgroundColor="#e7e7e7" >
+            </Grid>
+            <Grid x:Name="FactorGrid" Padding="5, 5, 5, 0" RowSpacing="1" ColumnSpacing="0" BackgroundColor="#e7e7e7" >
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+            </Grid>
+
+            <ListView x:Name="FactorsView" ItemsSource="{Binding FactorsObservableCollection}" VerticalOptions="FillAndExpand">
+                <ListView.Header>
+                    <Grid >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="35"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Text="شماره ف" BackgroundColor="Blue" TextColor="White" Grid.Column="4" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
+                        <Label Text="تاریخ ف" BackgroundColor="Blue" TextColor="White" Grid.Column="3" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
+                        <Label Text="فروشنده" BackgroundColor="Blue" TextColor="White" Grid.Column="2" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium" />
+                        <Label Text="مبلغ" BackgroundColor="Blue" TextColor="White" Grid.Column="1" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
+                        <Label Text="مانده" BackgroundColor="Blue" TextColor="White" Grid.Column="0" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
+                    </Grid>
+                </ListView.Header>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid Padding="1" VerticalOptions="FillAndExpand">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <!--<Label Text="شماره ف" Grid.Row="0" Grid.Column="0"/>
+                                <Label Text="تاریخ" Grid.Row="0" Grid.Column="1"/> --><!--OrderDate--><!--
+                                <Label Text="فروشنده" Grid.Row="0" Grid.Column="1"/>
+                                <Label Text="مبلغ نهایی" Grid.Row="0" Grid.Column="1"/> --><!--Price--><!--
+                                <Label Text="مانده" Grid.Row="0" Grid.Column="1"/> --><!--Remainder-->
+
+                                <Label Grid.Column="4" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding OrderCode} "/>
+                                <Label Grid.Column="3" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding OrderDate}"/>
+                                <Label Grid.Column="2" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding VisitorName}"/>
+                                <Label Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Price}"/>
+                                <Label Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Remainder}"/>
+                                
+
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </StackLayout>
+</local:GradientContentPage>

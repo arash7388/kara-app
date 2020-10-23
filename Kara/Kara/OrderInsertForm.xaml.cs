@@ -48,7 +48,6 @@ namespace Kara
             var BatchNumberRow = new RowDefinition() { };
             BatchNumberRow.SetBinding(RowDefinition.HeightProperty, "BatchNumberRowHeight");
             GridWrapper.RowDefinitions = new RowDefinitionCollection() { GroupRow1, GroupRow2, StuffRow1, StuffRow2, BatchNumberRow };
-            ListView BatchNumbersList = null;
             
             GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
             GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
@@ -955,7 +954,7 @@ namespace Kara
                 {
                     GettingPartnerCycleInformations = new int[] { -1, 2, 3, 1 }[GettingPartnerCycleInformations];
                     await Task.Delay(500);
-                    RefreshPartnerCycleInformation();
+                    await RefreshPartnerCycleInformation();
                 }
             }
         }
@@ -1286,7 +1285,7 @@ namespace Kara
             Navigation.PushAsync(BewforePreviewForm);
         }
         
-        private void PartnerSelected()
+        private async void PartnerSelected()
         {
             PartnerLabel.Text = SelectedPartner == null ? "مشتری" :
                 !string.IsNullOrEmpty(SelectedPartner.LegalName) ? (SelectedPartner.LegalName + (!string.IsNullOrEmpty(SelectedPartner.Name) ? (" (" + SelectedPartner.Name + ")") : "")) : (SelectedPartner.Name);
@@ -1295,8 +1294,8 @@ namespace Kara
             var NewSelectedPartnerId = SelectedPartner == null ? Guid.NewGuid() : SelectedPartner.Id;
             if (SelectedPartner != null && BeforeSelectedPartnerId != NewSelectedPartnerId)
             {
-                FillStuffs(StuffsSearchBar.Text, null, true, false);
-                FetchPartnerCycleInformationFromServer();
+                await FillStuffs(StuffsSearchBar.Text, null, true, false);
+                await FetchPartnerCycleInformationFromServer();
             }
         }
 
@@ -1730,7 +1729,7 @@ namespace Kara
 
         public async Task FillStuffs()
         {
-            FillStuffs(StuffsSearchBar.Text, null, false, false);
+            await FillStuffs(StuffsSearchBar.Text, null, false, false);
         }
         bool EditingOrderStuffsInitialized = false;
         private async Task FillStuffs(string Filter, SaleOrder EditingOrder, bool RefreshStuffsData, bool WithRefreshingAnimation)

@@ -11,8 +11,8 @@ namespace Kara
     {
         ToolbarItem LogoutMenu, UserNameMenu;
 
-        Image Image_InsertFailedVisit, Image_InsertOrder, Image_Customers, Image_Settings, Image_UpdateDB, Image_Visits, Image_Backups, Image_PartnerReport, Image_Report;
-        Label Label_InsertFailedVisit, Label_InsertOrder, Label_Customers, Label_Settings, Label_UpdateDB, Label_Visits, Label_Backups, Label_PartnerReport, Label_Report;
+        Image Image_InsertFailedVisit, Image_InsertOrder, Image_Customers, Image_Settings, Image_UpdateDB, Image_Visits, Image_Backups, Image_PartnerReport, Image_Report , Image_Receipts;
+        Label Label_InsertFailedVisit, Label_InsertOrder, Label_Customers, Label_Settings, Label_UpdateDB, Label_Visits, Label_Backups, Label_PartnerReport, Label_Report , Label_Receipts;
         Image[] MenuImages;
         Label[] MenuLabels;
 
@@ -40,6 +40,7 @@ namespace Kara
             Image_Backups = new Image() { Source = "MainMenu_Backups.png" };
             Image_PartnerReport = new Image() { Source = "MainMenu_PartnerReport.png" };
             Image_Report = new Image() { Source = "MainMenu_Reports.png" };
+            Image_Receipts = new Image() { Source = "MainMenu_AddInvoice.png" };
 
             Label_Customers = new Label() { Text = "لیست مشتریان", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
             Label_InsertOrder = new Label() { Text = "ثبت سفارش", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
@@ -50,11 +51,10 @@ namespace Kara
             Label_Backups = new Label() { Text = "پشتیبان اطلاعات", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
             Label_PartnerReport = new Label() { Text = "گردش حساب مشتری", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
             Label_Report = new Label() { Text = "گزارشات", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
+            Label_Receipts = new Label() { Text = "ثبت دریافت", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
 
-            MenuImages = new Image[] { Image_Customers, Image_InsertOrder, Image_InsertFailedVisit, Image_Visits, Image_PartnerReport, Image_Report, Image_UpdateDB, Image_Settings, Image_Backups };
-            MenuLabels = new Label[] { Label_Customers, Label_InsertOrder, Label_InsertFailedVisit, Label_Visits, Label_PartnerReport, Label_Report, Label_UpdateDB, Label_Settings, Label_Backups };
-
-
+            MenuImages = new Image[] { Image_Customers, Image_InsertOrder, Image_InsertFailedVisit, Image_Visits, Image_PartnerReport, Image_Report, Image_UpdateDB, Image_Settings, Image_Backups , Image_Receipts };
+            MenuLabels = new Label[] { Label_Customers, Label_InsertOrder, Label_InsertFailedVisit, Label_Visits, Label_PartnerReport, Label_Report, Label_UpdateDB, Label_Settings, Label_Backups, Label_Receipts };
 
             Image_Customers.GestureRecognizers.Add(new TapGestureRecognizer(MainMenu_GoToPartnerListForm));
             Image_InsertOrder.GestureRecognizers.Add(new TapGestureRecognizer(MainMenu_GoToOrderInsertForm));
@@ -65,6 +65,7 @@ namespace Kara
             Image_Backups.GestureRecognizers.Add(new TapGestureRecognizer(MainMenu_GoToBackupForm));
             Image_PartnerReport.GestureRecognizers.Add(new TapGestureRecognizer(MainMenu_GoToPartnerReportForm));
             Image_Report.GestureRecognizers.Add(new TapGestureRecognizer(MainMenu_GoToReportsForm));
+            Image_Receipts.GestureRecognizers.Add(new TapGestureRecognizer(MainMenu_GoToTahsildarForm));
 
 
             MessagingCenter.Subscribe<object, string>(this, "CheckGps", (sender, msg) =>
@@ -315,6 +316,16 @@ namespace Kara
                 EndColor = Color.FromHex("A6CFED")
             };
             await Navigation.PushAsync(ReportForm, false);
+        }
+
+        async void MainMenu_GoToTahsildarForm(View arg1, object arg2)
+        {
+            var TahsildarForm = new TahsildarForm()
+            {
+                StartColor = Color.FromHex("E6EBEF"),
+                EndColor = Color.FromHex("A6CFED")
+            };
+            await Navigation.PushAsync(TahsildarForm, false);
         }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using Kara.Assets;
 using Kara.CustomRenderer;
 using Kara.UserControls;
-using OxyPlot;
-using OxyPlot.Xamarin.Forms;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
