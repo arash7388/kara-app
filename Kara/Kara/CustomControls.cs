@@ -771,17 +771,14 @@ namespace Kara.CustomRenderer
         public event EventHandler OnLongClick;
         public virtual void LongClick(int Position)
         {
-            EventHandler handler = OnLongClick;
-            if (handler != null)
-                handler(this, new ListViewLongClickEventArgs() { Position = Position });
+            OnLongClick?.Invoke(this, new ListViewLongClickEventArgs() { Position = Position });
         }
     }
 
     public class MyCheckBox : Button
     {
         public Thickness? Padding { get; set; }
-        public static readonly BindableProperty CheckedProperty =
-            BindableProperty.Create("Checked", typeof(bool), typeof(MyCheckBox), false);
+        public static readonly BindableProperty CheckedProperty = BindableProperty.Create("Checked", typeof(bool), typeof(MyCheckBox), false);
         public bool Checked
         {
             get { return (bool)GetValue(CheckedProperty); }

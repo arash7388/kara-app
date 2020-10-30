@@ -212,7 +212,7 @@ namespace Kara
             ListView.IncludeVisitedsSwitch.IsToggled = includeVisiteds;
         }
 
-        private void ToolbarItem_SearchBar_Activated(object sender, EventArgs e)
+        private async void ToolbarItem_SearchBar_Activated(object sender, EventArgs e)
         {
             searchCustomers = !searchCustomers;
             new SettingField<bool>("SearchCustomers", searchCustomers).Value = searchCustomers;
@@ -221,24 +221,24 @@ namespace Kara
                 ToolbarItem_SearchBar.Icon = "Search.png";
 
                 ListView.PartnersSearchBar.IsVisible = true;
-                ListView.PartnersSearchBar.FadeTo(1);
+                await ListView.PartnersSearchBar.FadeTo(1);
                 MapView.PartnersSearchBar.IsVisible = true;
-                MapView.PartnersSearchBar.FadeTo(1);
+                await MapView.PartnersSearchBar.FadeTo(1);
             }
             else
             {
                 ToolbarItem_SearchBar.Icon = "SearchDeactive.png";
 
                 ListView.PartnersSearchBar.IsVisible = false;
-                ListView.PartnersSearchBar.FadeTo(0);
+                await ListView.PartnersSearchBar.FadeTo(0);
                 MapView.PartnersSearchBar.IsVisible = false;
-                MapView.PartnersSearchBar.FadeTo(0);
+                await MapView.PartnersSearchBar.FadeTo(0);
             }
 
-            FillPartners();
+            await FillPartners();
         }
 
-        private void ToolbarItem_NearbyCustomers_Activated(object sender, EventArgs e)
+        private async void ToolbarItem_NearbyCustomers_Activated(object sender, EventArgs e)
         {
             nearbyCustomers = !nearbyCustomers;
             new SettingField<bool>("NearbyCustomers", nearbyCustomers).Value = nearbyCustomers;
@@ -247,22 +247,22 @@ namespace Kara
                 ToolbarItem_NearbyCustomers.Icon = "NearbyPerson.png";
 
                 ListView.NearbyCustomersSection.IsVisible = true;
-                ListView.NearbyCustomersSection.FadeTo(1);
+                await ListView.NearbyCustomersSection.FadeTo(1);
                 MapView.NearbyCustomersSection.IsVisible = true;
-                MapView.NearbyCustomersSection.FadeTo(1);
+                await MapView.NearbyCustomersSection.FadeTo(1);
             }
             else
             {
                 ToolbarItem_NearbyCustomers.Icon = "NearbyPersonDeactive.png";
 
                 ListView.NearbyCustomersSection.IsVisible = false;
-                ListView.NearbyCustomersSection.FadeTo(0);
+                await ListView.NearbyCustomersSection.FadeTo(0);
                 MapView.NearbyCustomersSection.IsVisible = false;
-                MapView.NearbyCustomersSection.FadeTo(0);
+                await MapView.NearbyCustomersSection.FadeTo(0);
             }
             NearbyCustomers_DistanceSlider = new SettingField<double>("NearbyCustomersDistance", 0).Value;
 
-            FillPartners();
+            await FillPartners();
         }
 
         private void ToolbarItem_PartnerAdd_Activated(object sender, EventArgs e)
@@ -309,13 +309,13 @@ namespace Kara
             });
         }
 
-        public void FilterChanged(object sender, EventArgs e)
+        public async void FilterChanged(object sender, EventArgs e)
         {
             includeVisiteds = CurrentPage == ListView ? ListView.IncludeVisitedsSwitch.IsToggled : MapView.IncludeVisitedsSwitch.IsToggled;
             ListView.IncludeVisitedsSwitch.IsToggled = includeVisiteds;
             MapView.IncludeVisitedsSwitch.IsToggled = includeVisiteds;
             new SettingField<bool>("PartnerList_IncludeVisiteds", includeVisiteds).Value = includeVisiteds;
-            FillPartners(CurrentPage == ListView ? ListView.PartnersSearchBar.Text : MapView.PartnersSearchBar.Text);
+            await FillPartners(CurrentPage == ListView ? ListView.PartnersSearchBar.Text : MapView.PartnersSearchBar.Text);
         }
 
         public void RefreshToolbarItems
@@ -523,22 +523,22 @@ namespace Kara
 
         public async Task FillPartners()
         {
-            FillPartners(CurrentPage == ListView ? ListView.PartnersSearchBar.Text : MapView.PartnersSearchBar.Text);
+            await FillPartners(CurrentPage == ListView ? ListView.PartnersSearchBar.Text : MapView.PartnersSearchBar.Text);
         }
 
-        private void GoToNextDay(object sender, EventArgs e)
+        private async void GoToNextDay(object sender, EventArgs e)
         {
             if (dayOffset < App.Accesses.AccessToNextDay)
                 dayOffset++;
 
-            FillPartners(CurrentPage == ListView ? ListView.PartnersSearchBar.Text : MapView.PartnersSearchBar.Text);
+            await FillPartners(CurrentPage == ListView ? ListView.PartnersSearchBar.Text : MapView.PartnersSearchBar.Text);
         }
-        private void GoToPreDay(object sender, EventArgs e)
+        private async void GoToPreDay(object sender, EventArgs e)
         {
             if (dayOffset > -App.Accesses.AccessToPreDay)
                 dayOffset--;
 
-            FillPartners(CurrentPage == ListView ? ListView.PartnersSearchBar.Text : MapView.PartnersSearchBar.Text);
+            await FillPartners(CurrentPage == ListView ? ListView.PartnersSearchBar.Text : MapView.PartnersSearchBar.Text);
         }
     }
 }

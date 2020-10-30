@@ -11,6 +11,7 @@ using Kara.Models;
 using Plugin.Settings;
 using Kara.Helpers;
 using System.IO;
+using Xamarin.Forms;
 
 namespace Kara.Assets
 {
@@ -207,8 +208,40 @@ namespace Kara.Assets
             }
         }
 
-        public class UnSettledOrderModel
+        public class UnSettledOrderModel : INotifyPropertyChanged
         {
+            private bool _Selected;
+            public bool Selected 
+            { 
+                get { 
+                    return _Selected; 
+                    }   
+
+                set { 
+                    _Selected = value; 
+                    OnPropertyChanged("Selected"); 
+                    OnPropertyChanged("RowColor"); 
+
+                    //if (App.InsertedInformations_Partners != null) 
+                    //    App.InsertedInformations_Partners.RefreshToolbarItems(); 
+                    } 
+            }
+
+            public string RowColor
+            {
+                get
+                {
+                    //return ForChangedPartnersList ? Selected ? "#F5F5A4" : Sent ? "#B7E5BF" : "#DCE6FA" :
+                    //Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE6FA";
+
+                    return "#FFFFFF";
+                }
+            }
+            public bool Sent { get; set; }
+            public static bool Multiselection { get; set; }
+            public bool CanBeSelectedInMultiselection { get { return true; /*Sent ? false : true;*/ } }
+            public GridLength CheckBoxColumnWidth { get { return Multiselection ? 60 : 0; } }
+
             public Guid OrderId { get; set; }
             public string OrderCode { get; set; }
             public string TotalCode { get; set; }
@@ -228,6 +261,13 @@ namespace Kara.Assets
             public string VisitorName { get; set; }
             public string Remainder { get; set; }
             public string Price { get; set; }
+
+
+            public event PropertyChangedEventHandler PropertyChanged;
+            public void OnPropertyChanged(string propertyName)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
         public static async Task<ResultSuccess<List<UnSettledOrderModel>>> GetUnSettledOrdersFromServerAsync(string UserName, string Password, string CurrentVersionNumber, string PartnerCode, string BOrderInsertDate, string EOrderInsertDate)
         {

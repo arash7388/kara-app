@@ -4,8 +4,6 @@ using Kara.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
@@ -14,9 +12,28 @@ using static Kara.Assets.Connectivity;
 
 namespace Kara
 {
+    public class TahsildarCustomCell : ViewCell
+    {
+        public static readonly BindableProperty OrderIdProperty = BindableProperty.Create("OrderId", typeof(Guid), typeof(TahsildarCustomCell), Guid.Empty);
+        public Guid OrderId
+        {
+            get { return (Guid)GetValue(OrderIdProperty); }
+            set { SetValue(OrderIdProperty, value); }
+        }
+
+        public TahsildarCustomCell()
+        {
+            this.SetBinding(OrderIdProperty, "Id");
+        }
+    }
+
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class TahsildarForm : GradientContentPage
     {
+
+        private bool? TappedItemSent;
+        private UnSettledOrderModel LastSelectedOrder = null;
+        private bool MultiSelectionMode = false;
         private Partner _BeforeSelectedPartner;
         private Partner _SelectedPartner;
         public Partner SelectedPartner
@@ -26,7 +43,7 @@ namespace Kara
             {
                 _BeforeSelectedPartner = _SelectedPartner;
                 _SelectedPartner = value;
-                PartnerSelected();
+                 PartnerSelected();
             }
         }
         public ObservableCollection<UnSettledOrderModel> FactorsObservableCollection { get; private set; }
@@ -38,29 +55,30 @@ namespace Kara
         public TahsildarForm()
         {
             InitializeComponent();
+            FactorsView.ItemTapped += FactorsView_ItemTapped;
+            FactorsView.OnLongClick += FactorsView_OnLongClick;
+            
+            BusyIndicatorContainder.BackgroundColor = Color.FromRgba(255, 255, 255, 70);
+            BusyIndicator.Color = Color.FromRgba(80, 100, 150, 255);
 
             PartnerChangeButton = new LeftEntryCompanionLabel() { VerticalOptions = LayoutOptions.FillAndExpand, VerticalTextAlignment = TextAlignment.Center, HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, FontSize = 18, Text = "🔍" };
-            //App.UniversalLineInApp = 875234009;
+            
             PartnerLabel = new RightRoundedLabel() { VerticalOptions = LayoutOptions.FillAndExpand, VerticalTextAlignment = TextAlignment.Center, HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.End, Text = "مشتری", Padding = new Thickness(0, 0, 50, 0) };
-            //App.UniversalLineInApp = 875234010;
+            
             PartnerLabel.FontSize *= 1.5;
-            //App.UniversalLineInApp = 875234011;
-
+            
             if (SelectedPartner == null)
             {
                 PartnerChangeButton.IsEnabled = true;
                 App.UniversalLineInApp = 875234038;
-                //App.UniversalLineInApp = 875234039;
             }
             else
             {
                 PartnerChangeButton.IsEnabled = false;
                 App.UniversalLineInApp = 875234040;
-                //App.UniversalLineInApp = 875234041;
             }
 
             var PartnerChangeButtonTapGestureRecognizer = new TapGestureRecognizer();
-            //App.UniversalLineInApp = 875234042;
             PartnerChangeButtonTapGestureRecognizer.Tapped += (sender, e) => {
                 if (!TapEventHandlingInProgress)
                 {
@@ -92,13 +110,71 @@ namespace Kara
 
             App.UniversalLineInApp = 875234050;
             PartnerChangeButtonTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
-            //App.UniversalLineInApp = 875234051;
             PartnerChangeButton.GestureRecognizers.Add(PartnerChangeButtonTapGestureRecognizer);
-            //App.UniversalLineInApp = 875234052;
             PartnerChangeButton.WidthRequest = 150;
-            //App.UniversalLineInApp = 875234053;
+
+           
         }
 
+        private void FactorsView_ItemTapped(object sender, ItemTappedEventArgs e)
+        {
+            var TappedItem = (UnSettledOrderModel)e.Item;
+            FactorsView_ItemTapped(TappedItem);
+        }
+
+        private void FactorsView_ItemTapped(UnSettledOrderModel TappedItem)
+        {
+            if (MultiSelectionMode)
+            {
+                LastSelectedOrder = null;
+                TappedItem.Selected = !TappedItem.Selected;
+            }
+            else
+            {
+                if (TappedItem == LastSelectedOrder)
+                {
+                    LastSelectedOrder = null;
+                    TappedItem.Selected = false;
+                    TappedItemSent = null;
+                }
+                else
+                {
+                    if (LastSelectedOrder != null)
+                        LastSelectedOrder.Selected = false;
+                    LastSelectedOrder = TappedItem;
+                    LastSelectedOrder.Selected = true;
+
+                    TappedItemSent = TappedItem.Sent;
+                }
+            }
+
+            RefreshToolbarItems();
+        }
+
+        private async void FactorsView_OnLongClick(object sender, EventArgs e)
+        {
+            var Position = ((ListViewLongClickEventArgs)e).Position;
+            var Order = FactorsObservableCollection[Position - 1];
+
+            if (!MultiSelectionMode)
+            {
+                MultiSelectionMode = true;
+                UnSettledOrderModel.Multiselection = true;
+
+                if (LastSelectedOrder != null)
+                {
+                    LastSelectedOrder.Selected = false;
+                    LastSelectedOrder = null;
+                }
+
+                FactorsView.ItemsSource = null;
+                FactorsView.ItemsSource = FactorsObservableCollection;
+
+                await Task.Delay(100);
+                FactorsView_ItemTapped(Order);
+            }
+        }
+                
         Guid LastSizeAllocationId;
         protected override async void OnSizeAllocated(double width, double height)
         {
@@ -124,54 +200,22 @@ namespace Kara
             }
         }
 
-
         private void RefreshPartnerSection(bool Horizental)
         {
             PartnerSection.RowDefinitions = new RowDefinitionCollection();
             PartnerSection.ColumnDefinitions = new ColumnDefinitionCollection();
             PartnerSection.Children.Clear();
 
-            var ShowAccountingCycleOfPartner =
-                App.Accesses.AccessToViewPartnerRemainder &&
-                (
-                    App.ShowAccountingCycleOfPartner_Remainder.Value ||
-                    App.ShowAccountingCycleOfPartner_UncashedCheques.Value ||
-                    App.ShowAccountingCycleOfPartner_ReturnedCheques.Value
-                );
-
             if (Horizental)
             {
                 PartnerSection.RowDefinitions.Add(new RowDefinition() { Height = 50 });
-                //if (ShowAccountingCycleOfPartner)
-                //    PartnerSection.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
-
+                
                 PartnerSection.ColumnDefinitions.Add(new ColumnDefinition() { Width = 50 });
                 PartnerSection.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 var GallaryStuffGroupOffset = 0;
                 
-                //if (App.StuffListGroupingMethod.Value != 0 && InsertOrderForm_ShowGallaryMode.Value)
-                //{
-                //    PartnerSection.ColumnDefinitions.Add(new ColumnDefinition() { Width = 5 });
-                //    PartnerSection.ColumnDefinitions.Add(new ColumnDefinition() { Width = 50 });
-                //    PartnerSection.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                //    GallaryStuffGroupOffset = 3;
-                //}
-
                 PartnerSection.Children.Add(PartnerChangeButton, 0 + GallaryStuffGroupOffset, 0);
                 PartnerSection.Children.Add(PartnerLabel, 1 + GallaryStuffGroupOffset, 0);
-
-                //if (ShowAccountingCycleOfPartner)
-                //{
-                //    PartnerSection.Children.Add(PartnerRemainderDetailButton, 0 + GallaryStuffGroupOffset, 1);
-                //    PartnerSection.Children.Add(PartnerRemainderLabel, 1 + GallaryStuffGroupOffset, 1);
-                //}
-
-                //if (App.StuffListGroupingMethod.Value != 0 && InsertOrderForm_ShowGallaryMode.Value)
-                //{
-                //    PartnerSection.Children.Add(GallaryStuffGroupPicker, 0, 0);
-                //    PartnerSection.Children.Add(GallaryStuffGroupChangeButton, 0, 0);
-                //    PartnerSection.Children.Add(GallaryStuffGroupLabel, 1, 0);
-                //}
             }
             else
             {
@@ -185,7 +229,7 @@ namespace Kara
             }
         }
 
-        private void PartnerSelected()
+        private async Task PartnerSelected()
         {
             PartnerLabel.Text = SelectedPartner == null ? "مشتری" :
                 !string.IsNullOrEmpty(SelectedPartner.LegalName) ? (SelectedPartner.LegalName + (!string.IsNullOrEmpty(SelectedPartner.Name) ? (" (" + SelectedPartner.Name + ")") : "")) : (SelectedPartner.Name);
@@ -194,20 +238,98 @@ namespace Kara
             var NewSelectedPartnerId = SelectedPartner == null ? Guid.NewGuid() : SelectedPartner.Id;
             if (SelectedPartner != null && BeforeSelectedPartnerId != NewSelectedPartnerId)
             {
-                FillFactors(SelectedPartner.Code);
-                //FetchPartnerCycleInformationFromServer();
+                BusyIndicatorContainder.IsVisible = true;
+                await FillFactors(SelectedPartner.Code);
+                BusyIndicatorContainder.IsVisible = false;
             }
         }
 
-        private async void FillFactors(string partnerCode)
+        private async Task FillFactors(string partnerCode)
         {
-            partnerCode = "21200017"; //tempppp
+            //var getUnsetteledFactorsResult = await Connectivity.GetUnSettledOrdersFromServerAsync(App.Username.Value, App.Password.Value, App.CurrentVersionNumber, partnerCode, "", "");
+            //if (getUnsetteledFactorsResult.Success)
+            //{
+            //    FactorsView.IsVisible = true;
+            //    FactorsObservableCollection = new ObservableCollection<UnSettledOrderModel>(getUnsetteledFactorsResult.Data);
+            //    FactorsView.ItemsSource = FactorsObservableCollection;
+            //}
 
-            var unsetteledFactors = await Connectivity.GetUnSettledOrdersFromServerAsync(App.Username.Value, App.Password.Value, App.CurrentVersionNumber, partnerCode, "", "");
+            var testResult = new List<UnSettledOrderModel>
+                        {
+                            new UnSettledOrderModel
+                            {
+                                DriverName = "رضا محمودی",
+                                OrderCode = "1001",
+                                OrderDate = "",
+                                //OrderId = new Guid(),
+                                Remainder = 10000.ToString(),
+                                Price = 14000.ToString()
+                            },
+                             new UnSettledOrderModel
+                            {
+                                DriverName = "علی محمودی",
+                                OrderCode = "1002",
+                                OrderId = new Guid(),
+                                Remainder = 20000.ToString(),
+                                Price = 24000.ToString()
+                            },
+                              new UnSettledOrderModel
+                            {
+                                DriverName = "آرش سیبسی",
+                                OrderCode = "1003",
+                                OrderId = new Guid(),
+                                Remainder = 30000.ToString(),
+                                Price = 34000.ToString()
+                            }
+                        };
 
-            FactorsObservableCollection = new ObservableCollection<UnSettledOrderModel>(unsetteledFactors.Data);
+                FactorsView.IsVisible = true;
+                FactorsObservableCollection = new ObservableCollection<UnSettledOrderModel>(testResult);
+                FactorsView.ItemsSource = FactorsObservableCollection;
+        }
 
-            FactorsView.ItemsSource = FactorsObservableCollection;
+        public void RefreshToolbarItems()
+        {
+            //ToolbarItem_SendToServer_Visible = false;
+            //ToolbarItem_Delete_Visible = false;
+            //ToolbarItem_Edit_Visible = false;
+            //ToolbarItem_Show_Visible = false;
+            //ToolbarItem_SearchBar_Visible = false;
+            //ToolbarItem_SelectAll_Visible = false;
+            //BackButton_Visible = false;
+
+            //if (MultiSelectionMode)
+            //{
+            //    ToolbarItem_SelectAll_Visible = true;
+            //    var AllUnSentOrdersSelected = PartnersList.Where(a => !a.Sent).All(a => a.Selected);
+            //    InsertedInformations.ToolbarItem_SelectAll.Icon = AllUnSentOrdersSelected ? "SelectAll_Full.png" : "SelectAll_Empty.png";
+            //}
+            //else
+            //    BackButton_Visible = true;
+
+            //var SelectedCount = PartnersList != null ? PartnersList.Count(a => a.Selected) : 0;
+            //if (SelectedCount == 0)
+            //{
+            //    if (!MultiSelectionMode)
+            //        ToolbarItem_SearchBar_Visible = true;
+            //}
+            //else if (MultiSelectionMode)
+            //{
+            //    ToolbarItem_SendToServer_Visible = true;
+            //    ToolbarItem_Delete_Visible = true;
+            //}
+            //else
+            //{
+            //    if (!PartnersList.Single(a => a.Selected).Sent)
+            //    {
+            //        ToolbarItem_SendToServer_Visible = true;
+            //        ToolbarItem_Delete_Visible = true;
+            //        ToolbarItem_Edit_Visible = true;
+            //    }
+            //    ToolbarItem_Show_Visible = true;
+            //}
+
+            //InsertedInformations.RefreshToolbarItems(BackButton_Visible, ToolbarItem_SearchBar_Visible, ToolbarItem_Delete_Visible, ToolbarItem_SendToServer_Visible, ToolbarItem_Edit_Visible, ToolbarItem_Show_Visible, ToolbarItem_SelectAll_Visible);
         }
     }
 }
