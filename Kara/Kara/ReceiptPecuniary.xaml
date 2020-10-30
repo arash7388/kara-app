@@ -3,57 +3,41 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:Kara.CustomRenderer"
              xmlns:views="clr-namespace:Kara.UserControls;assembly=Kara"
-             x:Class="Kara.TahsildarForm">
+             x:Class="Kara.ReceiptPecuniary">
     <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" >
         <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
             <Grid x:Name="PartnerSection" Padding="5, 5, 5, 0" RowSpacing="5" ColumnSpacing="0" >
             </Grid>
 
             <local:MyListView x:Name="FactorsView" ItemsSource="{Binding FactorsObservableCollection}" VerticalOptions="FillAndExpand" IsVisible="False">
-                <ListView.Header>
-                    <Grid >
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="35"></RowDefinition>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-
-                        
-                        <Label Text="شماره ف" BackgroundColor="Navy" TextColor="White" Grid.Column="4" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
-                        <Label Text="تاریخ ف" BackgroundColor="Navy" TextColor="White" Grid.Column="3" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
-                        <Label Text="فروشنده" BackgroundColor="Navy" TextColor="White" Grid.Column="2" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium" />
-                        <Label Text="مبلغ" BackgroundColor="Navy" TextColor="White" Grid.Column="1" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
-                        <Label Text="مانده" BackgroundColor="Navy" TextColor="White" Grid.Column="0" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
-                    </Grid>
-                </ListView.Header>
+                
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
                             <Grid Padding="1" VerticalOptions="FillAndExpand" ColumnSpacing="1" RowSpacing="1" BackgroundColor="{Binding RowColor}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                    <RowDefinition Height="Auto"></RowDefinition>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"></ColumnDefinition>
                                     <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="{Binding CheckBoxColumnWidth}"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
                                                                 
-                                <local:MyCheckBox x:Name="selectedCheckBox" Grid.Column="5" HorizontalOptions="Center" VerticalOptions="Center" Checked="{Binding Selected}" IsVisible="{Binding CanBeSelectedInMultiselection}" ></local:MyCheckBox>
-                                <Label Grid.Column="4" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding OrderCode} "/>
-                                <Label Grid.Column="3" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding OrderDate}"/>
-                                <Label Grid.Column="2" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding VisitorName}"/>
-                                <Label Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Price}"/>
-                                <Label Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Remainder}"/>
-                                
+                                <Label Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="تاریخ"/>
+                                <Label Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="1398/05/05"/>
+
+                                <Label Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="صندوق"/>
+                                <Label Grid.Row="1" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="ص1"/>
+
+                                <Label Grid.Row="2" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="مبلغ"/>
+                                <Label Grid.Row="2" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="1000"/>
+
+                                <Label Grid.Row="3" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="شرح"/>
+                                <Label Grid.Row="3" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="---"/>
+
 
                             </Grid>
                         </ViewCell>

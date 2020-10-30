@@ -16,7 +16,10 @@ namespace Kara
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ReceiptPecuniary : GradientContentPage
     {
-
+        public ReceiptPecuniary()
+        {
+            InitializeComponent();
+        }
         
     }
 }
