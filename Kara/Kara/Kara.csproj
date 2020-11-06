@@ -57,6 +57,9 @@
     <Compile Include="MessageForm.xaml.cs">
       <DependentUpon>MessageForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ReceiptPecuniary.xaml.cs">
+      <DependentUpon>ReceiptPecuniary.xaml</DependentUpon>
+    </Compile>
     <Compile Include="TahsildarForm.xaml.cs">
       <DependentUpon>TahsildarForm.xaml</DependentUpon>
     </Compile>
@@ -538,6 +541,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TahsildarForm.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ReceiptPecuniary.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

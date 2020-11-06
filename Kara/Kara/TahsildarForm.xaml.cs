@@ -4,6 +4,7 @@ using Kara.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Xamarin.Forms;
@@ -30,7 +31,8 @@ namespace Kara
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class TahsildarForm : GradientContentPage
     {
-
+        public ToolbarItem ToolbarItem_Naghd, ToolbarItem_Cheque, ToolbarItem_SelectAll;
+        private bool ToolbarItem_Naghd_Visible, ToolbarItem_Cheque_Visible, ToolbarItem_SelectAll_Visible, BackButton_Visible;
         private bool? TappedItemSent;
         private UnSettledOrderModel LastSelectedOrder = null;
         private bool MultiSelectionMode = false;
@@ -78,6 +80,28 @@ namespace Kara
                 App.UniversalLineInApp = 875234040;
             }
 
+            ToolbarItem_SelectAll = new ToolbarItem();
+            ToolbarItem_SelectAll.Text = "انتخاب همه";
+            ToolbarItem_SelectAll.Icon = "SelectAll_Empty.png";
+            ToolbarItem_SelectAll.Order = ToolbarItemOrder.Primary;
+            ToolbarItem_SelectAll.Priority = 9;
+            ToolbarItem_SelectAll.Activated += ToolbarItem_SelectAll_Activated;
+
+            ToolbarItem_Naghd = new ToolbarItem();
+            ToolbarItem_Naghd.Text = "دریافت نقد";
+            ToolbarItem_Naghd.Icon = "Cash.png";
+            ToolbarItem_Naghd.Order = ToolbarItemOrder.Primary;
+            ToolbarItem_Naghd.Priority = 1;
+            ToolbarItem_Naghd.Activated += ToolbarItem_Naghd_Activated;
+
+            ToolbarItem_Cheque = new ToolbarItem();
+            ToolbarItem_Cheque.Text = "دریافت چک";
+            ToolbarItem_Cheque.Icon = "Cheque.png";
+            ToolbarItem_Cheque.Order = ToolbarItemOrder.Primary;
+            ToolbarItem_Cheque.Priority = 2;
+            ToolbarItem_Cheque.Activated += ToolbarItem_Cheque_Activated;
+
+
             var PartnerChangeButtonTapGestureRecognizer = new TapGestureRecognizer();
             PartnerChangeButtonTapGestureRecognizer.Tapped += (sender, e) => {
                 if (!TapEventHandlingInProgress)
@@ -112,14 +136,67 @@ namespace Kara
             PartnerChangeButtonTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
             PartnerChangeButton.GestureRecognizers.Add(PartnerChangeButtonTapGestureRecognizer);
             PartnerChangeButton.WidthRequest = 150;
+        }
 
-           
+        private void ToolbarItem_SelectAll_Activated(object sender, EventArgs e)
+        {
+            var AllSelected = FactorsObservableCollection.All(a => a.Selected);
+            if (AllSelected)
+            {
+                foreach (var item in FactorsObservableCollection)
+                    item.Selected = false;
+                ToolbarItem_SelectAll.Icon = "SelectAll_Full.png";
+            }
+            else
+            {
+                foreach (var item in FactorsObservableCollection)
+                    item.Selected = true;
+
+                ToolbarItem_SelectAll.Icon = "SelectAll_Empty.png";
+            }
+        }
+
+        private void ToolbarItem_Cheque_Activated(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private async void ToolbarItem_Naghd_Activated(object sender, EventArgs e)
+        {
+            var sumSelected = FactorsObservableCollection.Where(a => a.Selected).Sum(a => Decimal.Parse(a.Price));
+            ReceiptPecuniary receiptPecuniary = new ReceiptPecuniary();
+
+            receiptPecuniary.Price = sumSelected;
+            receiptPecuniary.PartnerId = SelectedPartner.Id;
+            try { await Navigation.PushAsync(receiptPecuniary); } catch (Exception) { }
         }
 
         private void FactorsView_ItemTapped(object sender, ItemTappedEventArgs e)
         {
             var TappedItem = (UnSettledOrderModel)e.Item;
             FactorsView_ItemTapped(TappedItem);
+        }
+
+        protected override bool OnBackButtonPressed()
+        {
+            if (MultiSelectionMode)
+            {
+                ExitMultiSelectionMode();
+                return true;
+            }
+            return base.OnBackButtonPressed();
+        }
+
+        private async void ExitMultiSelectionMode()
+        {
+            foreach (var item in FactorsObservableCollection.Where(a => a.Selected))
+                item.Selected = false;
+
+            MultiSelectionMode = false;
+            DBRepository.OrderListModel.Multiselection = false;
+            FactorsView.ItemsSource = null;
+            FactorsView.ItemsSource = FactorsObservableCollection;
+            RefreshToolbarItems();
         }
 
         private void FactorsView_ItemTapped(UnSettledOrderModel TappedItem)
@@ -154,7 +231,7 @@ namespace Kara
         private async void FactorsView_OnLongClick(object sender, EventArgs e)
         {
             var Position = ((ListViewLongClickEventArgs)e).Position;
-            var Order = FactorsObservableCollection[Position - 1];
+            var OrderedItem = FactorsObservableCollection[Position - 1];
 
             if (!MultiSelectionMode)
             {
@@ -171,7 +248,7 @@ namespace Kara
                 FactorsView.ItemsSource = FactorsObservableCollection;
 
                 await Task.Delay(100);
-                FactorsView_ItemTapped(Order);
+                FactorsView_ItemTapped(OrderedItem);
             }
         }
                 
@@ -189,6 +266,8 @@ namespace Kara
 
 
         double LastWidth, LastHeight;
+        
+
         public void sizeChanged(double width, double height)
         {
             if (LastWidth != width || LastHeight != height)
@@ -260,8 +339,8 @@ namespace Kara
                             {
                                 DriverName = "رضا محمودی",
                                 OrderCode = "1001",
-                                OrderDate = "",
-                                //OrderId = new Guid(),
+                                OrderDate = DateTime.Now.ToShortStringForDate().ReplaceLatinDigits(),
+                                OrderId = new Guid(),
                                 Remainder = 10000.ToString(),
                                 Price = 14000.ToString()
                             },
@@ -269,6 +348,7 @@ namespace Kara
                             {
                                 DriverName = "علی محمودی",
                                 OrderCode = "1002",
+                                OrderDate = DateTime.Now.AddDays(4). ToShortStringForDate().ReplaceLatinDigits(),
                                 OrderId = new Guid(),
                                 Remainder = 20000.ToString(),
                                 Price = 24000.ToString()
@@ -277,6 +357,7 @@ namespace Kara
                             {
                                 DriverName = "آرش سیبسی",
                                 OrderCode = "1003",
+                                OrderDate = DateTime.Now.AddDays(8).ToShortStringForDate().ReplaceLatinDigits(),
                                 OrderId = new Guid(),
                                 Remainder = 30000.ToString(),
                                 Price = 34000.ToString()
@@ -290,46 +371,82 @@ namespace Kara
 
         public void RefreshToolbarItems()
         {
-            //ToolbarItem_SendToServer_Visible = false;
-            //ToolbarItem_Delete_Visible = false;
-            //ToolbarItem_Edit_Visible = false;
-            //ToolbarItem_Show_Visible = false;
-            //ToolbarItem_SearchBar_Visible = false;
-            //ToolbarItem_SelectAll_Visible = false;
-            //BackButton_Visible = false;
+            ToolbarItem_Naghd_Visible = false;
+            ToolbarItem_SelectAll_Visible = false;
+            BackButton_Visible = false;
 
-            //if (MultiSelectionMode)
-            //{
-            //    ToolbarItem_SelectAll_Visible = true;
-            //    var AllUnSentOrdersSelected = PartnersList.Where(a => !a.Sent).All(a => a.Selected);
-            //    InsertedInformations.ToolbarItem_SelectAll.Icon = AllUnSentOrdersSelected ? "SelectAll_Full.png" : "SelectAll_Empty.png";
-            //}
-            //else
-            //    BackButton_Visible = true;
+            if (MultiSelectionMode)
+            {
+                ToolbarItem_SelectAll_Visible = true;
+                var AllUnSentOrdersSelected = FactorsObservableCollection.Where(a => !a.Sent).All(a => a.Selected);
+                ToolbarItem_SelectAll.Icon = AllUnSentOrdersSelected ? "SelectAll_Full.png" : "SelectAll_Empty.png";
+            }
+            else
+                BackButton_Visible = true;
 
-            //var SelectedCount = PartnersList != null ? PartnersList.Count(a => a.Selected) : 0;
-            //if (SelectedCount == 0)
-            //{
-            //    if (!MultiSelectionMode)
-            //        ToolbarItem_SearchBar_Visible = true;
-            //}
-            //else if (MultiSelectionMode)
-            //{
-            //    ToolbarItem_SendToServer_Visible = true;
-            //    ToolbarItem_Delete_Visible = true;
-            //}
-            //else
-            //{
-            //    if (!PartnersList.Single(a => a.Selected).Sent)
-            //    {
-            //        ToolbarItem_SendToServer_Visible = true;
-            //        ToolbarItem_Delete_Visible = true;
-            //        ToolbarItem_Edit_Visible = true;
-            //    }
-            //    ToolbarItem_Show_Visible = true;
-            //}
+            var SelectedCount = FactorsObservableCollection != null ? FactorsObservableCollection.Count(a => a.Selected) : 0;
+            if (SelectedCount == 0)
+            {
+                //if (!MultiSelectionMode)
+                //    ToolbarItem_SearchBar_Visible = true;
+            }
+            else if (MultiSelectionMode)
+            {
+                ToolbarItem_Naghd_Visible = true;
+            }
+            else
+            {
+                if (!FactorsObservableCollection.Single(a => a.Selected).Sent)
+                {
+                    ToolbarItem_Naghd_Visible = true;
+                }
+                //ToolbarItem_Show_Visible = true;
+            }
 
-            //InsertedInformations.RefreshToolbarItems(BackButton_Visible, ToolbarItem_SearchBar_Visible, ToolbarItem_Delete_Visible, ToolbarItem_SendToServer_Visible, ToolbarItem_Edit_Visible, ToolbarItem_Show_Visible, ToolbarItem_SelectAll_Visible);
+            RefreshToolbarItems(BackButton_Visible, ToolbarItem_Naghd_Visible, ToolbarItem_SelectAll_Visible);
+        }
+
+        public void RefreshToolbarItems
+        (
+            bool BackButton_Visible,
+            bool ToolbarItem_Naghd_Visible,
+            bool ToolbarItem_SelectAll_Visible
+        )
+        {
+            if (BackButton_Visible)
+                NavigationPage.SetHasBackButton(this, true);
+            else
+                NavigationPage.SetHasBackButton(this, false);
+
+            //if (ToolbarItem_SearchBar_Visible && !this.ToolbarItems.Contains(ToolbarItem_SearchBar))
+            //    this.ToolbarItems.Add(ToolbarItem_SearchBar);
+            //if (!ToolbarItem_SearchBar_Visible && this.ToolbarItems.Contains(ToolbarItem_SearchBar))
+            //    this.ToolbarItems.Remove(ToolbarItem_SearchBar);
+
+            //if (ToolbarItem_Delete_Visible && !this.ToolbarItems.Contains(ToolbarItem_Delete))
+            //    this.ToolbarItems.Add(ToolbarItem_Delete);
+            //if (!ToolbarItem_Delete_Visible && this.ToolbarItems.Contains(ToolbarItem_Delete))
+            //    this.ToolbarItems.Remove(ToolbarItem_Delete);
+
+            if (ToolbarItem_Naghd_Visible && !this.ToolbarItems.Contains(ToolbarItem_Naghd))
+                this.ToolbarItems.Add(ToolbarItem_Naghd);
+            if (!ToolbarItem_Naghd_Visible && this.ToolbarItems.Contains(ToolbarItem_Naghd))
+                this.ToolbarItems.Remove(ToolbarItem_Naghd);
+
+            //if (ToolbarItem_Edit_Visible && !this.ToolbarItems.Contains(ToolbarItem_Edit))
+            //    this.ToolbarItems.Add(ToolbarItem_Edit);
+            //if (!ToolbarItem_Edit_Visible && this.ToolbarItems.Contains(ToolbarItem_Edit))
+            //    this.ToolbarItems.Remove(ToolbarItem_Edit);
+
+            //if (ToolbarItem_Show_Visible && !this.ToolbarItems.Contains(ToolbarItem_Show))
+            //    this.ToolbarItems.Add(ToolbarItem_Show);
+            //if (!ToolbarItem_Show_Visible && this.ToolbarItems.Contains(ToolbarItem_Show))
+            //    this.ToolbarItems.Remove(ToolbarItem_Show);
+
+            if (ToolbarItem_SelectAll_Visible && !this.ToolbarItems.Contains(ToolbarItem_SelectAll))
+                this.ToolbarItems.Add(ToolbarItem_SelectAll);
+            if (!ToolbarItem_SelectAll_Visible && this.ToolbarItems.Contains(ToolbarItem_SelectAll))
+                this.ToolbarItems.Remove(ToolbarItem_SelectAll);
         }
     }
 }

@@ -107,7 +107,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="JarBinding">
-      <HintPath>..\Kara\Dll\JarBinding.dll</HintPath>
+      <HintPath>..\Kara\JarBinding.dll</HintPath>
     </Reference>
     <Reference Include="Java.Interop" />
     <Reference Include="Microsoft.AppCenter, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -231,6 +231,9 @@
     <Reference Include="Toasts.Forms.Plugin.Droid, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Toasts.Forms.Plugin.3.2.0\lib\MonoAndroid10\Toasts.Forms.Plugin.Droid.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="urovo">
+      <HintPath>..\Kara\urovo.dll</HintPath>
     </Reference>
     <Reference Include="Xam.Plugin.DownloadManager.Abstractions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xam.Plugin.DownloadManager.1.0.0.1\lib\MonoAndroid10\Xam.Plugin.DownloadManager.Abstractions.dll</HintPath>
@@ -737,6 +740,12 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\xml\device_admin.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\Cash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\Cheque.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

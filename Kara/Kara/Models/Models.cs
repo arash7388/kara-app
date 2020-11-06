@@ -48,7 +48,8 @@ namespace Kara.Models
             new KeyValuePair<Type, string>(typeof(SaleOrder), "SaleOrder"),
             new KeyValuePair<Type, string>(typeof(SaleOrderStuff), "SaleOrderStuff"),
             new KeyValuePair<Type, string>(typeof(CashDiscount), "CashDiscount"),
-            new KeyValuePair<Type, string>(typeof(DeviceSettingChange), "DeviceSettingChange")
+            new KeyValuePair<Type, string>(typeof(DeviceSettingChange), "DeviceSettingChange"),
+            new KeyValuePair<Type, string>(typeof(FinancialTransactionDocument), "FinancialTransactionDocument")
         };
 
         private static Dictionary<Type, List<PropertyInfo>> _PrimaryKeys;
@@ -152,6 +153,103 @@ namespace Kara.Models
         private DynamicGroup[] _Groups { get; set; }
         [Ignore]
         public DynamicGroup[] Groups { get { if (_Groups == null || !_Groups.Any()) _Groups = App.DB.GetPartnerGroups(Id); return _Groups; } }
+    }
+
+    [Table("FinancialTransactionDocument")]
+    public class FinancialTransactionDocument
+    {
+        public System.Guid DocumentId{get;set;}
+
+        public System.Guid YearId{get;set;}
+
+        public int TransactionType{get;set;}
+
+        public System.Nullable<System.Guid> PartnerId{get;set;}
+
+        public System.Nullable<System.Guid> PersonnelId{get;set;}
+
+        public System.Nullable<System.Guid> CashAccountId{get;set;}
+
+        public System.Nullable<System.Guid> BankAccountId{get;set;}
+
+        public System.Nullable<System.Guid> CreditAccountId{get;set;}
+
+        public System.Nullable<System.Guid> OrderId{get;set;}
+
+        public decimal InputPrice{get;set;}
+
+        public decimal OutputPrice{get;set;}
+
+        public string DocumentCode{get;set;}
+
+        public int DocumentState{get;set;}
+
+        public System.DateTime DocumentDate{get;set;}
+        public string PersianDocumentDate{get;set;}
+
+        public System.Nullable<System.DateTime> TransactionDate{get;set;}
+
+        public System.Nullable<System.DateTime> MaturityDate{get;set;}
+
+        public System.Guid DocumentUserId{get;set;}
+
+        public string DocumentDescription{get;set;}
+
+        public string ChequeCode{get;set;}
+
+        public string BranchName{get;set;}
+
+        public string BranchCode{get;set;}
+
+        public string Delivery{get;set;}
+
+        public string Issuance{get;set;}
+
+        public string BankTransferCode{get;set;}
+
+        public System.Nullable<int> ChequeType{get;set;}
+
+        public System.Nullable<System.Guid> ChequeDefinitionId{get;set;}
+
+        public System.Nullable<System.Guid> PartnerChequeId{get;set;}
+
+        public System.Nullable<System.Guid> RevokedChequeId{get;set;}
+
+        public System.Nullable<int> PaymentBankType{get;set;}
+
+        public System.Nullable<int> CashChargeType{get;set;}
+
+        public System.Nullable<System.Guid> FCashAccountId{get;set;}
+
+        public System.Nullable<System.Guid> ChequeBankId{get;set;}
+
+        public System.Nullable<System.Guid> DocumentTypeId{get;set;}
+
+        public bool IsInitialChequeOperation{get;set;}
+
+        public System.Nullable<System.Guid> FBankAccountId{get;set;}
+
+        public System.Nullable<System.Guid> BatchDocumentId{get;set;}
+
+        public System.Nullable<bool> AccountingConfirmed{get;set;}
+
+        public System.Nullable<System.Guid> SpecificCodingId{get;set;}
+
+        public string ReceivedChequeBankAccountNumber{get;set;}
+
+        public System.Nullable<System.Guid> TotalId{get;set;}
+
+        public System.Nullable<System.Guid> CollectorId{get;set;}
+
+        public System.Nullable<System.Guid> ReferenceId{get;set;}
+
+        public System.Nullable<System.Guid> Cashier{get;set;}
+
+        public System.Nullable<decimal> BankFee{get;set;}
+
+        [Ignore]
+        private DynamicGroup[] _Groups { get; set; }
+        
     }
 
     [Table("DynamicGroupPartner")]

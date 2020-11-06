@@ -3,52 +3,38 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:Kara.CustomRenderer"
              xmlns:views="clr-namespace:Kara.UserControls;assembly=Kara"
-             x:Class="Kara.ReceiptPecuniary">
+             x:Class="Kara.ReceiptPecuniary" Title="دریافت نقد">
     <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" >
-        <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
-            <Grid x:Name="PartnerSection" Padding="5, 5, 5, 0" RowSpacing="5" ColumnSpacing="0" >
-            </Grid>
 
-            <local:MyListView x:Name="FactorsView" ItemsSource="{Binding FactorsObservableCollection}" VerticalOptions="FillAndExpand" IsVisible="False">
-                
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <ViewCell>
-                            <Grid Padding="1" VerticalOptions="FillAndExpand" ColumnSpacing="1" RowSpacing="1" BackgroundColor="{Binding RowColor}">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"></RowDefinition>
-                                    <RowDefinition Height="Auto"></RowDefinition>
-                                    <RowDefinition Height="Auto"></RowDefinition>
-                                    <RowDefinition Height="Auto"></RowDefinition>
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-                                                                
-                                <Label Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="تاریخ"/>
-                                <Label Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="1398/05/05"/>
+        <Grid Padding="1" VerticalOptions="FillAndExpand" ColumnSpacing="5" RowSpacing="1" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"></ColumnDefinition>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
 
-                                <Label Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="صندوق"/>
-                                <Label Grid.Row="1" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="ص1"/>
+            <Label Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="تاریخ:" FontSize="Medium"/>
+            <Entry x:Name="txtDate" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="1398/05/05" FontSize="Medium"/>
 
-                                <Label Grid.Row="2" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="مبلغ"/>
-                                <Label Grid.Row="2" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="1000"/>
+            <Label Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="صندوق:" FontSize="Medium"/>
+            <Label Grid.Row="1" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="ص1" FontSize="Medium"/>
 
-                                <Label Grid.Row="3" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="شرح"/>
-                                <Label Grid.Row="3" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="---"/>
+            <Label Grid.Row="2" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="مبلغ:" FontSize="Medium"/>
+            <Entry Grid.Row="2" x:Name="txtPrice" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="1000" FontSize="Medium"/>
+
+            <Label Grid.Row="3" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="شرح:" FontSize="Medium"/>
+            <local:MyEntry x:Name="txtDesc"  Grid.Row="3" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="" FontSize="Medium"/>
 
 
-                            </Grid>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </local:MyListView>
-            
-            <StackLayout x:Name="BusyIndicatorContainder" Orientation="Vertical" Spacing="0" Padding="0" Grid.Row="0" Grid.Column="0" IsVisible="False">
-                <ActivityIndicator x:Name="BusyIndicator" IsRunning="True" Grid.Row="0" Grid.Column="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
-                </ActivityIndicator>
-            </StackLayout>
+        </Grid>
+        <StackLayout x:Name="BusyIndicatorContainder" Orientation="Vertical" Spacing="0" Padding="0" Grid.Row="0" Grid.Column="0" IsVisible="False">
+            <ActivityIndicator x:Name="BusyIndicator" IsRunning="True" Grid.Row="0" Grid.Column="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+            </ActivityIndicator>
         </StackLayout>
     </StackLayout>
 </local:GradientContentPage>

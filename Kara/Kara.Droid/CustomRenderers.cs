@@ -127,18 +127,55 @@ namespace Kara.Droid
             v.Draw(c);
 
             var top = 0;
-            while (b.GetPixel(0, top) != -10063246)
-                top++;
-            var bottom = Height - 1;
-            while (b.GetPixel(0, bottom) != -10063246)
-                bottom--;
-            var left = 0;
-            while (b.GetPixel(left, top) == -10063246)
-                left++;
-            var right = Resources.DisplayMetrics.WidthPixels - 1;
-            while (b.GetPixel(right, top) == -10063246)
-                right--;
+            try
+            {
+                while (b.GetPixel(0, top) != -10063246)
+                    top++;
+            }
+            catch (System.Exception e)
+            {
+                top = 0;
+            }
             
+            var bottom = Height - 1;
+            try
+            {
+                while (b.GetPixel(0, bottom) != -10063246)
+                    bottom--;
+            }
+            catch (System.Exception e)
+            {
+                bottom = b.Height;
+            }
+            
+            var left = 0;
+            try
+            {
+                while (b.GetPixel(left, top) == -10063246)
+                    left++;
+            }
+            catch (System.Exception e)
+            {
+                left = 0;
+            }
+            
+            var right = Resources.DisplayMetrics.WidthPixels - 1;
+
+            try
+            {
+                while (b.GetPixel(right, top) == -10063246)
+                    right--;
+            }
+            catch (System.Exception e)
+            {
+                right = b.Width;
+            }
+
+            top = 0;
+            bottom = b.Height;
+            left = 0;
+            right = b.Width;
+
             var result = Bitmap.CreateBitmap(right - left + 1, bottom - top + 1, b.GetConfig());
             new Canvas(result).DrawBitmap(b, new Rect(left, top, right, bottom), new Rect(0, 0, right - left + 1, bottom - top + 1), null);
 

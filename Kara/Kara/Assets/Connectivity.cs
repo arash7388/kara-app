@@ -609,6 +609,68 @@ namespace Kara.Assets
             }
         }
 
+
+
+        public static async Task<ResultSuccess<int>> SubmitReceiptPecuniaryAsync(FinancialTransactionDocument[] documents)
+        {
+            var SentCount = 0;
+            try
+            {
+                foreach (var document in documents)
+                {
+                    var Data = new[]
+                    {
+                        new KeyValuePair<string, string>("DocumentId", document.DocumentId.ToString()),
+                        new KeyValuePair<string, string>("Price", document.InputPrice.ToString()),
+                        new KeyValuePair<string, string>("CollectorId", document.CollectorId.ToString()),
+                        new KeyValuePair<string, string>("TransactionType", document.TransactionType.ToString()),
+                        new KeyValuePair<string, string>("PartnerId", document.PartnerId.ToString()),
+                        new KeyValuePair<string, string>("CashAccountId", document.CashAccountId.ToString()),
+                        //new KeyValuePair<string, string>("InputPrice", document.InputPrice.ToString()),
+                        //new KeyValuePair<string, string>("OutputPrice", document.OutputPrice.ToString()),
+                        //new KeyValuePair<string, string>("DocumentCode", document.DocumentCode.ToString()),
+                        //new KeyValuePair<string, string>("DocumentState", document.DocumentState.ToString()),
+                        new KeyValuePair<string, string>("PersianDocumentDate", document.PersianDocumentDate.ToString()),
+                        //new KeyValuePair<string, string>("DocumentUserId", document.DocumentUserId.ToString()),
+                        new KeyValuePair<string, string>("DocumentDescription", document.DocumentDescription.ToString()),
+                        //new KeyValuePair<string, string>("ChequeCode", document.ChequeCode.ToString()),
+                        //new KeyValuePair<string, string>("BranchName", document.BranchName.ToString()),
+                        //new KeyValuePair<string, string>("BranchCode", document.BranchCode.ToString()),
+                        //new KeyValuePair<string, string>("Delivery", document.Delivery.ToString()),
+                        //new KeyValuePair<string, string>("Issuance", document.Issuance.ToString()),
+                        //new KeyValuePair<string, string>("BankTransferCode", document.BankTransferCode.ToString()),
+                    };
+
+                    HttpContent Content = new FormUrlEncodedContent(Data);
+
+                    var resultTask = HttpClient.PostAsyncForUnicode(ServerRoot + "InsertReceiptPrcuniary?UserName=" + App.Username.Value + "&Password=" + App.Password.Value + "&CurrentVersionNumber=" + App.CurrentVersionNumber, Content);
+                    var result = await resultTask;
+                    if (resultTask.Exception != null)
+                        throw new Exception(resultTask.Exception.ProperMessage());
+                    if (!result.Success)
+                        throw new Exception(result.Message);
+
+                    var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<PartnerSubmitResultDataModel>>(result.Data);
+                    if (!resultDeserialized.Success)
+                        throw new Exception(resultDeserialized.Message);
+
+                    //Partner.Sent = true;
+                    //Partner.Code = resultDeserialized.Data.PartnerCode;
+                    var updateResult = await App.DB.InsertOrUpdateRecordAsync<FinancialTransactionDocument>(document);
+
+                    SentCount++;
+                }
+
+                return new ResultSuccess<int>(true, "", SentCount);
+            }
+            catch (Exception err)
+            {
+                var Message = (documents.Count() == 1 ? "" : SentCount == 0 ? "هیچ سندی به سرور ارسال نشد." : "تعداد " + SentCount + " سند به سرور ارسال شد، اما در ادامه مشکلی رخ داد.") + err.ProperMessage();
+                return new ResultSuccess<int>(false, Message, SentCount);
+            }
+        }
+
+
         public static async Task<ResultSuccess<int>> SubmitFailedVisitsAsync(FailedVisit[] FailedVisits)
         {
             var SentCount = 0;
