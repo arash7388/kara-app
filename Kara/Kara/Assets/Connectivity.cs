@@ -626,19 +626,9 @@ namespace Kara.Assets
                         new KeyValuePair<string, string>("TransactionType", document.TransactionType.ToString()),
                         new KeyValuePair<string, string>("PartnerId", document.PartnerId.ToString()),
                         new KeyValuePair<string, string>("CashAccountId", document.CashAccountId.ToString()),
-                        //new KeyValuePair<string, string>("InputPrice", document.InputPrice.ToString()),
-                        //new KeyValuePair<string, string>("OutputPrice", document.OutputPrice.ToString()),
-                        //new KeyValuePair<string, string>("DocumentCode", document.DocumentCode.ToString()),
-                        //new KeyValuePair<string, string>("DocumentState", document.DocumentState.ToString()),
+                        new KeyValuePair<string, string>("CommonUserId", document.DocumentUserId.ToString()),
                         new KeyValuePair<string, string>("PersianDocumentDate", document.PersianDocumentDate.ToString()),
-                        //new KeyValuePair<string, string>("DocumentUserId", document.DocumentUserId.ToString()),
                         new KeyValuePair<string, string>("DocumentDescription", document.DocumentDescription.ToString()),
-                        //new KeyValuePair<string, string>("ChequeCode", document.ChequeCode.ToString()),
-                        //new KeyValuePair<string, string>("BranchName", document.BranchName.ToString()),
-                        //new KeyValuePair<string, string>("BranchCode", document.BranchCode.ToString()),
-                        //new KeyValuePair<string, string>("Delivery", document.Delivery.ToString()),
-                        //new KeyValuePair<string, string>("Issuance", document.Issuance.ToString()),
-                        //new KeyValuePair<string, string>("BankTransferCode", document.BankTransferCode.ToString()),
                     };
 
                     HttpContent Content = new FormUrlEncodedContent(Data);
@@ -1572,6 +1562,78 @@ namespace Kara.Assets
                 var AccessesResult = await App.DB.FetchUserAccessesAsync();
                 if (!AccessesResult.Success)
                     return new ResultSuccess<int>(false, AccessesResult.Message);
+
+                return new ResultSuccess<int>(true, "", resultDeserialized.Data.TotalCount);
+            }
+            catch (Exception err)
+            {
+                return new ResultSuccess<int>(false, err.ProperMessage());
+            }
+        }
+    }
+
+    public class PartialUpdateDB_Cashes : PartialDBUpdater
+    {
+        public override async Task<ResultSuccess<int>> UpdateItemFromServer(Guid RequestId, int From, int Count)
+        {
+            try
+            {
+                if (From == 1)
+                {
+                    await App.DB.DeleteAllRecordsAsync<Cash>();
+                }
+
+                var resultTask = HttpClient.GetStringAsyncForUnicode(ServerRoot + "GetCashes?RequestId=" + RequestId.ToString() + "&UserName=" + App.Username.Value + "&Password=" + App.Password.Value + "&From=" + From + "&Count=" + Count + "&CurrentVersionNumber=" + App.CurrentVersionNumber);
+                var result = await resultTask;
+                if (resultTask.Exception != null)
+                    return new ResultSuccess<int>(false, resultTask.Exception.ProperMessage());
+
+                if (!result.Success)
+                    return new ResultSuccess<int>(false, result.Message);
+
+                var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<UpdateDB_CashBatchModel>>(result.Data);
+                if (!resultDeserialized.Success)
+                    return new ResultSuccess<int>(false, resultDeserialized.Message);
+
+                var res = await App.DB.InsertAllRecordsAsync<Cash>(resultDeserialized.Data.Cashes);
+                if (!res.Success)
+                    return new ResultSuccess<int>(false, res.Message);
+
+                return new ResultSuccess<int>(true, "", resultDeserialized.Data.TotalCount);
+            }
+            catch (Exception err)
+            {
+                return new ResultSuccess<int>(false, err.ProperMessage());
+            }
+        }
+    }
+
+    public class PartialUpdateDB_Banks : PartialDBUpdater
+    {
+        public override async Task<ResultSuccess<int>> UpdateItemFromServer(Guid RequestId, int From, int Count)
+        {
+            try
+            {
+                if (From == 1)
+                {
+                    await App.DB.DeleteAllRecordsAsync<Bank>();
+                }
+
+                var resultTask = HttpClient.GetStringAsyncForUnicode(ServerRoot + "GetBanks?RequestId=" + RequestId.ToString() + "&UserName=" + App.Username.Value + "&Password=" + App.Password.Value + "&From=" + From + "&Count=" + Count + "&CurrentVersionNumber=" + App.CurrentVersionNumber);
+                var result = await resultTask;
+                if (resultTask.Exception != null)
+                    return new ResultSuccess<int>(false, resultTask.Exception.ProperMessage());
+
+                if (!result.Success)
+                    return new ResultSuccess<int>(false, result.Message);
+
+                var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<UpdateDB_BankBatchModel>>(result.Data);
+                if (!resultDeserialized.Success)
+                    return new ResultSuccess<int>(false, resultDeserialized.Message);
+
+                var res = await App.DB.InsertAllRecordsAsync<Bank>(resultDeserialized.Data.Banks);
+                if (!res.Success)
+                    return new ResultSuccess<int>(false, res.Message);
 
                 return new ResultSuccess<int>(true, "", resultDeserialized.Data.TotalCount);
             }

@@ -140,6 +140,7 @@ namespace Kara
                 App.Username.Value = Username.Text;
                 App.Password.Value = Password.Text;
                 App.UserPersonnelId.Value = loginResult.Data.PersonnelId;
+                App.UserEntityId.Value = loginResult.Data.EntityId;
                 App.UserRealName.Value = loginResult.Data.RealName;
 
                 await Navigation.PushAsync(new MainMenu()

@@ -24,21 +24,16 @@ namespace Kara.Assets
         Joulian = 2
     }
 
-    public class NumberInPersianDigitsConverter : IValueConverter
+    public class DecimalToPersianDigitsConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value is int)
-            {
-                return ((int)value).ToString().ReplaceLatinDigits();
-            }
-
-            return value;
+            return value.ToString().ReplaceLatinDigits();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return System.Convert.ToInt32(((string)value).ReplacePersianDigits());
+            return System.Convert.ToDecimal(((string)value).ReplacePersianDigits());
         }
     }
 

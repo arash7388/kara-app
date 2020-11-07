@@ -405,6 +405,7 @@ namespace Kara
         public static SettingField<string> Username = new SettingField<string>("Username", "");
         public static SettingField<string> Password = new SettingField<string>("Password", "");
         public static SettingField<Guid> UserPersonnelId = new SettingField<Guid>("UserPersonnelId", Guid.Empty);
+        public static SettingField<Guid> UserEntityId = new SettingField<Guid>("UserEntityId", Guid.Empty);
         public static SettingField<string> UserRealName = new SettingField<string>("UserRealName", "");
         public static SettingField<Guid> LastLoginUserId = new SettingField<Guid>("LastLoginUserId", Guid.Empty);
         public static DBRepository DB;

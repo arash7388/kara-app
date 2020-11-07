@@ -2,8 +2,16 @@
 <local:GradientContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:Kara.CustomRenderer"
+             xmlns:conv="clr-namespace:Kara.Assets"
              xmlns:views="clr-namespace:Kara.UserControls;assembly=Kara"
              x:Class="Kara.ReceiptPecuniary" Title="دریافت نقد">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <conv:DecimalToPersianDigitsConverter x:Key="decimalToPersianDigits" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
     <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" >
 
         <Grid Padding="1" VerticalOptions="FillAndExpand" ColumnSpacing="5" RowSpacing="1" >
@@ -25,11 +33,11 @@
             <Label Grid.Row="1" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="ص1" FontSize="Medium"/>
 
             <Label Grid.Row="2" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="مبلغ:" FontSize="Medium"/>
-            <Entry Grid.Row="2" x:Name="txtPrice" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="1000" FontSize="Medium"/>
+            <Entry Grid.Row="2" x:Name="txtPrice" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" 
+                    Text="{Binding Price,Mode=TwoWay}" FontSize="Medium"/>
 
             <Label Grid.Row="3" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="شرح:" FontSize="Medium"/>
-            <local:MyEntry x:Name="txtDesc"  Grid.Row="3" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="" FontSize="Medium"/>
-
+            <Entry x:Name="txtDesc"  Grid.Row="3" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="" FontSize="Medium"/>
 
         </Grid>
         <StackLayout x:Name="BusyIndicatorContainder" Orientation="Vertical" Spacing="0" Padding="0" Grid.Row="0" Grid.Column="0" IsVisible="False">

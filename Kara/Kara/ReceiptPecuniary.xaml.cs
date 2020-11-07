@@ -17,13 +17,28 @@ namespace Kara
         private ToolbarItem ToolbarItem_SendToServer, ToolbarItem_LocalSave;
         bool JustShow = false;
 
+
+        //public static readonly BindableProperty PriceProperty = 
+        //    BindableProperty.Create("Price", typeof(decimal), typeof(ReceiptPecuniary), (decimal)0);
+
+        //public decimal Price
+        //{
+        //    get { return (decimal)GetValue(PriceProperty); }
+        //    set { SetValue(PriceProperty, value); }
+        //}
+
         public decimal Price { get; set; }
 
-        public ReceiptPecuniary()
+        public ReceiptPecuniary(decimal price,Guid partnerId)
         {
             InitializeComponent();
+            
+            //txtPrice.SetBinding(Entry.TextProperty, "Price");
+            Price = price;
+            PartnerId = partnerId;
 
-            txtDate.Text = DateTime.Now.ToShortStringForDate();
+            txtPrice.Text = Price.ToString().ReplaceLatinDigits();
+            txtDate.Text = DateTime.Now.ToShortStringForDate().ReplaceLatinDigits();
 
             ToolbarItem_LocalSave = new ToolbarItem();
             ToolbarItem_LocalSave.Text = "ذخیره محلی";
@@ -40,8 +55,11 @@ namespace Kara
             ToolbarItem_SendToServer.Activated += SubmitToServer;
             ToolbarItem_SendToServer.Order = ToolbarItemOrder.Primary;
             ToolbarItem_SendToServer.Priority = 0;
+
             if (!JustShow)
                 this.ToolbarItems.Add(ToolbarItem_SendToServer);
+
+            
         }
 
         private async void SubmitToServer(object sender, System.EventArgs e)
@@ -67,6 +85,9 @@ namespace Kara
                 else
                 {
                     WaitToggle(true);
+
+                    Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 1]);
+                    
                     App.ToastMessageHandler.ShowMessage("اطلاعات با موفقیت به سرور ارسال شد.", Helpers.ToastMessageDuration.Long);
                     try { await Navigation.PopAsync(); } catch (Exception) { }
                 }
@@ -102,8 +123,8 @@ namespace Kara
                 //var ZoneId = Zones.Where(a => a.ParentId == CityId).ToArray()[ZonePicker.SelectedIndex].Id;
                                
 
-                if (EditingFDT == null)
-                {
+                //if (EditingFDT == null)
+                //{
                     EditingFDT = new FinancialTransactionDocument()
                     {
                         DocumentId = Guid.NewGuid(),
@@ -111,11 +132,11 @@ namespace Kara
                         TransactionType = 1,
                         PartnerId = PartnerId,
                         CashAccountId = Guid.Parse("8c2876e4-03b7-462b-9a8f-621bb2a647d5"), //read from config
-                        InputPrice = decimal.Parse(txtPrice.Text.Replace(",", "")),
+                        InputPrice = decimal.Parse(txtPrice.Text.Replace(",", "").ReplacePersianDigits()),
                         OutputPrice = 0,
                         DocumentCode = "",
                         DocumentState = 0,
-                        PersianDocumentDate = txtDate.Text,
+                        PersianDocumentDate = txtDate.Text.ReplacePersianDigits(),
                         DocumentDate = txtDate.Text.PersianDateStringToDate(),
                         DocumentUserId = App.UserId.Value,
                         DocumentDescription = txtDesc.Text,
@@ -125,25 +146,26 @@ namespace Kara
                         Delivery = "",
                         Issuance = "",
                         BankTransferCode = "",
-                        CollectorId = App.UserId.Value
+                        CollectorId = App.UserEntityId.Value
                     };
 
                     var result = await App.DB.InsertOrUpdateRecordAsync<FinancialTransactionDocument>(EditingFDT);
                     if (!result.Success)
                         return new ResultSuccess<FinancialTransactionDocument>(false, result.Message);
                    
-                }
-                else
-                {
-                    EditingFDT.InputPrice = decimal.Parse(txtPrice.Text.Replace(",", ""));
-                    EditingFDT.DocumentDate = txtDate.Text.PersianDateStringToDate();
-                    EditingFDT.DocumentDescription = txtDesc.Text;
+                //}
+                //else
+                //{
+                //    EditingFDT.InputPrice = decimal.Parse(txtPrice.Text.Replace(",", ""));
+                //    EditingFDT.DocumentDate = txtDate.Text.PersianDateStringToDate();
+                //    EditingFDT.PersianDocumentDate = txtDate.Text;
+                //    EditingFDT.DocumentDescription = txtDesc.Text;
 
                     
-                    var result = await App.DB.InsertOrUpdateRecordAsync<FinancialTransactionDocument>(EditingFDT);
-                    if (!result.Success)
-                        return new ResultSuccess<FinancialTransactionDocument>(false, result.Message);
-                }
+                //    var result = await App.DB.InsertOrUpdateRecordAsync<FinancialTransactionDocument>(EditingFDT);
+                //    if (!result.Success)
+                //        return new ResultSuccess<FinancialTransactionDocument>(false, result.Message);
+                //}
 
                 //if (PartnerListForm != null)
                 //    await PartnerListForm.FillPartners();

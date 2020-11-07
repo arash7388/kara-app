@@ -49,7 +49,9 @@ namespace Kara.Models
             new KeyValuePair<Type, string>(typeof(SaleOrderStuff), "SaleOrderStuff"),
             new KeyValuePair<Type, string>(typeof(CashDiscount), "CashDiscount"),
             new KeyValuePair<Type, string>(typeof(DeviceSettingChange), "DeviceSettingChange"),
-            new KeyValuePair<Type, string>(typeof(FinancialTransactionDocument), "FinancialTransactionDocument")
+            new KeyValuePair<Type, string>(typeof(FinancialTransactionDocument), "FinancialTransactionDocument"),
+            new KeyValuePair<Type, string>(typeof(Cash), "Cash"),
+            new KeyValuePair<Type, string>(typeof(Bank), "Bank")
         };
 
         private static Dictionary<Type, List<PropertyInfo>> _PrimaryKeys;
@@ -787,5 +789,24 @@ namespace Kara.Models
         public DateTime DateTime { get; set; }
         public int Type { get; set; }
         public bool Sent { get; set; }
+    }
+
+    [Table("Cash")]  //صندوق
+    public class Cash
+    {
+        [PrimaryKey]
+        public Guid EntityId { get; set; }
+        public bool IsEnable { get; set; }
+        public string EntityCode { get; set; }
+        public string EntityName { get; set; }
+    }
+
+    [Table("Bank")]  
+    public class Bank
+    {
+        [PrimaryKey]
+        public Guid Id { get; set; }
+        public string Code { get; set; }
+        public string Name { get; set; }
     }
 }

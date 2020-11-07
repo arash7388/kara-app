@@ -37,6 +37,7 @@ namespace Kara
             UpdateItems.Add(new UpdateItemModel("PriceLists", "لیست قیمت", new PartialUpdateDB_PriceLists(), 100));
             UpdateItems.Add(new UpdateItemModel("DiscountRules", "فرمول تخفیفات", new PartialUpdateDB_DiscountRules(), 100));
             UpdateItems.Add(new UpdateItemModel("OtherInformations", "سایر اطلاعات", new PartialUpdateDB_OtherInformations(), 100));
+            UpdateItems.Add(new UpdateItemModel("Cashes", "صندوق ها", new PartialUpdateDB_Cashes(), 100));
 
             UpdatableItems.ItemsSource = UpdateItems;
         }
@@ -115,7 +116,7 @@ namespace Kara
             await Task.Delay(3000);
 
             if (Navigation.NavigationStack.Count() > 1)
-                try { Navigation.PopAsync(); } catch (Exception) { }
+                try { await Navigation.PopAsync(); } catch (Exception) { }
         }
     }
 }

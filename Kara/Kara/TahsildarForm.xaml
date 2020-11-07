@@ -2,7 +2,8 @@
 <local:GradientContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:Kara.CustomRenderer"
-             x:Class="Kara.TahsildarForm">
+             x:Class="Kara.TahsildarForm"
+             Title="ثبت دریافت">
     <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" >
         <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
             <Grid x:Name="PartnerSection" Padding="5, 5, 5, 0" RowSpacing="5" ColumnSpacing="0" >
@@ -15,10 +16,10 @@
                             <RowDefinition Height="35"></RowDefinition>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
                             <ColumnDefinition Width="*"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
@@ -38,15 +39,15 @@
                                     <RowDefinition Height="Auto"></RowDefinition>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                                    <ColumnDefinition Width="2*"></ColumnDefinition>
                                     <ColumnDefinition Width="*"></ColumnDefinition>
                                     <ColumnDefinition Width="{Binding CheckBoxColumnWidth}"></ColumnDefinition>
                                 </Grid.ColumnDefinitions>
                                                                 
-                                <local:MyCheckBox x:Name="selectedCheckBox" Grid.Column="5" HorizontalOptions="Center" VerticalOptions="Center" Checked="{Binding Selected}" IsVisible="{Binding CanBeSelectedInMultiselection}" ></local:MyCheckBox>
+                                <local:MyCheckBox x:Name="selectedCheckBox" Grid.Column="5" HorizontalOptions="Center" VerticalOptions="Center" Checked="{Binding Selected, Mode=TwoWay}" IsVisible="{Binding CanBeSelectedInMultiselection}" ></local:MyCheckBox>
                                 <Label Grid.Column="4" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding OrderCode} "/>
                                 <Label Grid.Column="3" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding OrderDate}"/>
                                 <Label Grid.Column="2" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding VisitorName}"/>

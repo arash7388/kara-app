@@ -145,14 +145,14 @@ namespace Kara
             {
                 foreach (var item in FactorsObservableCollection)
                     item.Selected = false;
-                ToolbarItem_SelectAll.Icon = "SelectAll_Full.png";
+                ToolbarItem_SelectAll.Icon = "SelectAll_Empty.png";
             }
             else
             {
                 foreach (var item in FactorsObservableCollection)
                     item.Selected = true;
 
-                ToolbarItem_SelectAll.Icon = "SelectAll_Empty.png";
+                ToolbarItem_SelectAll.Icon = "SelectAll_Full.png";
             }
         }
 
@@ -164,10 +164,15 @@ namespace Kara
         private async void ToolbarItem_Naghd_Activated(object sender, EventArgs e)
         {
             var sumSelected = FactorsObservableCollection.Where(a => a.Selected).Sum(a => Decimal.Parse(a.Price));
-            ReceiptPecuniary receiptPecuniary = new ReceiptPecuniary();
+            
+            ReceiptPecuniary receiptPecuniary = new ReceiptPecuniary(sumSelected, SelectedPartner.Id)
+            {
+                StartColor = Color.FromHex("E6EBEF"),
+                EndColor = Color.FromHex("A6CFED")
+            };
 
-            receiptPecuniary.Price = sumSelected;
-            receiptPecuniary.PartnerId = SelectedPartner.Id;
+            //receiptPecuniary.Price = sumSelected;
+            //receiptPecuniary.PartnerId = SelectedPartner.Id;
             try { await Navigation.PushAsync(receiptPecuniary); } catch (Exception) { }
         }
 
@@ -193,7 +198,7 @@ namespace Kara
                 item.Selected = false;
 
             MultiSelectionMode = false;
-            DBRepository.OrderListModel.Multiselection = false;
+            UnSettledOrderModel.Multiselection = false;
             FactorsView.ItemsSource = null;
             FactorsView.ItemsSource = FactorsObservableCollection;
             RefreshToolbarItems();
@@ -372,6 +377,7 @@ namespace Kara
         public void RefreshToolbarItems()
         {
             ToolbarItem_Naghd_Visible = false;
+            ToolbarItem_Cheque_Visible = false;
             ToolbarItem_SelectAll_Visible = false;
             BackButton_Visible = false;
 
@@ -382,34 +388,40 @@ namespace Kara
                 ToolbarItem_SelectAll.Icon = AllUnSentOrdersSelected ? "SelectAll_Full.png" : "SelectAll_Empty.png";
             }
             else
+            {
                 BackButton_Visible = true;
+            }
 
             var SelectedCount = FactorsObservableCollection != null ? FactorsObservableCollection.Count(a => a.Selected) : 0;
             if (SelectedCount == 0)
             {
                 //if (!MultiSelectionMode)
                 //    ToolbarItem_SearchBar_Visible = true;
+                ToolbarItem_Naghd_Visible = false;
+                ToolbarItem_Cheque_Visible = false;
             }
             else if (MultiSelectionMode)
             {
                 ToolbarItem_Naghd_Visible = true;
+                ToolbarItem_Cheque_Visible = true;
             }
             else
             {
-                if (!FactorsObservableCollection.Single(a => a.Selected).Sent)
-                {
-                    ToolbarItem_Naghd_Visible = true;
-                }
+                //if (!FactorsObservableCollection.Single(a => a.Selected).Sent)
+                //{
+                //    ToolbarItem_Naghd_Visible = true;
+                //}
                 //ToolbarItem_Show_Visible = true;
             }
 
-            RefreshToolbarItems(BackButton_Visible, ToolbarItem_Naghd_Visible, ToolbarItem_SelectAll_Visible);
+            RefreshToolbarItems(BackButton_Visible, ToolbarItem_Naghd_Visible, ToolbarItem_Cheque_Visible, ToolbarItem_SelectAll_Visible);
         }
 
         public void RefreshToolbarItems
         (
             bool BackButton_Visible,
             bool ToolbarItem_Naghd_Visible,
+            bool ToolbarItem_Cheque_Visible,
             bool ToolbarItem_SelectAll_Visible
         )
         {
@@ -433,10 +445,10 @@ namespace Kara
             if (!ToolbarItem_Naghd_Visible && this.ToolbarItems.Contains(ToolbarItem_Naghd))
                 this.ToolbarItems.Remove(ToolbarItem_Naghd);
 
-            //if (ToolbarItem_Edit_Visible && !this.ToolbarItems.Contains(ToolbarItem_Edit))
-            //    this.ToolbarItems.Add(ToolbarItem_Edit);
-            //if (!ToolbarItem_Edit_Visible && this.ToolbarItems.Contains(ToolbarItem_Edit))
-            //    this.ToolbarItems.Remove(ToolbarItem_Edit);
+            if (ToolbarItem_Cheque_Visible && !this.ToolbarItems.Contains(ToolbarItem_Cheque))
+                this.ToolbarItems.Add(ToolbarItem_Cheque);
+            if (!ToolbarItem_Cheque_Visible && this.ToolbarItems.Contains(ToolbarItem_Cheque))
+                this.ToolbarItems.Remove(ToolbarItem_Cheque);
 
             //if (ToolbarItem_Show_Visible && !this.ToolbarItems.Contains(ToolbarItem_Show))
             //    this.ToolbarItems.Add(ToolbarItem_Show);

@@ -7,6 +7,7 @@ namespace Kara.Assets
     {
         public Guid UserId { get; set; }
         public Guid PersonnelId { get; set; }
+        public Guid EntityId { get; set; }
         public string RealName { get; set; }
     }
 
@@ -129,4 +130,20 @@ namespace Kara.Assets
         public SaleDiscountRuleStepStuffBasket[] DiscountRuleStepStuffBaskets { get; set; }
         public int LastDiscountRuleVersion { get; set; }
     }
+
+    public class UpdateDB_CashBatchModel
+    {
+        public int TotalCount { get; set; }
+        public int From { get; set; }
+        public Cash[] Cashes { get; set; }
+    }
+
+    public class UpdateDB_BankBatchModel
+    {
+        public int TotalCount { get; set; }
+        public int From { get; set; }
+        public Bank[] Banks { get; set; }
+    }
+
+    
 }

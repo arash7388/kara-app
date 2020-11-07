@@ -83,7 +83,7 @@ namespace Kara
 
         private async void MainMenu_GoToNaghdForm(View arg1, object arg2)
         {
-            var naghdForm = new ReceiptPecuniary()
+            var naghdForm = new ReceiptPecuniary(12345678,new Guid())
             {
                 StartColor = Color.FromHex("E6EBEF"),
                 EndColor = Color.FromHex("A6CFED")
