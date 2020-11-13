@@ -57,6 +57,12 @@
     <Compile Include="MessageForm.xaml.cs">
       <DependentUpon>MessageForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ReceiptCheque.xaml.cs">
+      <DependentUpon>ReceiptCheque.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ReceiptBank.xaml.cs">
+      <DependentUpon>ReceiptBank.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ReceiptPecuniary.xaml.cs">
       <DependentUpon>ReceiptPecuniary.xaml</DependentUpon>
     </Compile>
@@ -547,6 +553,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ReceiptPecuniary.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ReceiptBank.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ReceiptCheque.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

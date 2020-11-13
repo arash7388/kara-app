@@ -26,7 +26,7 @@ namespace Kara.Assets
                 if (_HttpClient == null)
                 {
                     _HttpClient = new HttpClient();
-                    _HttpClient.Timeout = new TimeSpan(0, 1, 0);
+                    _HttpClient.Timeout = new TimeSpan(0, 1, 20);
                     _HttpClient.DefaultRequestHeaders.Add("Accept", "application/json");
                 }
                 return _HttpClient;
@@ -556,6 +556,17 @@ namespace Kara.Assets
         {
             public string PartnerCode { get; set; }
         }
+
+        public class ReceiptPecuniarySubmitResultDataModel
+        {
+            public string DocumentCode { get; set; }
+        }
+
+        public class ReceiptBankSubmitResultDataModel
+        {
+            public string DocumentCode { get; set; }
+        }
+
         public static async Task<ResultSuccess<int>> SubmitPartnersAsync(Partner[] Partners)
         {
             var SentCount = 0;
@@ -635,12 +646,67 @@ namespace Kara.Assets
 
                     var resultTask = HttpClient.PostAsyncForUnicode(ServerRoot + "InsertReceiptPrcuniary?UserName=" + App.Username.Value + "&Password=" + App.Password.Value + "&CurrentVersionNumber=" + App.CurrentVersionNumber, Content);
                     var result = await resultTask;
+
                     if (resultTask.Exception != null)
                         throw new Exception(resultTask.Exception.ProperMessage());
+
                     if (!result.Success)
                         throw new Exception(result.Message);
 
-                    var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<PartnerSubmitResultDataModel>>(result.Data);
+                    var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<ReceiptPecuniarySubmitResultDataModel>>(result.Data);
+                    if (!resultDeserialized.Success)
+                        throw new Exception(resultDeserialized.Message);
+
+                    //Partner.Sent = true;
+                    //Partner.Code = resultDeserialized.Data.PartnerCode;
+                    var updateResult = await App.DB.InsertOrUpdateRecordAsync<FinancialTransactionDocument>(document);
+
+                    SentCount++;
+                }
+
+                return new ResultSuccess<int>(true, "", SentCount);
+            }
+            catch (Exception err)
+            {
+                var Message = (documents.Count() == 1 ? "" : SentCount == 0 ? "هیچ سندی به سرور ارسال نشد." : "تعداد " + SentCount + " سند به سرور ارسال شد، اما در ادامه مشکلی رخ داد.") + err.ProperMessage();
+                return new ResultSuccess<int>(false, Message, SentCount);
+            }
+        }
+
+        public static async Task<ResultSuccess<int>> SubmitReceiptBankAsync(FinancialTransactionDocument[] documents)
+        {
+            var SentCount = 0;
+            try
+            {
+                foreach (var document in documents)
+                {
+                    var Data = new[]
+                    {
+                        new KeyValuePair<string, string>("DocumentId", document.DocumentId.ToString()),
+                        new KeyValuePair<string, string>("BankAccountId", document.BankAccountId.ToString()),
+                        new KeyValuePair<string, string>("BankTransferCode", document.BankTransferCode.ToString()),
+                        new KeyValuePair<string, string>("Price", document.InputPrice.ToString()),
+                        new KeyValuePair<string, string>("CollectorId", document.CollectorId.ToString()),
+                        new KeyValuePair<string, string>("TransactionType", document.TransactionType.ToString()),
+                        new KeyValuePair<string, string>("PartnerId", document.PartnerId.ToString()),
+                        new KeyValuePair<string, string>("CashAccountId", document.CashAccountId.ToString()),
+                        new KeyValuePair<string, string>("CommonUserId", document.DocumentUserId.ToString()),
+                        new KeyValuePair<string, string>("PersianDocumentDate", document.PersianDocumentDate.ToString()),
+                        new KeyValuePair<string, string>("DocumentDescription", document.DocumentDescription.ToString()),
+                    };
+
+                    HttpContent Content = new FormUrlEncodedContent(Data);
+
+                    var resultTask = HttpClient.PostAsyncForUnicode(ServerRoot + "InsertReceiptBank?UserName=" + App.Username.Value + "&Password=" + App.Password.Value + "&CurrentVersionNumber=" + App.CurrentVersionNumber, Content);
+                    var result = await resultTask;
+
+                    if (resultTask.Exception != null)
+                        throw new Exception(resultTask.Exception.ProperMessage());
+
+                    if (!result.Success)
+                        throw new Exception(result.Message);
+
+                    var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<ReceiptBankSubmitResultDataModel>>(result.Data);
                     if (!resultDeserialized.Success)
                         throw new Exception(resultDeserialized.Message);
 
@@ -1643,5 +1709,42 @@ namespace Kara.Assets
             }
         }
     }
+    public class PartialUpdateDB_BankAccounts : PartialDBUpdater
+    {
+        public override async Task<ResultSuccess<int>> UpdateItemFromServer(Guid RequestId, int From, int Count)
+        {
+            try
+            {
+                if (From == 1)
+                {
+                    await App.DB.DeleteAllRecordsAsync<BankAccount>();
+                }
+
+                var resultTask = HttpClient.GetStringAsyncForUnicode(ServerRoot + "GetBankAccounts?RequestId=" + RequestId.ToString() + "&UserName=" + App.Username.Value + "&Password=" + App.Password.Value + "&From=" + From + "&Count=" + Count + "&CurrentVersionNumber=" + App.CurrentVersionNumber);
+                var result = await resultTask;
+                if (resultTask.Exception != null)
+                    return new ResultSuccess<int>(false, resultTask.Exception.ProperMessage());
+
+                if (!result.Success)
+                    return new ResultSuccess<int>(false, result.Message);
+
+                var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<UpdateDB_BankAccountBatchModel>>(result.Data);
+                if (!resultDeserialized.Success)
+                    return new ResultSuccess<int>(false, resultDeserialized.Message);
+
+                var res = await App.DB.InsertAllRecordsAsync<BankAccount>(resultDeserialized.Data.BankAccounts);
+                if (!res.Success)
+                    return new ResultSuccess<int>(false, res.Message);
+
+                return new ResultSuccess<int>(true, "", resultDeserialized.Data.TotalCount);
+            }
+            catch (Exception err)
+            {
+                return new ResultSuccess<int>(false, err.ProperMessage());
+            }
+        }
+    }
+
+
 
 }

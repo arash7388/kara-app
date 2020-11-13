@@ -594,6 +594,57 @@ namespace Kara.Assets
             });
         }
 
+        public async Task<ResultSuccess<List<Cash>>> GetCashesAsync()
+        {
+            return await Task.Run(() =>
+            {
+                try
+                {
+                    var Cashes = conn.Table<Cash>().ToList();
+
+                    return new ResultSuccess<List<Cash>>(true, "", Cashes);
+                }
+                catch (Exception err)
+                {
+                    return new ResultSuccess<List<Cash>>(false, err.ProperMessage());
+                }
+            });
+        }
+
+        public async Task<ResultSuccess<List<Bank>>> GetBanksAsync()
+        {
+            return await Task.Run(() =>
+            {
+                try
+                {
+                    var Banks = conn.Table<Bank>().ToList();
+
+                    return new ResultSuccess<List<Bank>>(true, "", Banks);
+                }
+                catch (Exception err)
+                {
+                    return new ResultSuccess<List<Bank>>(false, err.ProperMessage());
+                }
+            });
+        }
+
+        public async Task<ResultSuccess<List<BankAccount>>> GetBankAccountsAsync()
+        {
+            return await Task.Run(() =>
+            {
+                try
+                {
+                    var BankAccounts = conn.Table<BankAccount>().ToList();
+
+                    return new ResultSuccess<List<BankAccount>>(true, "", BankAccounts);
+                }
+                catch (Exception err)
+                {
+                    return new ResultSuccess<List<BankAccount>>(false, err.ProperMessage());
+                }
+            });
+        }
+
         public class AccessModel
         {
             public bool PartnerInsert { get; set; }

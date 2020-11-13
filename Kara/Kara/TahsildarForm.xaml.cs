@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using XLabs;
 using static Kara.Assets.Connectivity;
 
 namespace Kara
@@ -31,8 +32,8 @@ namespace Kara
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class TahsildarForm : GradientContentPage
     {
-        public ToolbarItem ToolbarItem_Naghd, ToolbarItem_Cheque, ToolbarItem_SelectAll;
-        private bool ToolbarItem_Naghd_Visible, ToolbarItem_Cheque_Visible, ToolbarItem_SelectAll_Visible, BackButton_Visible;
+        public ToolbarItem ToolbarItem_Naghd, ToolbarItem_Cheque, ToolbarItem_Bank, ToolbarItem_SelectAll;
+        private bool ToolbarItem_Naghd_Visible, ToolbarItem_Cheque_Visible, ToolbarItem_Bank_Visible, ToolbarItem_SelectAll_Visible, BackButton_Visible;
         private bool? TappedItemSent;
         private UnSettledOrderModel LastSelectedOrder = null;
         private bool MultiSelectionMode = false;
@@ -57,6 +58,10 @@ namespace Kara
         public TahsildarForm()
         {
             InitializeComponent();
+            
+            MultiSelectionMode = false;
+            UnSettledOrderModel.Multiselection = false;
+
             FactorsView.ItemTapped += FactorsView_ItemTapped;
             FactorsView.OnLongClick += FactorsView_OnLongClick;
             
@@ -101,6 +106,13 @@ namespace Kara
             ToolbarItem_Cheque.Priority = 2;
             ToolbarItem_Cheque.Activated += ToolbarItem_Cheque_Activated;
 
+            ToolbarItem_Bank = new ToolbarItem();
+            ToolbarItem_Bank.Text = "دریافت حواله";
+            ToolbarItem_Bank.Icon = "Havaleh.png";
+            ToolbarItem_Bank.Order = ToolbarItemOrder.Primary;
+            ToolbarItem_Bank.Priority = 2;
+            ToolbarItem_Bank.Activated += ToolbarItem_Bank_Activated; ;
+
 
             var PartnerChangeButtonTapGestureRecognizer = new TapGestureRecognizer();
             PartnerChangeButtonTapGestureRecognizer.Tapped += (sender, e) => {
@@ -138,6 +150,21 @@ namespace Kara
             PartnerChangeButton.WidthRequest = 150;
         }
 
+        private async void ToolbarItem_Bank_Activated(object sender, EventArgs e)
+        {
+            var sumSelected = FactorsObservableCollection.Where(a => a.Selected).Sum(a => decimal.Parse(a.Price));
+
+            ReceiptBank receiptBank = new ReceiptBank(sumSelected, SelectedPartner.Id)
+            {
+                StartColor = Color.FromHex("E6EBEF"),
+                EndColor = Color.FromHex("A6CFED")
+            };
+
+            //receiptPecuniary.Price = sumSelected;
+            //receiptPecuniary.PartnerId = SelectedPartner.Id;
+            try { await Navigation.PushAsync(receiptBank); } catch (Exception) { }
+        }
+
         private void ToolbarItem_SelectAll_Activated(object sender, EventArgs e)
         {
             var AllSelected = FactorsObservableCollection.All(a => a.Selected);
@@ -163,7 +190,7 @@ namespace Kara
 
         private async void ToolbarItem_Naghd_Activated(object sender, EventArgs e)
         {
-            var sumSelected = FactorsObservableCollection.Where(a => a.Selected).Sum(a => Decimal.Parse(a.Price));
+            var sumSelected = FactorsObservableCollection.Where(a => a.Selected).Sum(a => decimal.Parse(a.Price));
             
             ReceiptPecuniary receiptPecuniary = new ReceiptPecuniary(sumSelected, SelectedPartner.Id)
             {
@@ -330,6 +357,7 @@ namespace Kara
 
         private async Task FillFactors(string partnerCode)
         {
+            // todo
             //var getUnsetteledFactorsResult = await Connectivity.GetUnSettledOrdersFromServerAsync(App.Username.Value, App.Password.Value, App.CurrentVersionNumber, partnerCode, "", "");
             //if (getUnsetteledFactorsResult.Success)
             //{
@@ -378,6 +406,7 @@ namespace Kara
         {
             ToolbarItem_Naghd_Visible = false;
             ToolbarItem_Cheque_Visible = false;
+            ToolbarItem_Bank_Visible = false;
             ToolbarItem_SelectAll_Visible = false;
             BackButton_Visible = false;
 
@@ -399,14 +428,24 @@ namespace Kara
                 //    ToolbarItem_SearchBar_Visible = true;
                 ToolbarItem_Naghd_Visible = false;
                 ToolbarItem_Cheque_Visible = false;
+                ToolbarItem_Bank_Visible = false;
             }
             else if (MultiSelectionMode)
             {
                 ToolbarItem_Naghd_Visible = true;
                 ToolbarItem_Cheque_Visible = true;
+                ToolbarItem_Bank_Visible = true;
             }
             else
             {
+                MultiSelectionMode = false;
+                UnSettledOrderModel.Multiselection = false;
+                ToolbarItem_Naghd_Visible = false;
+                ToolbarItem_Cheque_Visible = false;
+                ToolbarItem_Bank_Visible = false;
+                ToolbarItem_SelectAll_Visible = false;
+                FactorsObservableCollection.ForEach(item => item.Selected = false);
+
                 //if (!FactorsObservableCollection.Single(a => a.Selected).Sent)
                 //{
                 //    ToolbarItem_Naghd_Visible = true;
@@ -414,7 +453,7 @@ namespace Kara
                 //ToolbarItem_Show_Visible = true;
             }
 
-            RefreshToolbarItems(BackButton_Visible, ToolbarItem_Naghd_Visible, ToolbarItem_Cheque_Visible, ToolbarItem_SelectAll_Visible);
+            RefreshToolbarItems(BackButton_Visible, ToolbarItem_Naghd_Visible, ToolbarItem_Cheque_Visible, ToolbarItem_Bank_Visible, ToolbarItem_SelectAll_Visible);
         }
 
         public void RefreshToolbarItems
@@ -422,6 +461,7 @@ namespace Kara
             bool BackButton_Visible,
             bool ToolbarItem_Naghd_Visible,
             bool ToolbarItem_Cheque_Visible,
+            bool ToolbarItem_Bank_Visible,
             bool ToolbarItem_SelectAll_Visible
         )
         {
@@ -449,6 +489,11 @@ namespace Kara
                 this.ToolbarItems.Add(ToolbarItem_Cheque);
             if (!ToolbarItem_Cheque_Visible && this.ToolbarItems.Contains(ToolbarItem_Cheque))
                 this.ToolbarItems.Remove(ToolbarItem_Cheque);
+
+            if (ToolbarItem_Bank_Visible && !this.ToolbarItems.Contains(ToolbarItem_Bank))
+                this.ToolbarItems.Add(ToolbarItem_Bank);
+            if (!ToolbarItem_Bank_Visible && this.ToolbarItems.Contains(ToolbarItem_Bank))
+                this.ToolbarItems.Remove(ToolbarItem_Bank);
 
             //if (ToolbarItem_Show_Visible && !this.ToolbarItems.Contains(ToolbarItem_Show))
             //    this.ToolbarItems.Add(ToolbarItem_Show);

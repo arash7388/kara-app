@@ -38,6 +38,8 @@ namespace Kara
             UpdateItems.Add(new UpdateItemModel("DiscountRules", "فرمول تخفیفات", new PartialUpdateDB_DiscountRules(), 100));
             UpdateItems.Add(new UpdateItemModel("OtherInformations", "سایر اطلاعات", new PartialUpdateDB_OtherInformations(), 100));
             UpdateItems.Add(new UpdateItemModel("Cashes", "صندوق ها", new PartialUpdateDB_Cashes(), 100));
+            UpdateItems.Add(new UpdateItemModel("Banks", "بانک ها", new PartialUpdateDB_Banks(), 100));
+            UpdateItems.Add(new UpdateItemModel("BankAccounts", "حساب های بانکی", new PartialUpdateDB_BankAccounts(), 100));
 
             UpdatableItems.ItemsSource = UpdateItems;
         }

@@ -145,5 +145,12 @@ namespace Kara.Assets
         public Bank[] Banks { get; set; }
     }
 
-    
+    public class UpdateDB_BankAccountBatchModel
+    {
+        public int TotalCount { get; set; }
+        public int From { get; set; }
+        public BankAccount[] BankAccounts { get; set; }
+    }
+
+
 }

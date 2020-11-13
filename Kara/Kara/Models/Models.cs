@@ -11,6 +11,18 @@ namespace Kara.Models
 {
     public class ModelsInterface
     {
+        public enum TransactionType
+        {
+            CashDocumentIn = 1,         //دریافت نقدی
+            CashDocumentOut = 2,        //پرداخت نقدی
+            BankDocumentIn = 3,         //حواله دریافتنی
+            BankDocumentOut = 4,        //حواله پرداختنی
+            ChequeDocumentIn = 5,       //دریافت چک
+            ChequeDocumentOut = 6,      //پرداخت چک
+            CashCharge = 10,            //شارژ صندوق
+            BankCharge = 11,            //شارژ بانک
+        }
+
         public static KeyValuePair<Type, string>[] AllTables = new KeyValuePair<Type, string>[]
         {
             new KeyValuePair<Type, string>(typeof(Zone), "Zone"),
@@ -51,7 +63,8 @@ namespace Kara.Models
             new KeyValuePair<Type, string>(typeof(DeviceSettingChange), "DeviceSettingChange"),
             new KeyValuePair<Type, string>(typeof(FinancialTransactionDocument), "FinancialTransactionDocument"),
             new KeyValuePair<Type, string>(typeof(Cash), "Cash"),
-            new KeyValuePair<Type, string>(typeof(Bank), "Bank")
+            new KeyValuePair<Type, string>(typeof(Bank), "Bank"),
+            new KeyValuePair<Type, string>(typeof(BankAccount), "BankAccount")
         };
 
         private static Dictionary<Type, List<PropertyInfo>> _PrimaryKeys;
@@ -803,6 +816,15 @@ namespace Kara.Models
 
     [Table("Bank")]  
     public class Bank
+    {
+        [PrimaryKey]
+        public Guid Id { get; set; }
+        public string Code { get; set; }
+        public string Name { get; set; }
+    }
+
+    [Table("BankAccount")]
+    public class BankAccount
     {
         [PrimaryKey]
         public Guid Id { get; set; }

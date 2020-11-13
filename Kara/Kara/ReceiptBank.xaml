@@ -4,7 +4,7 @@
              xmlns:local="clr-namespace:Kara.CustomRenderer"
              xmlns:conv="clr-namespace:Kara.Assets"
              xmlns:views="clr-namespace:Kara.UserControls;assembly=Kara"
-             x:Class="Kara.ReceiptPecuniary" Title="دریافت نقد">
+             x:Class="Kara.ReceiptBank" Title="صدور حواله">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -20,6 +20,7 @@
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*"></ColumnDefinition>
@@ -29,15 +30,17 @@
             <Label Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="تاریخ:" FontSize="Medium"/>
             <Entry x:Name="txtDate" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="1398/05/05" FontSize="Medium"/>
 
-            <Label Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="صندوق:" FontSize="Medium"/>
-            <Picker x:Name="CashPicker" Grid.Row="1" Grid.Column="0" HorizontalOptions="FillAndExpand" />
+            <Label Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="بانک:" FontSize="Medium"/>
+            <Picker x:Name="BankAccountPicker" Grid.Row="1" Grid.Column="0" HorizontalOptions="FillAndExpand" />
 
-            <Label Grid.Row="2" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="مبلغ:" FontSize="Medium"/>
-            <Entry Grid.Row="2" x:Name="txtPrice" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" 
-                    Text="{Binding Price,Mode=TwoWay}" FontSize="Medium"/>
+            <Label Grid.Row="2" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="شماره حواله:" FontSize="Medium"/>
+            <Entry x:Name="txtHavalehNo" Grid.Row="2" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
 
-            <Label Grid.Row="3" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="شرح:" FontSize="Medium"/>
-            <Entry x:Name="txtDesc"  Grid.Row="3" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="" FontSize="Medium"/>
+            <Label Grid.Row="3" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="مبلغ:" FontSize="Medium"/>
+            <Entry x:Name="txtPrice" Grid.Row="3" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="" FontSize="Medium"/>
+
+            <Label Grid.Row="4" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="شرح:" FontSize="Medium"/>
+            <Entry x:Name="txtDesc" Grid.Row="4" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="" FontSize="Medium"/>
 
         </Grid>
         <StackLayout x:Name="BusyIndicatorContainder" Orientation="Vertical" Spacing="0" Padding="0" Grid.Row="0" Grid.Column="0" IsVisible="False">
