@@ -211,6 +211,36 @@ namespace Kara.CustomRenderer
         }
     }
 
+    public class DateEntry : Entry
+    {
+        public Thickness? Padding = null;
+        public bool RightRounded, LeftRounded;
+        public DateEntry()
+        {
+            //txtDate.TextChanged += TxtDate_TextChanged;
+
+            this.Focused += TxtDate_Focused;
+            this.Unfocused += TxtDate_Unfocused;
+        }
+
+        private void TxtDate_Unfocused(object sender, FocusEventArgs e)
+        {
+            ((Entry)sender).Text = ((Entry)sender).Text.ReplaceLatinDigits();
+        }
+
+        private void TxtDate_Focused(object sender, FocusEventArgs e)
+        {
+            ((Entry)sender).Text = DateTime.Now.ToShortStringForDate().ReplaceLatinDigits().Substring(0, 4) + "/";
+        }
+
+        private void TxtDate_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            this.TextChanged -= TxtDate_TextChanged;
+            ((Entry)sender).Text = ((Entry)sender).Text.ReplaceLatinDigits();
+            this.TextChanged += TxtDate_TextChanged;
+        }
+    }
+
     public class MyLabel : Label
     {
         public Color MyBackgroundColor = Color.Transparent;

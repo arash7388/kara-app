@@ -268,6 +268,11 @@ namespace Kara.Assets
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             }
+
+            public UnSettledOrderModel()
+            {
+                Selected = false;
+            }
         }
         public static async Task<ResultSuccess<List<UnSettledOrderModel>>> GetUnSettledOrdersFromServerAsync(string UserName, string Password, string CurrentVersionNumber, string PartnerCode, string BOrderInsertDate, string EOrderInsertDate)
         {
@@ -698,6 +703,67 @@ namespace Kara.Assets
                     HttpContent Content = new FormUrlEncodedContent(Data);
 
                     var resultTask = HttpClient.PostAsyncForUnicode(ServerRoot + "InsertReceiptBank?UserName=" + App.Username.Value + "&Password=" + App.Password.Value + "&CurrentVersionNumber=" + App.CurrentVersionNumber, Content);
+                    var result = await resultTask;
+
+                    if (resultTask.Exception != null)
+                        throw new Exception(resultTask.Exception.ProperMessage());
+
+                    if (!result.Success)
+                        throw new Exception(result.Message);
+
+                    var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<ReceiptBankSubmitResultDataModel>>(result.Data);
+                    if (!resultDeserialized.Success)
+                        throw new Exception(resultDeserialized.Message);
+
+                    //Partner.Sent = true;
+                    //Partner.Code = resultDeserialized.Data.PartnerCode;
+                    var updateResult = await App.DB.InsertOrUpdateRecordAsync<FinancialTransactionDocument>(document);
+
+                    SentCount++;
+                }
+
+                return new ResultSuccess<int>(true, "", SentCount);
+            }
+            catch (Exception err)
+            {
+                var Message = (documents.Count() == 1 ? "" : SentCount == 0 ? "هیچ سندی به سرور ارسال نشد." : "تعداد " + SentCount + " سند به سرور ارسال شد، اما در ادامه مشکلی رخ داد.") + err.ProperMessage();
+                return new ResultSuccess<int>(false, Message, SentCount);
+            }
+        }
+
+        public static async Task<ResultSuccess<int>> SubmitReceiptChequeAsync(FinancialTransactionDocument[] documents)
+        {
+            var SentCount = 0;
+            try
+            {
+                foreach (var document in documents)
+                {
+                    var Data = new[]
+                    {
+                        new KeyValuePair<string, string>("DocumentId", document.DocumentId.ToSafeString()),
+                        new KeyValuePair<string, string>("BankAccountId", document.BankAccountId.ToSafeString()),
+                        new KeyValuePair<string, string>("BankTransferCode", document.BankTransferCode.ToSafeString()),
+                        new KeyValuePair<string, string>("Price", document.InputPrice.ToSafeString()),
+                        new KeyValuePair<string, string>("CollectorId", document.CollectorId.ToSafeString()),
+                        new KeyValuePair<string, string>("TransactionType", document.TransactionType.ToSafeString()),
+                        new KeyValuePair<string, string>("PartnerId", document.PartnerId.ToSafeString()),
+                        new KeyValuePair<string, string>("CashAccountId", document.CashAccountId.ToSafeString()),
+                        new KeyValuePair<string, string>("CommonUserId", document.DocumentUserId.ToSafeString()),
+                        new KeyValuePair<string, string>("PersianDocumentDate", document.PersianDocumentDate.ToSafeString()),
+                        new KeyValuePair<string, string>("DocumentDescription", document.DocumentDescription.ToSafeString()),
+                        new KeyValuePair<string, string>("PersianMaturityDate", document.PersianMaturityDate.ToSafeString()),
+                        new KeyValuePair<string, string>("BranchCode", document.BranchCode.ToSafeString()),
+                        new KeyValuePair<string, string>("BranchName", document.BranchName.ToSafeString()),
+                        new KeyValuePair<string, string>("Issuance", document.Issuance.ToSafeString()),
+                        new KeyValuePair<string, string>("ChequeCode", document.ChequeCode.ToSafeString()),
+                        new KeyValuePair<string, string>("ChequeBankId", document.ChequeBankId.ToSafeString()),
+                        new KeyValuePair<string, string>("BankAccountNumber", document.BankAccountNumber.ToSafeString()),
+                        new KeyValuePair<string, string>("Delivery", document.Delivery.ToSafeString()),
+                    };
+
+                    HttpContent Content = new FormUrlEncodedContent(Data);
+
+                    var resultTask = HttpClient.PostAsyncForUnicode(ServerRoot + "InsertReceiptCheque?UserName=" + App.Username.Value + "&Password=" + App.Password.Value + "&CurrentVersionNumber=" + App.CurrentVersionNumber, Content);
                     var result = await resultTask;
 
                     if (resultTask.Exception != null)
@@ -1623,6 +1689,7 @@ namespace Kara.Assets
                     App.UseQRScannerInVisitorAppToSelectStuff.Value = AppSettings[0].UseQRScannerInVisitorAppToSelectStuff;
                     App.QRScannerInVisitorAppForSelectingStuffTemplates = AppSettings[0].QRScannerInVisitorAppForSelectingStuffTemplates;
                     App.CalculateStuffsSettlementDaysBasedOn.Value = AppSettings[0].CalculateStuffsSettlementDaysBasedOn;
+                    App.UseCollectorAndroidApplication.Value = AppSettings[0].UseCollectorAndroidApplication;
                 }
 
                 var AccessesResult = await App.DB.FetchUserAccessesAsync();

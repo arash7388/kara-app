@@ -41,7 +41,10 @@ namespace Kara
 
             txtPrice.Text = Price.ToString().ReplaceLatinDigits();
             txtDate.Text = DateTime.Now.ToShortStringForDate().ReplaceLatinDigits();
+            //txtDate.TextChanged += TxtDate_TextChanged;
 
+            //txtDate.Focused += TxtDate_Focused;
+            //txtDate.Unfocused += TxtDate_Unfocused;
             ToolbarItem_LocalSave = new ToolbarItem();
             ToolbarItem_LocalSave.Text = "ذخیره محلی";
             ToolbarItem_LocalSave.Icon = "Save.png";
@@ -63,6 +66,23 @@ namespace Kara
 
             FillCashes();
         }
+
+        //private void TxtDate_Unfocused(object sender, FocusEventArgs e)
+        //{
+        //    ((Entry)sender).Text = ((Entry)sender).Text.ReplaceLatinDigits();
+        //}
+
+        //private void TxtDate_Focused(object sender, FocusEventArgs e)
+        //{
+        //    ((Entry)sender).Text = DateTime.Now.ToShortStringForDate().ReplaceLatinDigits().Substring(0, 4) + "/"; 
+        //}
+
+        //private void TxtDate_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    txtDate.TextChanged -= TxtDate_TextChanged;
+        //    ((Entry)sender).Text = ((Entry)sender).Text.ReplaceLatinDigits();
+        //    txtDate.TextChanged += TxtDate_TextChanged;
+        //}
 
         private async void FillCashes()
         {

@@ -107,6 +107,7 @@ namespace Kara.Assets
         public string[] QRScannerInVisitorAppForSelectingStuffTemplates { get; set; }
         public int CalculateStuffsSettlementDaysBasedOn { get; set; }
         public bool DefineWarehouseForSaleAndBuy { get; set; }
+        public bool UseCollectorAndroidApplication { get; set; }
     }
     public class UpdateDB_OtherInformationBatchModel
     {

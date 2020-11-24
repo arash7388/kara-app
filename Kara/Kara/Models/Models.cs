@@ -205,6 +205,7 @@ namespace Kara.Models
         public System.Nullable<System.DateTime> TransactionDate{get;set;}
 
         public System.Nullable<System.DateTime> MaturityDate{get;set;}
+        public string PersianMaturityDate{get;set;}
 
         public System.Guid DocumentUserId{get;set;}
 
@@ -261,6 +262,7 @@ namespace Kara.Models
         public System.Nullable<System.Guid> Cashier{get;set;}
 
         public System.Nullable<decimal> BankFee{get;set;}
+        public string BankAccountNumber { get; set; }
 
         [Ignore]
         private DynamicGroup[] _Groups { get; set; }

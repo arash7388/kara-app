@@ -4,17 +4,40 @@ using Xamarin.Forms;
 using Kara.CustomRenderer;
 using Kara.Assets;
 using Xamarin.Essentials;
+using System.Collections.Generic;
 
 namespace Kara
 {
     public partial class MainMenu : GradientContentPage
     {
+        public class ImageHelper
+        {
+            public Image Image { get; set; }
+            public bool Invisible { get; set; }
+
+            public ImageHelper()
+            {
+                Invisible = false;
+            }
+        }
+
+        public class LabelHelper
+        {
+            public Label Label { get; set; }
+            public bool Invisible { get; set; }
+
+            public LabelHelper()
+            {
+                Invisible = false;
+            }
+        }
+
         ToolbarItem LogoutMenu, UserNameMenu;
 
         Image Image_InsertFailedVisit, Image_InsertOrder, Image_Customers, Image_Settings, Image_UpdateDB, Image_Visits, Image_Backups, Image_PartnerReport, Image_Report , Image_Receipts, Image_ReceiptsNaghd;
         Label Label_InsertFailedVisit, Label_InsertOrder, Label_Customers, Label_Settings, Label_UpdateDB, Label_Visits, Label_Backups, Label_PartnerReport, Label_Report , Label_Receipts, Label_ReceiptsNaghd;
-        Image[] MenuImages;
-        Label[] MenuLabels;
+        List<ImageHelper> MenuImages;
+        List<LabelHelper> MenuLabels;
 
         private bool _firstTime = true;
 
@@ -53,10 +76,31 @@ namespace Kara
             Label_PartnerReport = new Label() { Text = "گردش حساب مشتری", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
             Label_Report = new Label() { Text = "گزارشات", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
             Label_Receipts = new Label() { Text = "ثبت دریافت", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
-            Label_ReceiptsNaghd = new Label() { Text = "نقد", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
 
-            MenuImages = new Image[] { Image_Customers, Image_InsertOrder, Image_InsertFailedVisit, Image_Visits, Image_PartnerReport, Image_Report, Image_UpdateDB, Image_Settings, Image_Backups , Image_Receipts, Image_ReceiptsNaghd };
-            MenuLabels = new Label[] { Label_Customers, Label_InsertOrder, Label_InsertFailedVisit, Label_Visits, Label_PartnerReport, Label_Report, Label_UpdateDB, Label_Settings, Label_Backups, Label_Receipts, Label_ReceiptsNaghd };
+            MenuImages = new List<ImageHelper>();
+
+            MenuImages.Add(new ImageHelper { Image = Image_Customers });
+            MenuImages.Add(new ImageHelper { Image = Image_InsertOrder });
+            MenuImages.Add(new ImageHelper { Image = Image_InsertFailedVisit });
+            MenuImages.Add(new ImageHelper { Image = Image_Visits });
+            MenuImages.Add(new ImageHelper { Image = Image_PartnerReport });
+            MenuImages.Add(new ImageHelper { Image = Image_Report });
+            MenuImages.Add(new ImageHelper { Image = Image_UpdateDB });
+            MenuImages.Add(new ImageHelper { Image = Image_Settings });
+            MenuImages.Add(new ImageHelper { Image = Image_Backups });
+            MenuImages.Add(new ImageHelper { Image = Image_Receipts,Invisible = !App.UseCollectorAndroidApplication.Value });
+
+            MenuLabels = new List<LabelHelper>();
+            MenuLabels.Add(new LabelHelper { Label = Label_Customers });
+            MenuLabels.Add(new LabelHelper { Label = Label_InsertOrder });
+            MenuLabels.Add(new LabelHelper { Label = Label_InsertFailedVisit });
+            MenuLabels.Add(new LabelHelper { Label = Label_Visits });
+            MenuLabels.Add(new LabelHelper { Label = Label_PartnerReport });
+            MenuLabels.Add(new LabelHelper { Label = Label_Report });
+            MenuLabels.Add(new LabelHelper { Label = Label_UpdateDB });
+            MenuLabels.Add(new LabelHelper { Label = Label_Settings });
+            MenuLabels.Add(new LabelHelper { Label = Label_Backups });
+            MenuLabels.Add(new LabelHelper { Label = Label_Receipts, Invisible = !App.UseCollectorAndroidApplication.Value });
 
             Image_Customers.GestureRecognizers.Add(new TapGestureRecognizer(MainMenu_GoToPartnerListForm));
             Image_InsertOrder.GestureRecognizers.Add(new TapGestureRecognizer(MainMenu_GoToOrderInsertForm));
@@ -140,6 +184,8 @@ namespace Kara
                 );
             }
 
+            //MainMenuGrid.Children[MainMenuGrid.Children.Count - 1].IsVisible = App.UseCollectorAndroidApplication.Value;
+            //MainMenuGrid.Children[MainMenuGrid.Children.Count - 2].IsVisible = App.UseCollectorAndroidApplication.Value;
         }
 
         DateTime? LastBackButtonPressedTime = null;
@@ -212,14 +258,18 @@ namespace Kara
                         for (int j = 0; j < ColCount; j++)
                         {
                             var ItemNumber = i * ColCount + j;
-                            if (ItemNumber < MenuImages.Length)
+                            if (ItemNumber < MenuImages.Count)
                             {
                                 var img = MenuImages[ItemNumber];
                                 var lbl = MenuLabels[ItemNumber];
 
-                                MainMenuGrid.Children.Add(img, ((ColCount - 1) * 3) - (j * 3) + 1, i * 2 + 1);
-                                MainMenuGrid.Children.Add(lbl, ((ColCount - 1) * 3) - (j * 3), i * 2 + 2);
-                                Grid.SetColumnSpan(lbl, 3);
+                                if(!img.Invisible)
+                                    MainMenuGrid.Children.Add(img.Image, ((ColCount - 1) * 3) - (j * 3) + 1, i * 2 + 1);
+
+                                if(!lbl.Invisible)
+                                    MainMenuGrid.Children.Add(lbl.Label, ((ColCount - 1) * 3) - (j * 3), i * 2 + 2);
+
+                                Grid.SetColumnSpan(lbl.Label, 3);
                             }
                         }
                     }

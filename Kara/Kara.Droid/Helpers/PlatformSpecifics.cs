@@ -49,7 +49,7 @@ namespace Kara.Droid.Helpers
             }
             catch (System.Exception err)
             {
-                var x = 0;
+                
             }
         }
     }

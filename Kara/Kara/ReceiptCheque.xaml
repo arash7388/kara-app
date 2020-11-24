@@ -21,6 +21,12 @@
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*"></ColumnDefinition>
@@ -28,7 +34,12 @@
             </Grid.ColumnDefinitions>
 
             <Label Grid.Row="0" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="تاریخ:" FontSize="Medium"/>
-            <Entry x:Name="txtDate" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="1398/05/05" FontSize="Medium"/>
+            <local:DateEntry x:Name="txtDate" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium">
+                <Entry.Behaviors>
+                    <conv:MaskedBehavior Mask="XXXX/XX/XX" />
+                </Entry.Behaviors>
+            </local:DateEntry>
+                
 
             <Label Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="صندوق:" FontSize="Medium"/>
             <Picker x:Name="CashPicker" Grid.Row="1" Grid.Column="0" HorizontalOptions="FillAndExpand" />
@@ -40,13 +51,13 @@
             <Entry x:Name="txtBranchName" Grid.Row="3" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
 
             <Label Grid.Row="4" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="کد شعبه:" FontSize="Medium"/>
-            <Entry x:Name="txtBranchName" Grid.Row="4" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
+            <Entry x:Name="txtBranchCode" Grid.Row="4" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
 
             <Label Grid.Row="5" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="شهر محل صدور:" FontSize="Medium"/>
             <Entry x:Name="txtCity" Grid.Row="5" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="" FontSize="Medium"/>
 
             <Label Grid.Row="6" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="شماره چک:" FontSize="Medium"/>
-            <Entry x:Name="txtChequeNo" Grid.Row="6" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="" FontSize="Medium"/>
+            <Entry x:Name="txtChequeCode" Grid.Row="6" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="" FontSize="Medium"/>
 
             <Label Grid.Row="7" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="شماره حساب:" FontSize="Medium"/>
             <Entry x:Name="txtAccountNo" Grid.Row="7" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="" FontSize="Medium"/>
@@ -55,7 +66,11 @@
             <Entry x:Name="txtPrice" Grid.Row="8" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="" FontSize="Medium"/>
 
             <Label Grid.Row="9" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="سررسید:" FontSize="Medium"/>
-            <Entry x:Name="txtDueDate" Grid.Row="9" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="" FontSize="Medium"/>
+            <local:DateEntry x:Name="txtDueDate" Grid.Row="9" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="" FontSize="Medium">
+                <Entry.Behaviors>
+                    <conv:MaskedBehavior Mask="XXXX/XX/XX" />
+                </Entry.Behaviors>
+            </local:DateEntry>
 
             <Label Grid.Row="10" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="شرح:" FontSize="Medium"/>
             <Entry x:Name="txtDesc" Grid.Row="10" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="" FontSize="Medium"/>

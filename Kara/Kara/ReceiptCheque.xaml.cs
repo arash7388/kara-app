@@ -13,7 +13,8 @@ namespace Kara
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ReceiptCheque : GradientContentPage
     {
-        BankAccount[] BankAccounts;
+        Bank[] Banks;
+        Cash[] Cashes;
 
         FinancialTransactionDocument EditingFDT;
         public Guid PartnerId { get; set; }
@@ -21,28 +22,18 @@ namespace Kara
         bool JustShow = false;
 
 
-        //public static readonly BindableProperty PriceProperty = 
-        //    BindableProperty.Create("Price", typeof(decimal), typeof(ReceiptPecuniary), (decimal)0);
-
-        //public decimal Price
-        //{
-        //    get { return (decimal)GetValue(PriceProperty); }
-        //    set { SetValue(PriceProperty, value); }
-        //}
-
         public decimal Price { get; set; }
 
         public ReceiptCheque(decimal price,Guid partnerId)
         {
             InitializeComponent();
             
-            //txtPrice.SetBinding(Entry.TextProperty, "Price");
             Price = price;
             PartnerId = partnerId;
 
             txtPrice.Text = Price.ToString().ReplaceLatinDigits();
             txtDate.Text = DateTime.Now.ToShortStringForDate().ReplaceLatinDigits();
-
+            
             ToolbarItem_LocalSave = new ToolbarItem();
             ToolbarItem_LocalSave.Text = "ذخیره محلی";
             ToolbarItem_LocalSave.Icon = "Save.png";
@@ -62,33 +53,53 @@ namespace Kara
             if (!JustShow)
                 this.ToolbarItems.Add(ToolbarItem_SendToServer);
 
-            FillBankAccounts();
+            FillBanks();
+            FillCashes();
         }
 
-        private async void FillBankAccounts()
+        private async void FillBanks()
         {
-            var result = await App.DB.GetBankAccountsAsync();
+            var result = await App.DB.GetBanksAsync();
 
             if(result.Success && result.Data!=null)
             {
-                BankAccounts = result.Data.ToArray();
+                Banks = result.Data.ToArray();
 
-                if (BankAccounts != null)
-                    foreach (var b in BankAccounts)
-                        BankAccountPicker.Items.Add(b.Name);
+                if (Banks != null)
+                    foreach (var b in Banks)
+                        BankPicker.Items.Add(b.Name);
             }
             else
             {
-                App.ShowError("خطا", "هیچ حساب بانکی وجود ندارد لطفا اطلاعات را به روزرسانی کنید", "خوب");
+                App.ShowError("خطا", "هیچ بانکی وجود ندارد لطفا اطلاعات را به روزرسانی کنید", "خوب");
             }
             
+        }
+
+        private async void FillCashes()
+        {
+            var result = await App.DB.GetCashesAsync();
+
+            if (result.Success && result.Data != null)
+            {
+                Cashes = result.Data.ToArray();
+
+                if (Cashes != null)
+                    foreach (var c in Cashes)
+                        CashPicker.Items.Add(c.EntityName);
+            }
+            else
+            {
+                App.ShowError("خطا", "هیچ صندوقی وجود ندارد لطفا اطلاعات را به روزرسانی کنید", "خوب");
+            }
+
         }
 
         private async void SubmitToServer(object sender, System.EventArgs e)
         {
             WaitToggle(false);
             await Task.Delay(100);
-            var SaveResult = await SaveReceiptBank();
+            var SaveResult = await SaveReceiptCheque();
 
             if (!SaveResult.Success)
             {
@@ -97,7 +108,7 @@ namespace Kara
             }
             else
             {
-                var submitResult = await Connectivity.SubmitReceiptBankAsync(new FinancialTransactionDocument[] { SaveResult.Data });
+                var submitResult = await Connectivity.SubmitReceiptChequeAsync(new FinancialTransactionDocument[] { SaveResult.Data });
 
                 if (!submitResult.Success)
                 {
@@ -120,7 +131,7 @@ namespace Kara
         {
             WaitToggle(false);
             await Task.Delay(100);
-            var SaveResult = await SaveReceiptBank();
+            var SaveResult = await SaveReceiptCheque();
 
             if (!SaveResult.Success)
             {
@@ -135,12 +146,27 @@ namespace Kara
             }
         }
 
-        private async Task<ResultSuccess<FinancialTransactionDocument>> SaveReceiptBank()
+        private async Task<ResultSuccess<FinancialTransactionDocument>> SaveReceiptCheque()
         {
             try
             {
-                if (BankAccountPicker.SelectedIndex == -1)
+                if (BankPicker.SelectedIndex == -1)
                     return new ResultSuccess<FinancialTransactionDocument>(false, "بانک انتخاب نشده است.");
+
+                if (CashPicker.SelectedIndex == -1)
+                    return new ResultSuccess<FinancialTransactionDocument>(false, "صندوق انتخاب نشده است.");
+
+                if(string.IsNullOrWhiteSpace(txtBranchName.Text))
+                    return new ResultSuccess<FinancialTransactionDocument>(false, "نام شعبه را وارد نمایید.");
+
+                if (string.IsNullOrWhiteSpace(txtChequeCode.Text))
+                    return new ResultSuccess<FinancialTransactionDocument>(false, "شماره چک را وارد نمایید.");
+
+                if (string.IsNullOrWhiteSpace(txtAccountNo.Text))
+                    return new ResultSuccess<FinancialTransactionDocument>(false, "شماره حساب را وارد نمایید.");
+
+                if (string.IsNullOrWhiteSpace(txtDueDate.Text))
+                    return new ResultSuccess<FinancialTransactionDocument>(false, "تاریخ سررسید را وارد نمایید.");
 
                 //if (EditingFDT == null)
                 //{
@@ -149,7 +175,7 @@ namespace Kara
                     {
                         DocumentId = Guid.NewGuid(),
                         YearId = Guid.Parse("00000000-0000-0000-0000-000000000000"),
-                        TransactionType = (int)TransactionType.BankDocumentIn,
+                        TransactionType = (int)TransactionType.ChequeDocumentIn,
                         PartnerId = PartnerId,
                         InputPrice = decimal.Parse(txtPrice.Text.Replace(",", "").ReplacePersianDigits()),
                         OutputPrice = 0,
@@ -158,15 +184,18 @@ namespace Kara
                         DocumentDate = txtDate.Text.PersianDateStringToDate(),
                         DocumentUserId = App.UserId.Value,
                         DocumentDescription = txtDesc.Text,
-                        BankAccountId = BankAccounts[BankAccountPicker.SelectedIndex].Id,
-                        BankTransferCode = txtHavalehNo.Text.ReplacePersianDigits(),
-                        ChequeCode = "",
-                        BranchName = "",
-                        BranchCode = "",
-                        Delivery = "",
-                        Issuance = "",
-                        CollectorId = App.UserEntityId.Value
-                    };
+                        //BankTransferCode = txtHavalehNo.Text.ReplacePersianDigits(),
+                        ChequeCode = txtChequeCode.Text.ReplacePersianDigits(),
+                        BranchName = txtBranchName.Text,
+                        BranchCode = txtBranchCode.Text,
+                        Delivery = "-",
+                        Issuance = txtCity.Text,
+                        PersianMaturityDate = txtDueDate.Text.ReplacePersianDigits(),
+                        CollectorId = App.UserEntityId.Value,
+                        ChequeBankId = Banks[BankPicker.SelectedIndex].Id,
+                        CashAccountId = Cashes[CashPicker.SelectedIndex].EntityId,
+                        BankAccountNumber = txtAccountNo.Text.ReplacePersianDigits()
+                };
 
                     var result = await App.DB.InsertOrUpdateRecordAsync<FinancialTransactionDocument>(EditingFDT);
                     if (!result.Success)
@@ -217,3 +246,4 @@ namespace Kara
         }
     }
 }
+

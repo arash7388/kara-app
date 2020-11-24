@@ -152,7 +152,7 @@ namespace Kara
 
         private async void ToolbarItem_Bank_Activated(object sender, EventArgs e)
         {
-            var sumSelected = FactorsObservableCollection.Where(a => a.Selected).Sum(a => decimal.Parse(a.Price));
+            decimal sumSelected = CalcSumSelected();
 
             ReceiptBank receiptBank = new ReceiptBank(sumSelected, SelectedPartner.Id)
             {
@@ -183,15 +183,25 @@ namespace Kara
             }
         }
 
-        private void ToolbarItem_Cheque_Activated(object sender, EventArgs e)
+        private async void ToolbarItem_Cheque_Activated(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            decimal sumSelected = CalcSumSelected();
+
+            ReceiptCheque receiptCheque = new ReceiptCheque(sumSelected, SelectedPartner.Id)
+            {
+                StartColor = Color.FromHex("E6EBEF"),
+                EndColor = Color.FromHex("A6CFED")
+            };
+
+            //receiptPecuniary.Price = sumSelected;
+            //receiptPecuniary.PartnerId = SelectedPartner.Id;
+            try { await Navigation.PushAsync(receiptCheque); } catch (Exception) { }
         }
 
         private async void ToolbarItem_Naghd_Activated(object sender, EventArgs e)
         {
-            var sumSelected = FactorsObservableCollection.Where(a => a.Selected).Sum(a => decimal.Parse(a.Price));
-            
+            decimal sumSelected = CalcSumSelected();
+
             ReceiptPecuniary receiptPecuniary = new ReceiptPecuniary(sumSelected, SelectedPartner.Id)
             {
                 StartColor = Color.FromHex("E6EBEF"),
@@ -201,6 +211,20 @@ namespace Kara
             //receiptPecuniary.Price = sumSelected;
             //receiptPecuniary.PartnerId = SelectedPartner.Id;
             try { await Navigation.PushAsync(receiptPecuniary); } catch (Exception) { }
+        }
+
+        private decimal CalcSumSelected()
+        {
+            var selectedItems = FactorsObservableCollection.Where(a => a.Selected).ToList();
+            decimal sumSelected = 0;
+
+            foreach (UnSettledOrderModel item in selectedItems)
+            {
+                if (decimal.TryParse(item.Price.ReplacePersianDigits(), out decimal d))
+                    sumSelected += d;
+            }
+
+            return sumSelected;
         }
 
         private void FactorsView_ItemTapped(object sender, ItemTappedEventArgs e)
@@ -358,48 +382,51 @@ namespace Kara
         private async Task FillFactors(string partnerCode)
         {
             // todo
-            //var getUnsetteledFactorsResult = await Connectivity.GetUnSettledOrdersFromServerAsync(App.Username.Value, App.Password.Value, App.CurrentVersionNumber, partnerCode, "", "");
-            //if (getUnsetteledFactorsResult.Success)
-            //{
-            //    FactorsView.IsVisible = true;
-            //    FactorsObservableCollection = new ObservableCollection<UnSettledOrderModel>(getUnsetteledFactorsResult.Data);
-            //    FactorsView.ItemsSource = FactorsObservableCollection;
-            //}
-
-            var testResult = new List<UnSettledOrderModel>
-                        {
-                            new UnSettledOrderModel
-                            {
-                                DriverName = "رضا محمودی",
-                                OrderCode = "1001",
-                                OrderDate = DateTime.Now.ToShortStringForDate().ReplaceLatinDigits(),
-                                OrderId = new Guid(),
-                                Remainder = 10000.ToString(),
-                                Price = 14000.ToString()
-                            },
-                             new UnSettledOrderModel
-                            {
-                                DriverName = "علی محمودی",
-                                OrderCode = "1002",
-                                OrderDate = DateTime.Now.AddDays(4). ToShortStringForDate().ReplaceLatinDigits(),
-                                OrderId = new Guid(),
-                                Remainder = 20000.ToString(),
-                                Price = 24000.ToString()
-                            },
-                              new UnSettledOrderModel
-                            {
-                                DriverName = "آرش سیبسی",
-                                OrderCode = "1003",
-                                OrderDate = DateTime.Now.AddDays(8).ToShortStringForDate().ReplaceLatinDigits(),
-                                OrderId = new Guid(),
-                                Remainder = 30000.ToString(),
-                                Price = 34000.ToString()
-                            }
-                        };
-
+            var getUnsetteledFactorsResult = await Connectivity.GetUnSettledOrdersFromServerAsync(App.Username.Value, App.Password.Value, App.CurrentVersionNumber, partnerCode, "", "");
+            
+            if (!getUnsetteledFactorsResult.Success)
+                App.ShowError( "خطا", getUnsetteledFactorsResult.Message,"انصراف");
+            else if (getUnsetteledFactorsResult.Success)
+            {
                 FactorsView.IsVisible = true;
-                FactorsObservableCollection = new ObservableCollection<UnSettledOrderModel>(testResult);
+                FactorsObservableCollection = new ObservableCollection<UnSettledOrderModel>(getUnsetteledFactorsResult.Data);
                 FactorsView.ItemsSource = FactorsObservableCollection;
+            }
+
+            //var testResult = new List<UnSettledOrderModel>
+            //            {
+            //                new UnSettledOrderModel
+            //                {
+            //                    DriverName = "رضا محمودی",
+            //                    OrderCode = "1001",
+            //                    OrderDate = DateTime.Now.ToShortStringForDate().ReplaceLatinDigits(),
+            //                    OrderId = new Guid(),
+            //                    Remainder = 10000.ToString(),
+            //                    Price = 14000.ToString()
+            //                },
+            //                 new UnSettledOrderModel
+            //                {
+            //                    DriverName = "علی محمودی",
+            //                    OrderCode = "1002",
+            //                    OrderDate = DateTime.Now.AddDays(4). ToShortStringForDate().ReplaceLatinDigits(),
+            //                    OrderId = new Guid(),
+            //                    Remainder = 20000.ToString(),
+            //                    Price = 24000.ToString()
+            //                },
+            //                  new UnSettledOrderModel
+            //                {
+            //                    DriverName = "آرش سیبسی",
+            //                    OrderCode = "1003",
+            //                    OrderDate = DateTime.Now.AddDays(8).ToShortStringForDate().ReplaceLatinDigits(),
+            //                    OrderId = new Guid(),
+            //                    Remainder = 30000.ToString(),
+            //                    Price = 34000.ToString()
+            //                }
+            //            };
+
+            //    FactorsView.IsVisible = true;
+            //    FactorsObservableCollection = new ObservableCollection<UnSettledOrderModel>(testResult);
+            //    FactorsView.ItemsSource = FactorsObservableCollection;
         }
 
         public void RefreshToolbarItems()

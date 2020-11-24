@@ -22,12 +22,16 @@
                 <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="5*"></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
             <Label Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="تاریخ:" FontSize="Medium"/>
-            <Entry x:Name="txtDate" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="1398/05/05" FontSize="Medium"/>
+            <local:DateEntry x:Name="txtDate" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium">
+                <Entry.Behaviors>
+                    <conv:MaskedBehavior Mask="XXXX/XX/XX" />
+                </Entry.Behaviors>
+            </local:DateEntry>
 
             <Label Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="صندوق:" FontSize="Medium"/>
             <Picker x:Name="CashPicker" Grid.Row="1" Grid.Column="0" HorizontalOptions="FillAndExpand" />
