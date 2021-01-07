@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:GradientContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Kara.CustomRenderer"
+             x:Class="Kara.SaleTotal"
+             Title="لیست سرجمع ها">
+    <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" >
+        <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+            <Grid x:Name="PartnerSection" Padding="5, 5, 5, 0" RowSpacing="5" ColumnSpacing="0" >
+            </Grid>
+
+            <local:MyListView x:Name="TotalsView" ItemsSource="{Binding FactorsObservableCollection}" VerticalOptions="FillAndExpand" IsVisible="False">
+                <ListView.Header>
+                    <Grid >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="35"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        
+                        <Label Text="شماره" BackgroundColor="Navy" TextColor="White" Grid.Column="4" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
+                        <Label Text="تاریخ" BackgroundColor="Navy" TextColor="White" Grid.Column="3" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
+                        <Label Text="راننده" BackgroundColor="Navy" TextColor="White" Grid.Column="2" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium" />
+                        <Label Text="خودرو" BackgroundColor="Navy" TextColor="White" Grid.Column="1" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
+                        <Label Text="تعداد پ ف" BackgroundColor="Navy" TextColor="White" Grid.Column="0" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
+                    </Grid>
+                </ListView.Header>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid Padding="1" VerticalOptions="FillAndExpand" ColumnSpacing="1" RowSpacing="1" BackgroundColor="{Binding RowColor}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                                                
+                                <Label Grid.Column="4" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding TotalCode} "/>
+                                <Label Grid.Column="3" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding PersianTotalDate}"/>
+                                <Label Grid.Column="2" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding DriverName}"/>
+                                <Label Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Machine}"/>
+                                <Label Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding OrdersCount}"/>
+                                
+
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </local:MyListView>
+            
+            <StackLayout x:Name="BusyIndicatorContainder" Orientation="Vertical" Spacing="0" Padding="0" Grid.Row="0" Grid.Column="0" IsVisible="False">
+                <ActivityIndicator x:Name="BusyIndicator" IsRunning="True" Grid.Row="0" Grid.Column="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                </ActivityIndicator>
+            </StackLayout>
+        </StackLayout>
+    </StackLayout>
+</local:GradientContentPage>

@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<local:GradientContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Kara.CustomRenderer"
+             x:Class="Kara.SaleTotalDetails"
+             Title="لیست پیش فاکتور ها">
+    <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" >
+        <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+
+            <local:MyListView x:Name="TotalDetailsView"  VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand" IsVisible="False">
+                <ListView.Header>
+                    <Grid >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="35"></RowDefinition>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+
+                        
+                        <Label Text="شماره پ ف" BackgroundColor="Navy" TextColor="White" Grid.Column="5" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
+                        <Label Text="کد طرف حساب" BackgroundColor="Navy" TextColor="White" Grid.Column="4" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
+                        <Label Text="نام طرف حساب" BackgroundColor="Navy" TextColor="White" Grid.Column="3" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium" />
+                        <Label Text="آدرس" BackgroundColor="Navy" TextColor="White" Grid.Column="2" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
+                        <Label Text="تلفن" BackgroundColor="Navy" TextColor="White" Grid.Column="1" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
+                        <Label Text="ویزیتور" BackgroundColor="Navy" TextColor="White" Grid.Column="0" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
+                    </Grid>
+                </ListView.Header>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <Grid Padding="1" VerticalOptions="FillAndExpand" ColumnSpacing="1" RowSpacing="1" BackgroundColor="{Binding RowColor}">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"></RowDefinition>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="{Binding CheckBoxColumnWidth}"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+
+                                <local:MyCheckBox x:Name="selectedCheckBox" Grid.Column="6" HorizontalOptions="Center" VerticalOptions="Center" Checked="{Binding Selected, Mode=TwoWay}" IsVisible="{Binding MultiSelectionMode}" ></local:MyCheckBox>
+                                <Label Grid.Column="5" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding OrderPreCode} "/>
+                                <Label Grid.Column="4" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding EntityCode}"/>
+                                <Label Grid.Column="3" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding EntityName}"/>
+                                <Label Grid.Column="2" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Address}"/>
+                                <Label Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Tels}"/>
+                                <Label Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Visitor}"/>
+                                
+
+                            </Grid>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </local:MyListView>
+            
+            <StackLayout x:Name="BusyIndicatorContainder" Orientation="Vertical" Spacing="0" Padding="0" Grid.Row="0" Grid.Column="0" IsVisible="False">
+                <ActivityIndicator x:Name="BusyIndicator" IsRunning="True" Grid.Row="0" Grid.Column="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+                </ActivityIndicator>
+            </StackLayout>
+        </StackLayout>
+    </StackLayout>
+</local:GradientContentPage>
