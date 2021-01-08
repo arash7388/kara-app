@@ -32,8 +32,8 @@ namespace Kara
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class TahsildarForm : GradientContentPage
     {
-        public ToolbarItem ToolbarItem_Naghd, ToolbarItem_Cheque, ToolbarItem_Bank, ToolbarItem_SelectAll;
-        private bool ToolbarItem_Naghd_Visible, ToolbarItem_Cheque_Visible, ToolbarItem_Bank_Visible, ToolbarItem_SelectAll_Visible, BackButton_Visible;
+        public ToolbarItem ToolbarItem_Naghd, ToolbarItem_Cheque, ToolbarItem_Bank, ToolbarItem_SelectAll, ToolbarItem_PartnerReport;
+        private bool ToolbarItem_Naghd_Visible, ToolbarItem_Cheque_Visible, ToolbarItem_Bank_Visible, ToolbarItem_SelectAll_Visible, BackButton_Visible, ToolbarItem_PartnerReport_Visible;
         private bool? TappedItemSent;
         private UnSettledOrderModel LastSelectedOrder = null;
         private bool MultiSelectionMode = false;
@@ -46,7 +46,7 @@ namespace Kara
             {
                 _BeforeSelectedPartner = _SelectedPartner;
                 _SelectedPartner = value;
-                 PartnerSelected();
+                PartnerSelected();
             }
         }
         public ObservableCollection<UnSettledOrderModel> FactorsObservableCollection { get; private set; }
@@ -58,22 +58,22 @@ namespace Kara
         public TahsildarForm()
         {
             InitializeComponent();
-            
+
             MultiSelectionMode = false;
             UnSettledOrderModel.Multiselection = false;
 
             FactorsView.ItemTapped += FactorsView_ItemTapped;
             FactorsView.OnLongClick += FactorsView_OnLongClick;
-            
+
             BusyIndicatorContainder.BackgroundColor = Color.FromRgba(255, 255, 255, 70);
             BusyIndicator.Color = Color.FromRgba(80, 100, 150, 255);
 
             PartnerChangeButton = new LeftEntryCompanionLabel() { VerticalOptions = LayoutOptions.FillAndExpand, VerticalTextAlignment = TextAlignment.Center, HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, FontSize = 18, Text = "🔍" };
-            
+
             PartnerLabel = new RightRoundedLabel() { VerticalOptions = LayoutOptions.FillAndExpand, VerticalTextAlignment = TextAlignment.Center, HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.End, Text = "مشتری", Padding = new Thickness(0, 0, 50, 0) };
-            
+
             PartnerLabel.FontSize *= 1.5;
-            
+
             if (SelectedPartner == null)
             {
                 PartnerChangeButton.IsEnabled = true;
@@ -111,7 +111,14 @@ namespace Kara
             ToolbarItem_Bank.Icon = "Havaleh.png";
             ToolbarItem_Bank.Order = ToolbarItemOrder.Primary;
             ToolbarItem_Bank.Priority = 2;
-            ToolbarItem_Bank.Activated += ToolbarItem_Bank_Activated; ;
+            ToolbarItem_Bank.Activated += ToolbarItem_Bank_Activated;
+
+            ToolbarItem_PartnerReport = new ToolbarItem();
+            ToolbarItem_PartnerReport.Text = "گردش حساب";
+            ToolbarItem_PartnerReport.Icon = "PartnerTurnover.png";
+            ToolbarItem_PartnerReport.Order = ToolbarItemOrder.Primary;
+            ToolbarItem_PartnerReport.Priority = 2;
+            ToolbarItem_PartnerReport.Activated += ToolbarItem_PartnerReport_Activated; ;
 
 
             var PartnerChangeButtonTapGestureRecognizer = new TapGestureRecognizer();
@@ -130,7 +137,7 @@ namespace Kara
                             //App.UniversalLineInApp = 875234045;
                             var PartnerListForm1 = new PartnerListForm();
                             //App.UniversalLineInApp = 875234046;
-                            PartnerListForm1.TahsildarForm = this;  
+                            PartnerListForm1.TahsildarForm = this;
                             //App.UniversalLineInApp = 875234047;
                             Navigation.PushAsync(PartnerListForm1);
                             //App.UniversalLineInApp = 875234048;
@@ -163,6 +170,12 @@ namespace Kara
             //receiptPecuniary.Price = sumSelected;
             //receiptPecuniary.PartnerId = SelectedPartner.Id;
             try { await Navigation.PushAsync(receiptBank); } catch (Exception) { }
+        }
+
+        private async void ToolbarItem_PartnerReport_Activated(object sender, EventArgs e)
+        {
+            var PartnerReportForm = new PartnerReportForm(SelectedPartner.Id);
+            await Navigation.PushAsync(PartnerReportForm);
         }
 
         private void ToolbarItem_SelectAll_Activated(object sender, EventArgs e)
@@ -307,7 +320,7 @@ namespace Kara
                 FactorsView_ItemTapped(OrderedItem);
             }
         }
-                
+
         Guid LastSizeAllocationId;
         protected override async void OnSizeAllocated(double width, double height)
         {
@@ -322,7 +335,7 @@ namespace Kara
 
 
         double LastWidth, LastHeight;
-        
+
 
         public void sizeChanged(double width, double height)
         {
@@ -344,18 +357,18 @@ namespace Kara
             if (Horizental)
             {
                 PartnerSection.RowDefinitions.Add(new RowDefinition() { Height = 50 });
-                
+
                 PartnerSection.ColumnDefinitions.Add(new ColumnDefinition() { Width = 50 });
                 PartnerSection.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                 var GallaryStuffGroupOffset = 0;
-                
+
                 PartnerSection.Children.Add(PartnerChangeButton, 0 + GallaryStuffGroupOffset, 0);
                 PartnerSection.Children.Add(PartnerLabel, 1 + GallaryStuffGroupOffset, 0);
             }
             else
             {
                 PartnerSection.RowDefinitions.Add(new RowDefinition() { Height = 50 });
-                
+
                 PartnerSection.ColumnDefinitions.Add(new ColumnDefinition() { Width = 50 });
                 PartnerSection.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
 
@@ -383,9 +396,9 @@ namespace Kara
         {
             // todo
             var getUnsetteledFactorsResult = await Connectivity.GetUnSettledOrdersFromServerAsync(App.Username.Value, App.Password.Value, App.CurrentVersionNumber, partnerCode, "", "");
-            
+
             if (!getUnsetteledFactorsResult.Success)
-                App.ShowError( "خطا", getUnsetteledFactorsResult.Message,"انصراف");
+                App.ShowError("خطا", getUnsetteledFactorsResult.Message, "انصراف");
             else if (getUnsetteledFactorsResult.Success)
             {
                 FactorsView.IsVisible = true;
@@ -435,6 +448,7 @@ namespace Kara
             ToolbarItem_Cheque_Visible = false;
             ToolbarItem_Bank_Visible = false;
             ToolbarItem_SelectAll_Visible = false;
+            ToolbarItem_PartnerReport_Visible = false;
             BackButton_Visible = false;
 
             if (MultiSelectionMode)
@@ -456,12 +470,14 @@ namespace Kara
                 ToolbarItem_Naghd_Visible = false;
                 ToolbarItem_Cheque_Visible = false;
                 ToolbarItem_Bank_Visible = false;
+                ToolbarItem_PartnerReport_Visible = false;
             }
             else if (MultiSelectionMode)
             {
                 ToolbarItem_Naghd_Visible = true;
                 ToolbarItem_Cheque_Visible = true;
                 ToolbarItem_Bank_Visible = true;
+                ToolbarItem_PartnerReport_Visible = true;
             }
             else
             {
@@ -469,6 +485,7 @@ namespace Kara
                 UnSettledOrderModel.Multiselection = false;
                 ToolbarItem_Naghd_Visible = false;
                 ToolbarItem_Cheque_Visible = false;
+                ToolbarItem_PartnerReport_Visible = false;
                 ToolbarItem_Bank_Visible = false;
                 ToolbarItem_SelectAll_Visible = false;
                 FactorsObservableCollection.ForEach(item => item.Selected = false);
@@ -480,7 +497,7 @@ namespace Kara
                 //ToolbarItem_Show_Visible = true;
             }
 
-            RefreshToolbarItems(BackButton_Visible, ToolbarItem_Naghd_Visible, ToolbarItem_Cheque_Visible, ToolbarItem_Bank_Visible, ToolbarItem_SelectAll_Visible);
+            RefreshToolbarItems(BackButton_Visible, ToolbarItem_Naghd_Visible, ToolbarItem_Cheque_Visible, ToolbarItem_Bank_Visible, ToolbarItem_SelectAll_Visible, ToolbarItem_PartnerReport_Visible);
         }
 
         public void RefreshToolbarItems
@@ -489,7 +506,8 @@ namespace Kara
             bool ToolbarItem_Naghd_Visible,
             bool ToolbarItem_Cheque_Visible,
             bool ToolbarItem_Bank_Visible,
-            bool ToolbarItem_SelectAll_Visible
+            bool ToolbarItem_SelectAll_Visible,
+            bool ToolbarItem_PartnerReport_Visible
         )
         {
             if (BackButton_Visible)
@@ -531,6 +549,11 @@ namespace Kara
                 this.ToolbarItems.Add(ToolbarItem_SelectAll);
             if (!ToolbarItem_SelectAll_Visible && this.ToolbarItems.Contains(ToolbarItem_SelectAll))
                 this.ToolbarItems.Remove(ToolbarItem_SelectAll);
+
+            if (ToolbarItem_PartnerReport_Visible && !this.ToolbarItems.Contains(ToolbarItem_PartnerReport))
+                this.ToolbarItems.Add(ToolbarItem_PartnerReport);
+            if (!ToolbarItem_PartnerReport_Visible && this.ToolbarItems.Contains(ToolbarItem_PartnerReport))
+                this.ToolbarItems.Remove(ToolbarItem_PartnerReport);
         }
     }
 }

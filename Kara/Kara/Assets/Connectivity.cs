@@ -26,7 +26,7 @@ namespace Kara.Assets
                 if (_HttpClient == null)
                 {
                     _HttpClient = new HttpClient();
-                    _HttpClient.Timeout = new TimeSpan(0, 1, 20);
+                    _HttpClient.Timeout = new TimeSpan(0, 2, 30);
                     _HttpClient.DefaultRequestHeaders.Add("Accept", "application/json");
                 }
                 return _HttpClient;
@@ -46,6 +46,31 @@ namespace Kara.Assets
             catch (Exception err)
             {
                 return new ResultSuccess<LoginResult>(false, err.ProperMessage());
+            }
+        }
+
+        public static async Task<ResultSuccess<AppSettingsModel>> GetAndroidAppSettings(string Username, string Password)
+        {
+            try
+            {
+                var resultTask = HttpClient.GetStringAsyncForUnicode(ServerRoot + "GetAndroidAppSettings?&UserName=" + Username + "&Password=" + Password);
+                var result = await resultTask;
+
+                if (resultTask.Exception != null)
+                    return new ResultSuccess<AppSettingsModel>(false, resultTask.Exception.ProperMessage());
+
+                if (!result.Success)
+                    return new ResultSuccess<AppSettingsModel>(false, result.Message);
+
+                var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<AppSettingsModel>>(result.Data);
+                if (!resultDeserialized.Success)
+                    return new ResultSuccess<AppSettingsModel>(false, resultDeserialized.Message);
+
+                return resultDeserialized;
+            }
+            catch (Exception err)
+            {
+                return new ResultSuccess<AppSettingsModel>(false, err.ProperMessage());
             }
         }
 
@@ -211,20 +236,22 @@ namespace Kara.Assets
         public class UnSettledOrderModel : INotifyPropertyChanged
         {
             private bool _Selected;
-            public bool Selected 
-            { 
-                get { 
-                    return _Selected; 
-                    }   
+            public bool Selected
+            {
+                get
+                {
+                    return _Selected;
+                }
 
-                set { 
-                    _Selected = value; 
-                    OnPropertyChanged("Selected"); 
-                    OnPropertyChanged("RowColor"); 
+                set
+                {
+                    _Selected = value;
+                    OnPropertyChanged("Selected");
+                    OnPropertyChanged("RowColor");
 
                     //if (App.InsertedInformations_Partners != null) 
                     //    App.InsertedInformations_Partners.RefreshToolbarItems(); 
-                    } 
+                }
             }
 
             public string RowColor
@@ -290,7 +317,7 @@ namespace Kara.Assets
                     throw new Exception(result.Message);
 
                 var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<List<UnSettledOrderModel>>>(result.Data);
-                
+
                 if (!resultDeserialized.Success)
                 {
                     return new ResultSuccess<List<UnSettledOrderModel>>(false, resultDeserialized.Message);
@@ -301,6 +328,257 @@ namespace Kara.Assets
             catch (Exception ex)
             {
                 return new ResultSuccess<List<UnSettledOrderModel>>(false, ex.ProperMessage());
+            }
+        }
+
+
+        public class SaleTotalsModel
+        {
+            public Guid TotalId { get; set; }
+            public string TotalCode { get; set; }
+            public DateTime TotalDate { get; set; }
+            public DateTime? ShipmentDate { get; set; }
+            public DateTime PossibleShipmentDate { get; set; }
+            public string PayeeCode { get; set; }
+            public string PayeeName { get; set; }
+            public string DriverCode { get; set; }
+            public string DriverName { get; set; }
+            public IEnumerable<string> VisitorsCode { get; set; }
+            public IEnumerable<string> VisitorsName { get; set; }
+            public decimal TotalPrice { get; set; }
+            public string Status { get; set; }
+            public string TotalDescription { get; set; }
+            public string Machine { get; set; }
+            public decimal MachineVolumeCapacity { get; set; }
+            public decimal MachineWeightCapacity { get; set; }
+            public int OrdersCount { get; set; }
+            public decimal VolumeSum { get; set; }
+            public decimal VolumeSumPercent { get; set; }
+            public decimal WeightSum { get; set; }
+            public decimal WeightSumPercent { get; set; }
+        }
+
+        public class SaleTotalsViewModel
+        {
+            public Guid TotalId { get; set; }
+
+            private string _totalCode;
+            public string TotalCode { get { return _totalCode.ReplaceLatinDigits(); } set { _totalCode = value; } }
+
+            private DateTime _totalDate;
+            public DateTime TotalDate
+            {
+                get { return _totalDate; }
+                set
+                {
+                    _totalDate = value;
+                    PersianTotalDate = TotalDate.ToShortStringForDate().ReplaceLatinDigits();
+                }
+            }
+
+            public string PersianTotalDate { get; set; }
+
+            //public DateTime? ShipmentDate { get; set; }
+            //public DateTime PossibleShipmentDate { get; set; }
+
+            private string _payeeCode;
+            public string PayeeCode
+            {
+                get { return _payeeCode.ReplaceLatinDigits(); }
+                set { _payeeCode = value; }
+            }
+
+            private string _driverCode;
+            public string DriverCode
+            {
+                get { return _driverCode.ReplaceLatinDigits(); }
+                set { _driverCode = value; }
+            }
+
+
+            public string DriverName { get; set; }
+            //public IEnumerable<string> VisitorsCode { get; set; }
+            //public IEnumerable<string> VisitorsName { get; set; }
+
+            private string _totalPrice;
+            public string TotalPrice
+            {
+                get { return _totalPrice.ReplaceLatinDigits(); }
+                set { _totalPrice = value; }
+            }
+
+
+            //public string Status { get; set; }
+            //public string TotalDescription { get; set; }
+            public string Machine { get; set; }
+            //public decimal MachineVolumeCapacity { get; set; }
+            //public decimal MachineWeightCapacity { get; set; }
+
+            private string _ordersCount;
+            public string OrdersCount { get { return _ordersCount.ReplaceLatinDigits(); } set { _ordersCount = value; } }
+
+            //public decimal VolumeSum { get; set; }
+            //public decimal VolumeSumPercent { get; set; }
+            //public decimal WeightSum { get; set; }
+            //public decimal WeightSumPercent { get; set; }
+        }
+        public static async Task<ResultSuccess<List<SaleTotalsModel>>> GetPayeeSaleTotals(string UserName, string Password, string CurrentVersionNumber, Guid userId, string payeeCode)
+        {
+            try
+            {
+                var resultTask = HttpClient.GetStringAsyncForUnicode(ServerRoot + $"GetPayeeTotals?UserName={UserName}&Password={Password}&CurrentVersionNumber={CurrentVersionNumber}&userId={userId}&payeeCode={payeeCode}");
+                var result = await resultTask;
+
+                if (resultTask.Exception != null)
+                {
+                    return new ResultSuccess<List<SaleTotalsModel>>(false, resultTask.Exception.ProperMessage());
+                }
+
+                if (!result.Success)
+                    throw new Exception(result.Message);
+
+                var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<List<SaleTotalsModel>>>(result.Data);
+
+                if (!resultDeserialized.Success)
+                {
+                    return new ResultSuccess<List<SaleTotalsModel>>(false, resultDeserialized.Message);
+                }
+
+                return new ResultSuccess<List<SaleTotalsModel>>(true, "", resultDeserialized.Data);
+            }
+            catch (Exception ex)
+            {
+                return new ResultSuccess<List<SaleTotalsModel>>(false, ex.ProperMessage());
+            }
+        }
+
+        public class TotalDetailModel
+        {
+            private bool _Selected;
+            public bool Selected
+            {
+                get
+                {
+                    return _Selected;
+                }
+
+                set
+                {
+                    _Selected = value;
+                    OnPropertyChanged("Selected");
+                    //OnPropertyChanged("RowColor");
+
+                    //if (App.InsertedInformations_Partners != null) 
+                    //    App.InsertedInformations_Partners.RefreshToolbarItems(); 
+                }
+            }
+
+            public event PropertyChangedEventHandler PropertyChanged;
+            public void OnPropertyChanged(string propertyName)
+            {
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            }
+
+            public static bool Multiselection { get; set; }
+            public GridLength CheckBoxColumnWidth { get { return Multiselection ? 60 : 0; } }
+
+
+            public Guid OrderId { get; internal set; }
+            public int OrderPreCode { get; internal set; }
+            public string EntityCode { get; internal set; }
+            public string EntityName { get; internal set; }
+            public string PersonLegalName { get; internal set; }
+            public string AccountingZone { get; internal set; }
+            public string Address { get; internal set; }
+            public string Tels { get; internal set; }
+            public decimal Price { get; internal set; }
+            public string Visitor { get; internal set; }
+            public string SettlementName { get; internal set; }
+            public decimal? GeoLocation_Lat { get; internal set; }
+            public decimal? GeoLocation_Long { get; internal set; }
+        }
+
+        public static async Task<ResultSuccess<List<TotalDetailModel>>> GetTotalDetails(string UserName, string Password, string CurrentVersionNumber, Guid totalId)
+        {
+            try
+            {
+                var resultTask = HttpClient.GetStringAsyncForUnicode(ServerRoot + $"GetTotalDetails?UserName={UserName}&Password={Password}&CurrentVersionNumber={CurrentVersionNumber}&totalId={totalId}");
+                var result = await resultTask;
+
+                if (resultTask.Exception != null)
+                {
+                    return new ResultSuccess<List<TotalDetailModel>>(false, resultTask.Exception.ProperMessage());
+                }
+
+                if (!result.Success)
+                    throw new Exception(result.Message);
+
+                var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<List<TotalDetailModel>>>(result.Data);
+
+                if (!resultDeserialized.Success)
+                {
+                    return new ResultSuccess<List<TotalDetailModel>>(false, resultDeserialized.Message);
+                }
+
+                return new ResultSuccess<List<TotalDetailModel>>(true, "", resultDeserialized.Data);
+            }
+            catch (Exception ex)
+            {
+                return new ResultSuccess<List<TotalDetailModel>>(false, ex.ProperMessage());
+            }
+        }
+
+
+        public class DtoSaleOrderFinalizedState
+        {
+            public Guid OrderId { get; set; }
+            public int OrderPreCode { get; set; }
+            public int? OrderCode { get; set; }
+            public string PartnerCode { get; set; }
+            public string PartnerName { get; set; }
+            public string PartnerLegalName { get; set; }
+            public string VisitorName { get; set; }
+            public bool AllStuffsReturned { get; set; }
+            public bool HasReshipment { get; set; }
+            public string Description { get; set; }
+            public string Description2 { get; set; }
+        }
+
+        public static async Task<ResultSuccess<DtoSaleOrderFinalizedState>> AddSigniture(Guid orderId, string imageBase64)
+        {
+            try
+            {
+                var Data = new[]
+                    {
+                        new KeyValuePair<string, string>("orderId", orderId.ToString()),
+                        new KeyValuePair<string, string>("signitureImage", imageBase64),
+                    };
+
+                HttpContent Content = new FormUrlEncodedContent(Data);
+                //?orderId={orderId}&signitureImage={imageBase64}
+                var resultTask = HttpClient.PostAsyncForUnicode(ServerRoot + $"AddSigniture", Content);
+                var result = await resultTask;
+
+                if (resultTask.Exception != null)
+                {
+                    return new ResultSuccess<DtoSaleOrderFinalizedState>(false, resultTask.Exception.ProperMessage());
+                }
+
+                if (!result.Success)
+                    throw new Exception(result.Message);
+
+                var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<DtoSaleOrderFinalizedState>>(result.Data);
+
+                if (!resultDeserialized.Success)
+                {
+                    return new ResultSuccess<DtoSaleOrderFinalizedState>(false, resultDeserialized.Message);
+                }
+
+                return new ResultSuccess<DtoSaleOrderFinalizedState>(true, "", resultDeserialized.Data);
+            }
+            catch (Exception ex)
+            {
+                return new ResultSuccess<DtoSaleOrderFinalizedState>(false, ex.ProperMessage());
             }
         }
 
@@ -1690,6 +1968,7 @@ namespace Kara.Assets
                     App.QRScannerInVisitorAppForSelectingStuffTemplates = AppSettings[0].QRScannerInVisitorAppForSelectingStuffTemplates;
                     App.CalculateStuffsSettlementDaysBasedOn.Value = AppSettings[0].CalculateStuffsSettlementDaysBasedOn;
                     App.UseCollectorAndroidApplication.Value = AppSettings[0].UseCollectorAndroidApplication;
+                    App.UseVisitorsNadroidApplication.Value = AppSettings[0].UseVisitorsNadroidApplication;
                 }
 
                 var AccessesResult = await App.DB.FetchUserAccessesAsync();

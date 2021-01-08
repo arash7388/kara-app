@@ -5,16 +5,37 @@
              x:Class="Kara.SignPad">
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="تایید پیش فاکتور"
-                VerticalOptions="CenterAndExpand" 
+            
+            
+            <Grid Padding="1" VerticalOptions="FillAndExpand" ColumnSpacing="1" RowSpacing="1" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"></RowDefinition>
+                    <RowDefinition Height="300"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0" Text="تایید پیش فاکتور"
+                VerticalOptions="Start" 
                 HorizontalOptions="CenterAndExpand" />
-            <controls:SignaturePadView
+                
+                <controls:SignaturePadView
+                    Grid.Row="1"
 	            x:Name="signatureView"
-	            StrokeWidth="2"
+	            StrokeWidth="3"
 	            StrokeColor="Black"
-	            BackgroundColor="White" />
-            <Button VerticalOptions="CenterAndExpand" Text="تایید" x:Name="btnOk" Clicked="btnOk_Clicked"></Button>
-            <Button VerticalOptions="CenterAndExpand" Text="انصراف" x:Name="btnCancel" Clicked="btnCancel_Clicked"></Button>
+	            BackgroundColor="White"
+                MinimumHeightRequest="300"
+                HorizontalOptions="CenterAndExpand"/>
+                <Button Grid.Row="2" VerticalOptions="End" Text="تایید" x:Name="btnOk" Clicked="btnOk_Clicked"></Button>
+                <Button Grid.Row="3" VerticalOptions="End" Text="انصراف" x:Name="btnCancel" Clicked="btnCancel_Clicked"></Button>
+
+            </Grid>
+            
+            
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -14,7 +14,7 @@ namespace Kara
     {
 
         private ToolbarItem UpdateDBToolbarButton;
-        
+
         ObservableCollection<UpdateItemModel> UpdateItems;
 
         public UpdateDBForm()
@@ -30,16 +30,25 @@ namespace Kara
             this.ToolbarItems.Add(UpdateDBToolbarButton);
 
             UpdateItems = new ObservableCollection<UpdateItemModel>();
-            UpdateItems.Add(new UpdateItemModel("Stuffs", "کالاها", new PartialUpdateDB_Stuffs(), 100));
-            UpdateItems.Add(new UpdateItemModel("StuffGallary", "گالری کالا", new PartialUpdateDB_StuffImages(), 1));
-            UpdateItems.Add(new UpdateItemModel("Stocks", "موجودی", new PartialUpdateDB_Stocks(), 100));
-            UpdateItems.Add(new UpdateItemModel("Partners", "مشتریان", new PartialUpdateDB_Partners(), 100));
-            UpdateItems.Add(new UpdateItemModel("PriceLists", "لیست قیمت", new PartialUpdateDB_PriceLists(), 100));
-            UpdateItems.Add(new UpdateItemModel("DiscountRules", "فرمول تخفیفات", new PartialUpdateDB_DiscountRules(), 100));
+
+            if (App.UseVisitorsNadroidApplication.Value)
+            {
+                UpdateItems.Add(new UpdateItemModel("Stuffs", "کالاها", new PartialUpdateDB_Stuffs(), 100));
+                UpdateItems.Add(new UpdateItemModel("StuffGallary", "گالری کالا", new PartialUpdateDB_StuffImages(), 1));
+                UpdateItems.Add(new UpdateItemModel("Stocks", "موجودی", new PartialUpdateDB_Stocks(), 100));
+                UpdateItems.Add(new UpdateItemModel("Partners", "مشتریان", new PartialUpdateDB_Partners(), 100));
+                UpdateItems.Add(new UpdateItemModel("PriceLists", "لیست قیمت", new PartialUpdateDB_PriceLists(), 100));
+                UpdateItems.Add(new UpdateItemModel("DiscountRules", "فرمول تخفیفات", new PartialUpdateDB_DiscountRules(), 100));
+            }
+
+            if (App.UseCollectorAndroidApplication.Value)
+            {
+                UpdateItems.Add(new UpdateItemModel("Cashes", "صندوق ها", new PartialUpdateDB_Cashes(), 100));
+                UpdateItems.Add(new UpdateItemModel("Banks", "بانک ها", new PartialUpdateDB_Banks(), 100));
+                UpdateItems.Add(new UpdateItemModel("BankAccounts", "حساب های بانکی", new PartialUpdateDB_BankAccounts(), 100));
+            }
+
             UpdateItems.Add(new UpdateItemModel("OtherInformations", "سایر اطلاعات", new PartialUpdateDB_OtherInformations(), 100));
-            UpdateItems.Add(new UpdateItemModel("Cashes", "صندوق ها", new PartialUpdateDB_Cashes(), 100));
-            UpdateItems.Add(new UpdateItemModel("Banks", "بانک ها", new PartialUpdateDB_Banks(), 100));
-            UpdateItems.Add(new UpdateItemModel("BankAccounts", "حساب های بانکی", new PartialUpdateDB_BankAccounts(), 100));
 
             UpdatableItems.ItemsSource = UpdateItems;
         }
@@ -49,10 +58,10 @@ namespace Kara
             try
             {
                 this.ToolbarItems.Remove(UpdateDBToolbarButton);
-                
+
                 foreach (var item in UpdateItems)
                     item.UpdateOperationNotStarted = false;
-                
+
                 var UpdatingItems = UpdateItems.Where(a => a.Selected).ToArray();
                 foreach (var UpdatingItem in UpdatingItems)
                 {
@@ -88,7 +97,7 @@ namespace Kara
                 DBRepository._AllStuffsDataInitialized = false;
                 App.DB.ClearFetchedDiscountRules();
 
-                if(App.LastPriceListOrDiscountRuleVersionChanged)
+                if (App.LastPriceListOrDiscountRuleVersionChanged)
                 {
                     await App.RecalculateUnsentOrdersPriceAndDiscount();
                     App.LastPriceListOrDiscountRuleVersionChanged = false;

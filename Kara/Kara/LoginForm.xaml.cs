@@ -111,7 +111,7 @@ namespace Kara
                 BusyIndicator.IsRunning = true;
 
                 var locationTask = App.CheckGps();
-                
+
                 LoginErrorText.IsVisible = false;
                 var _ServerAddress = ServerAddress != null ? ServerAddress.Text != null ? ServerAddress.Text.ReplacePersianDigits() : "" : "";
                 App.ServerAddress = _ServerAddress;
@@ -119,7 +119,11 @@ namespace Kara
                 var loginTask = Kara.Assets.Connectivity.Login(Username.Text, Password.Text);
                 await locationTask;
                 var loginResult = await loginTask;
-                var tasks = new Task[] { locationTask, loginTask };
+
+                var getSettingTask = Kara.Assets.Connectivity.GetAndroidAppSettings(Username.Text, Password.Text);
+                await getSettingTask;
+
+                var tasks = new Task[] { locationTask, loginTask, getSettingTask };
                 Task.WaitAll(tasks);
 
                 BusyIndicator.IsRunning = false;
@@ -142,6 +146,10 @@ namespace Kara
                 App.UserPersonnelId.Value = loginResult.Data.PersonnelId;
                 App.UserEntityId.Value = loginResult.Data.EntityId;
                 App.UserRealName.Value = loginResult.Data.RealName;
+                App.EntityCode.Value = loginResult.Data.EntityCode;
+
+                App.UseVisitorsNadroidApplication.Value = getSettingTask.Result.Data.UseVisitorsNadroidApplication;
+                App.UseCollectorAndroidApplication.Value = getSettingTask.Result.Data.UseCollectorAndroidApplication;
 
                 await Navigation.PushAsync(new MainMenu()
                 {

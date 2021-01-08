@@ -9,6 +9,7 @@ namespace Kara.Assets
         public Guid PersonnelId { get; set; }
         public Guid EntityId { get; set; }
         public string RealName { get; set; }
+        public string EntityCode { get; set; }
     }
 
     public class UpdateDB_StuffBatchModel
@@ -69,7 +70,8 @@ namespace Kara.Assets
         public bool OrderPrintShowSmallUnitFee { get; set; }
         public bool UseVisitProgram { get; set; }
         public long? _VisitorBeginWorkTime { get; set; }
-        public TimeSpan? VisitorBeginWorkTime {
+        public TimeSpan? VisitorBeginWorkTime
+        {
             get
             {
                 return _VisitorBeginWorkTime.HasValue ? new TimeSpan(_VisitorBeginWorkTime.Value) : new TimeSpan?();
@@ -108,6 +110,7 @@ namespace Kara.Assets
         public int CalculateStuffsSettlementDaysBasedOn { get; set; }
         public bool DefineWarehouseForSaleAndBuy { get; set; }
         public bool UseCollectorAndroidApplication { get; set; }
+        public bool UseVisitorsNadroidApplication { get; set; }
     }
     public class UpdateDB_OtherInformationBatchModel
     {

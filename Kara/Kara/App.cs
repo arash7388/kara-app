@@ -227,6 +227,7 @@ namespace Kara
         public static SettingField<bool> DefineWarehouseForSaleAndBuy = new SettingField<bool>("DefineWarehouseForSaleAndBuy", false);
         public static SettingField<int> CalculateStuffsSettlementDaysBasedOn = new SettingField<int>("CalculateStuffsSettlementDaysBasedOn", 0);
         public static SettingField<bool> UseCollectorAndroidApplication = new SettingField<bool>("UseCollectorAndroidApplication", false);
+        public static SettingField<bool> UseVisitorsNadroidApplication = new SettingField<bool>("UseVisitorsNadroidApplication", false);
         public static SettingField<bool> UseBarcodeScannerInVisitorAppToSelectStuff = new SettingField<bool>("UseBarcodeScannerInVisitorAppToSelectStuff", false);
         public static SettingField<bool> UseQRScannerInVisitorAppToSelectStuff = new SettingField<bool>("UseQRScannerInVisitorAppToSelectStuff", false);
         private static SettingField<string> _QRScannerInVisitorAppForSelectingStuffTemplates = new SettingField<string>("QRScannerInVisitorAppForSelectingStuffTemplates", "");
@@ -408,6 +409,7 @@ namespace Kara
         public static SettingField<Guid> UserPersonnelId = new SettingField<Guid>("UserPersonnelId", Guid.Empty);
         public static SettingField<Guid> UserEntityId = new SettingField<Guid>("UserEntityId", Guid.Empty);
         public static SettingField<string> UserRealName = new SettingField<string>("UserRealName", "");
+        public static SettingField<string> EntityCode = new SettingField<string>("EntityCode", "");
         public static SettingField<Guid> LastLoginUserId = new SettingField<Guid>("LastLoginUserId", Guid.Empty);
         public static DBRepository DB;
         public static DBRepository.AccessModel Accesses;

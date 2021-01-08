@@ -38,15 +38,7 @@ namespace Kara
 
         public SaleTotal()
         {
-            try
-            {
-                InitializeComponent();
-            }
-            catch (Exception ex)
-            {
-
-            }
-            
+            InitializeComponent();
 
             TotalsView.ItemTapped += TotalsView_ItemTapped;
             TotalsView.OnLongClick += TotalsView_OnLongClick;
@@ -144,8 +136,8 @@ namespace Kara
                 var totals = new ResultSuccess<List<SaleTotalsModel>>() { Success = true };
                 totals.Data = new List<SaleTotalsModel>()
                 {
-                    new SaleTotalsModel(){DriverCode="123",DriverName="d1 name",TotalCode="123",OrdersCount=3,PayeeCode="10213",PayeeName="asdsadasd",TotalId=new Guid(),TotalPrice=200000,TotalDate= DateTime.Now},
-                    new SaleTotalsModel(){DriverCode="456",DriverName="d2 name",TotalCode="456",OrdersCount=15,PayeeCode="3465213",PayeeName="relktj dfg",TotalId=new Guid(),TotalPrice=14500000,TotalDate=DateTime.Now.AddDays(5)},
+                    new SaleTotalsModel(){DriverCode="123",DriverName="d1 name",TotalCode="123",OrdersCount=3,PayeeCode="10213",PayeeName="asdsadasd",TotalId=new Guid("D7DA45EA-BB3F-430D-AB22-0015A97D90E0"),TotalPrice=200000,TotalDate= DateTime.Now},
+                    new SaleTotalsModel(){DriverCode="456",DriverName="d2 name",TotalCode="456",OrdersCount=15,PayeeCode="3465213",PayeeName="relktj dfg",TotalId=new Guid("D7DA45EA-BB3F-430D-AB22-0015A97D90E0"),TotalPrice=14500000,TotalDate=DateTime.Now.AddDays(5)},
                 };
 
                 if (!totals.Success)

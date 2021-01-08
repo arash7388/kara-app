@@ -240,9 +240,9 @@ namespace Kara
                                                                                                                     //35.77058910303877, 51.33699392144137 taghato ashrafi niyayesh 2
                                                                                                                     //35.77047516927987, 51.31835622724807 taghato  satari niyayesh 1
 
-                    new TotalDetailModel{EntityCode="1",EntityName="ی لیبل",Address="آدرس", GeoLocation_Lat=(decimal?)35.77047516927987,GeoLocation_Long=(decimal?)51.31835622724807},
-                    new TotalDetailModel{EntityCode="2",EntityName="شسی",Address="آدرس", GeoLocation_Lat=(decimal?)35.77058910303877,GeoLocation_Long=(decimal?)51.33699392144137},
-                    new TotalDetailModel{EntityCode="3",EntityName="سیبس",Address="آدرس", GeoLocation_Lat=(decimal?)35.77819690121176,GeoLocation_Long=(decimal?)51.33577083417429},
+                    new TotalDetailModel{EntityCode="1",EntityName="ی لیبل",Address="آدرس", GeoLocation_Lat=(decimal?)35.77047516927987,GeoLocation_Long=(decimal?)51.31835622724807,OrderId=new Guid("9A304202-3916-425E-B5A9-000070C10E82")},
+                    new TotalDetailModel{EntityCode="2",EntityName="شسی",Address="آدرس", GeoLocation_Lat=(decimal?)35.77058910303877,GeoLocation_Long=(decimal?)51.33699392144137,OrderId=new Guid("406A46C5-7A38-4BEC-B62D-0000D77B4258")},
+                    new TotalDetailModel{EntityCode="3",EntityName="سیبس",Address="آدرس", GeoLocation_Lat=(decimal?)35.77819690121176,GeoLocation_Long=(decimal?)51.33577083417429,OrderId=new Guid("F216BEE8-C22C-4595-8F65-00017C1EF608")},
 
                     
                 }; 
