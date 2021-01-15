@@ -331,7 +331,7 @@ namespace Kara.Assets
             }
         }
 
-
+        
         public class SaleTotalsModel
         {
             public Guid TotalId { get; set; }
@@ -422,6 +422,44 @@ namespace Kara.Assets
             //public decimal WeightSum { get; set; }
             //public decimal WeightSumPercent { get; set; }
         }
+
+
+        
+
+        public static async Task<ResultSuccess<GetOrderEditDataDto>> GetEditData(Guid orderId, bool? NotForEdit, bool? ForReInsertTheOrder, bool? FromDistributionReversionForm, bool AllowEditInTransportationState)
+        {
+            try
+            {
+                var url = ServerRoot + $"GetEditData?orderId={orderId}&NotForEdit={NotForEdit}&ForReInsertTheOrder={ForReInsertTheOrder}&FromDistributionReversionForm={FromDistributionReversionForm}&AllowEditInTransportationState={AllowEditInTransportationState}";
+                var resultTask = HttpClient.GetStringAsyncForUnicode(url);
+                //var resultTask = HttpClient.GetStringAsyncForUnicode(ServerRoot + $"GetEditData?id={id}");
+
+                var result = await resultTask;
+
+                if (resultTask.Exception != null)
+                {
+                    return new ResultSuccess<GetOrderEditDataDto>(false, resultTask.Exception.ProperMessage());
+                }
+
+                if (!result.Success)
+                    throw new Exception(result.Message);
+
+                var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<GetOrderEditDataDto>>(result.Data);
+
+                if (!resultDeserialized.Success)
+                {
+                    return new ResultSuccess<GetOrderEditDataDto>(false, resultDeserialized.Message);
+                }
+
+                return new ResultSuccess<GetOrderEditDataDto>(true, "", resultDeserialized.Data);
+            }
+            catch (Exception ex)
+            {
+                return new ResultSuccess<GetOrderEditDataDto>(false, ex.ProperMessage());
+            }
+        }
+
+
         public static async Task<ResultSuccess<List<SaleTotalsModel>>> GetPayeeSaleTotals(string UserName, string Password, string CurrentVersionNumber, Guid userId, string payeeCode)
         {
             try
@@ -454,48 +492,20 @@ namespace Kara.Assets
 
         public class TotalDetailModel
         {
-            private bool _Selected;
-            public bool Selected
-            {
-                get
-                {
-                    return _Selected;
-                }
-
-                set
-                {
-                    _Selected = value;
-                    OnPropertyChanged("Selected");
-                    //OnPropertyChanged("RowColor");
-
-                    //if (App.InsertedInformations_Partners != null) 
-                    //    App.InsertedInformations_Partners.RefreshToolbarItems(); 
-                }
-            }
-
-            public event PropertyChangedEventHandler PropertyChanged;
-            public void OnPropertyChanged(string propertyName)
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            }
-
-            public static bool Multiselection { get; set; }
-            public GridLength CheckBoxColumnWidth { get { return Multiselection ? 60 : 0; } }
-
-
-            public Guid OrderId { get; internal set; }
-            public int OrderPreCode { get; internal set; }
-            public string EntityCode { get; internal set; }
-            public string EntityName { get; internal set; }
-            public string PersonLegalName { get; internal set; }
-            public string AccountingZone { get; internal set; }
-            public string Address { get; internal set; }
-            public string Tels { get; internal set; }
-            public decimal Price { get; internal set; }
-            public string Visitor { get; internal set; }
-            public string SettlementName { get; internal set; }
-            public decimal? GeoLocation_Lat { get; internal set; }
-            public decimal? GeoLocation_Long { get; internal set; }
+            public Guid OrderId { get; set; }
+            public int OrderPreCode { get; set; }
+            public string EntityCode { get; set; }
+            public string EntityName { get; set; }
+            public string PersonLegalName { get; set; }
+            public string AccountingZone { get; set; }
+            public string Address { get; set; }
+            public string Tels { get; set; }
+            public decimal Price { get; set; }
+            public string Visitor { get; set; }
+            public string SettlementName { get; set; }
+            public decimal GeoLocation_Lat { get; set; }
+            public decimal GeoLocation_Long { get; set; }
+            public Guid PartnerEntityId { get; set; }
         }
 
         public static async Task<ResultSuccess<List<TotalDetailModel>>> GetTotalDetails(string UserName, string Password, string CurrentVersionNumber, Guid totalId)
@@ -544,18 +554,19 @@ namespace Kara.Assets
             public string Description2 { get; set; }
         }
 
-        public static async Task<ResultSuccess<DtoSaleOrderFinalizedState>> AddSigniture(Guid orderId, string imageBase64)
+        public static async Task<ResultSuccess<DtoSaleOrderFinalizedState>> AddSigniture(Guid orderId,string imageBase64)
         {
             try
             {
                 var Data = new[]
                     {
                         new KeyValuePair<string, string>("orderId", orderId.ToString()),
+                        new KeyValuePair<string, string>("commonUserId", App.UserId.ToString()),
                         new KeyValuePair<string, string>("signitureImage", imageBase64),
                     };
 
                 HttpContent Content = new FormUrlEncodedContent(Data);
-                //?orderId={orderId}&signitureImage={imageBase64}
+                
                 var resultTask = HttpClient.PostAsyncForUnicode(ServerRoot + $"AddSigniture", Content);
                 var result = await resultTask;
 

@@ -33,6 +33,7 @@ namespace Kara
         private Guid? SettlementTypeId;
         MyKeyboard<QuantityEditingStuffModel, decimal> QuantityKeyboard;
         Guid? WarehouseId;
+        bool FromTour;
         //Dictionary<Guid, decimal> PackagesQuantity;
 
         public OrderBeforePreviewForm
@@ -46,10 +47,13 @@ namespace Kara
             string Description,
             OrderInsertForm OrderInsertForm,
             bool CanChangePartner,
-            Guid? WarehouseId
+            Guid? WarehouseId,
+            bool fromTour=false
         )
         {
             InitializeComponent();
+
+            FromTour = fromTour;
 
             this.WarehouseId = WarehouseId;
 
@@ -128,11 +132,13 @@ namespace Kara
 
             if(SaleOrder != null)
                 _SettlementTypeId = SaleOrder.SettlementTypeId;
-            if (_SettlementTypeId.HasValue)
+
+            if (_SettlementTypeId.HasValue && _SettlementTypeId.Value!=Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
                 SettlementTypePicker.SelectedIndex = SettlementTypes.Select((a, index) => new { a, index }).Single(a => a.a.Id == _SettlementTypeId).index;
                 SettlementTypeLabel.Text = SettlementTypes[SettlementTypePicker.SelectedIndex].Name;
             }
+
             SettlementTypeId = _SettlementTypeId;
 
             SettlementTypePicker.SelectedIndexChanged += (sender, e) => {

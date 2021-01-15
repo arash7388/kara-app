@@ -3,6 +3,7 @@ using Kara.CustomRenderer;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
@@ -32,13 +33,13 @@ namespace Kara
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SaleTotalDetails : GradientContentPage
     {
-        public ToolbarItem ToolbarItem_Confirm, ToolbarItem_SelectAll;
-        private bool ToolbarItem_Confirm_Visible, ToolbarItem_SelectAll_Visible, BackButton_Visible;
+        public ToolbarItem ToolbarItem_Confirm, ToolbarItem_SelectAll, ToolbarItem_EditOrder;
+        private bool ToolbarItem_Confirm_Visible, ToolbarItem_SelectAll_Visible, ToolbarItem_EditOrder_Visible, BackButton_Visible;
         private bool MultiSelectionMode = false;
 
         Guid SelectedTotalId;
-                       
-        public ObservableCollection<TotalDetailModel> TotalDetailsObservableCollection { get; private set; }
+
+        public ObservableCollection<TotalDetailViewModel> TotalDetailsObservableCollection { get; private set; }
 
         bool TapEventHandlingInProgress = false;
 
@@ -49,7 +50,7 @@ namespace Kara
             SelectedTotalId = totalId;
 
             MultiSelectionMode = false;
-            TotalDetailModel.Multiselection = false;
+            TotalDetailViewModel.Multiselection = false;
 
             TotalDetailsView.ItemTapped += TotalDetailsView_ItemTapped;
             TotalDetailsView.OnLongClick += TotalDetailsView_OnLongClick;
@@ -68,10 +69,67 @@ namespace Kara
             ToolbarItem_Confirm.Priority = 1;
             ToolbarItem_Confirm.Activated += ToolbarItem_Confirm_Activated;
 
+            ToolbarItem_EditOrder = new ToolbarItem();
+            ToolbarItem_EditOrder.Text = "ویرایش پ ف";
+            ToolbarItem_EditOrder.Icon = "Edit.png";
+            ToolbarItem_EditOrder.Order = ToolbarItemOrder.Primary;
+            ToolbarItem_EditOrder.Priority = 1;
+            ToolbarItem_EditOrder.Activated += ToolbarItem_EditOrder_Activated;
+
             BusyIndicatorContainder.BackgroundColor = Color.FromRgba(255, 255, 255, 70);
             BusyIndicator.Color = Color.FromRgba(80, 100, 150, 255);
+        }
 
-            //Navigate();
+        private async void ToolbarItem_EditOrder_Activated(object sender, EventArgs e)
+        {
+            var selectedPartnerId = TotalDetailsObservableCollection.Where(a => a.Selected).Select(a => a.PartnerEntityId).FirstOrDefault();
+            var partner = await App.DB.GetPartnerAsync(selectedPartnerId,null);
+            Models.Partner p = new Models.Partner()
+            {
+                Code = partner.Data.Code,
+                LegalName = partner.Data.LegalName,
+                Name = partner.Data.Name,
+                LastName = partner.Data.LastName,
+                FirstName = partner.Data.FirstName,
+                IsLegal = partner.Data.IsLegal
+            };
+
+            var selectedOrderId = TotalDetailsObservableCollection.FirstOrDefault(a => a.Selected).OrderId;
+            var orderData = await Connectivity.GetEditData(selectedOrderId, true, true, false, false);
+
+            DtoEditSaleOrder selectedOrder = null;
+            
+            Models.SaleOrder order = null;
+
+            if (orderData.Success)
+            {
+                var sr = orderData.Data.SaleOrder;
+
+                order = new Models.SaleOrder()
+                {
+                    Id = sr.OrderId,
+                    PartnerId = sr.PartnerId,
+                    Description = sr.OrderDescription,
+                    PreCode = sr.OrderPreCode,
+                    SettlementTypeId=sr.SettlementTypeId,
+                    DiscountPercent=sr.OrderDiscountPercent,
+                    SaleOrderStuffs = orderData.Data.SaleOrderStuffs.Select(s => new Models.SaleOrderStuff()
+                    {
+                        ArticleIndex = s.Index,
+                        PackageId = s.PackageId,
+                        Quantity=s.Quantity,
+                        SalePrice=s.SalePrice,
+                        VATPercent=s.VATPercent
+                    }
+                    ).ToArray()
+                };
+            }
+
+
+            var orderInsertForm = new OrderInsertForm(p, order, null, null, null,true);
+            
+            await Navigation.PushAsync(orderInsertForm);
+
         }
 
         private void ToolbarItem_SelectAll_Activated(object sender, EventArgs e)
@@ -101,38 +159,33 @@ namespace Kara
             Navigation.PushModalAsync(signPad, true);
         }
 
-        protected override void OnAppearing()
+        protected override async void OnAppearing()
         {
-            var source = CalcOrderedDetails(SelectedTotalId);
+            var source = await CalcOrderedDetails(SelectedTotalId);
 
             TotalDetailsView.IsVisible = true;
-            TotalDetailsObservableCollection = new ObservableCollection<TotalDetailModel>(source.GetAwaiter().GetResult());
+            TotalDetailsObservableCollection = new ObservableCollection<TotalDetailViewModel>(source);
             TotalDetailsView.ItemsSource = TotalDetailsObservableCollection;
+
             base.OnAppearing();
         }
 
         public async Task Navigate(Location location)
-        {           
+        {
             //var options = new MapLaunchOptions { NavigationMode = NavigationMode.Driving };
             //Launcher.OpenAsync(location);
             await Map.OpenAsync(location);
         }
 
-        private async void ToolbarItem_Bank_Activated(object sender, EventArgs e)
-        {
-            //ReceiptBank receiptBank = new ReceiptBank(sumSelected, SelectedPartner.Id)
-            //{
-            //    StartColor = Color.FromHex("E6EBEF"),
-            //    EndColor = Color.FromHex("A6CFED")
-            //};
 
-            //try { await Navigation.PushAsync(receiptBank); } catch (Exception) { }
-        }
-               
         private async void TotalDetailsView_ItemTapped(object sender, ItemTappedEventArgs e)
         {
-            var TappedItem = (TotalDetailModel)e.Item;
-            await Navigate(new Location((double)TappedItem.GeoLocation_Lat, (double)TappedItem.GeoLocation_Long));
+            var TappedItem = (TotalDetailViewModel)e.Item;
+            
+            if (TappedItem.GeoLocation_Lat == 0)
+                App.ShowError("خطا", "مکان طرف حساب نامشخص است", "باشه");
+            else
+                await Navigate(new Location((double)TappedItem.GeoLocation_Lat, (double)TappedItem.GeoLocation_Long));
         }
 
         protected override bool OnBackButtonPressed()
@@ -151,7 +204,7 @@ namespace Kara
                 item.Selected = false;
 
             MultiSelectionMode = false;
-            TotalDetailModel.Multiselection = false;
+            TotalDetailViewModel.Multiselection = false;
             TotalDetailsView.ItemsSource = null;
             TotalDetailsView.ItemsSource = TotalDetailsObservableCollection;
             RefreshToolbarItems();
@@ -161,11 +214,12 @@ namespace Kara
         public void RefreshToolbarItems()
         {
             ToolbarItem_Confirm_Visible = false;
+            ToolbarItem_EditOrder_Visible = false;
 
 
             if (MultiSelectionMode)
             {
-                ToolbarItem_SelectAll_Visible = true;
+                //ToolbarItem_SelectAll_Visible = true;//? temp
                 var AllOrdersSelected = TotalDetailsObservableCollection.All(a => a.Selected);
                 ToolbarItem_SelectAll.Icon = AllOrdersSelected ? "SelectAll_Full.png" : "SelectAll_Empty.png";
             }
@@ -180,27 +234,31 @@ namespace Kara
                 //if (!MultiSelectionMode)
                 //    ToolbarItem_SearchBar_Visible = true;
                 ToolbarItem_Confirm_Visible = false;
+                ToolbarItem_EditOrder_Visible = false;
             }
             else if (MultiSelectionMode)
             {
                 ToolbarItem_Confirm_Visible = true;
+                ToolbarItem_EditOrder_Visible = true;
             }
             else
             {
                 MultiSelectionMode = false;
-                TotalDetailModel.Multiselection = false;
+                TotalDetailViewModel.Multiselection = false;
                 ToolbarItem_Confirm_Visible = false;
+                ToolbarItem_EditOrder_Visible = false;
                 ToolbarItem_SelectAll_Visible = false;
                 TotalDetailsObservableCollection.ForEach(item => item.Selected = false);
             }
 
-            RefreshToolbarItems(BackButton_Visible,ToolbarItem_Confirm_Visible, ToolbarItem_SelectAll_Visible);
+            RefreshToolbarItems(BackButton_Visible, ToolbarItem_Confirm_Visible, ToolbarItem_EditOrder_Visible,ToolbarItem_SelectAll_Visible);
         }
 
         public void RefreshToolbarItems
         (
             bool BackButton_Visible,
             bool ToolbarItem_Confirm_Visible,
+            bool ToolbarItem_EditOrder_Visible,
             bool ToolbarItem_SelectAll_Visible
         )
         {
@@ -213,15 +271,21 @@ namespace Kara
                 this.ToolbarItems.Add(ToolbarItem_Confirm);
             if (!ToolbarItem_Confirm_Visible && this.ToolbarItems.Contains(ToolbarItem_Confirm))
                 this.ToolbarItems.Remove(ToolbarItem_Confirm);
+            
+            if (ToolbarItem_EditOrder_Visible && !this.ToolbarItems.Contains(ToolbarItem_EditOrder))
+                this.ToolbarItems.Add(ToolbarItem_EditOrder);
+            if (!ToolbarItem_EditOrder_Visible && this.ToolbarItems.Contains(ToolbarItem_EditOrder))
+                this.ToolbarItems.Remove(ToolbarItem_EditOrder);
 
-            if (ToolbarItem_SelectAll_Visible && !this.ToolbarItems.Contains(ToolbarItem_SelectAll))
-                this.ToolbarItems.Add(ToolbarItem_SelectAll);
-            if (!ToolbarItem_SelectAll_Visible && this.ToolbarItems.Contains(ToolbarItem_SelectAll))
-                this.ToolbarItems.Remove(ToolbarItem_SelectAll);
+            //temp comment
+            //if (ToolbarItem_SelectAll_Visible && !this.ToolbarItems.Contains(ToolbarItem_SelectAll))
+            //    this.ToolbarItems.Add(ToolbarItem_SelectAll);
+            //if (!ToolbarItem_SelectAll_Visible && this.ToolbarItems.Contains(ToolbarItem_SelectAll))
+            //    this.ToolbarItems.Remove(ToolbarItem_SelectAll);
         }
 
 
-        private async Task<List<TotalDetailModel>> CalcOrderedDetails(Guid totalId)
+        private async Task<List<TotalDetailViewModel>> CalcOrderedDetails(Guid totalId)
         {
             var orderedResult = new List<TotalDetailModel>();
 
@@ -231,24 +295,23 @@ namespace Kara
 
                 //temp
                 //var details = await Connectivity.GetTotalDetails(App.Username.Value, App.Password.Value, App.CurrentVersionNumber, totalId);
-                
+
                 var details = new ResultSuccess<List<TotalDetailModel>>() { Success = true };
-                
+
                 details.Data = new List<TotalDetailModel>
                 {
                                                                                                                     //35.77819690121176, 51.33577083417429 sare ashrafi 3
                                                                                                                     //35.77058910303877, 51.33699392144137 taghato ashrafi niyayesh 2
                                                                                                                     //35.77047516927987, 51.31835622724807 taghato  satari niyayesh 1
 
-                    new TotalDetailModel{EntityCode="1",EntityName="ی لیبل",Address="آدرس", GeoLocation_Lat=(decimal?)35.77047516927987,GeoLocation_Long=(decimal?)51.31835622724807,OrderId=new Guid("9A304202-3916-425E-B5A9-000070C10E82")},
-                    new TotalDetailModel{EntityCode="2",EntityName="شسی",Address="آدرس", GeoLocation_Lat=(decimal?)35.77058910303877,GeoLocation_Long=(decimal?)51.33699392144137,OrderId=new Guid("406A46C5-7A38-4BEC-B62D-0000D77B4258")},
-                    new TotalDetailModel{EntityCode="3",EntityName="سیبس",Address="آدرس", GeoLocation_Lat=(decimal?)35.77819690121176,GeoLocation_Long=(decimal?)51.33577083417429,OrderId=new Guid("F216BEE8-C22C-4595-8F65-00017C1EF608")},
+                    new TotalDetailModel{EntityCode="1",EntityName="ی لیبل",Address="آدرس", GeoLocation_Lat=(decimal)35.77047516927987,GeoLocation_Long=(decimal)51.31835622724807,OrderId=new Guid("9A304202-3916-425E-B5A9-000070C10E82"),PartnerEntityId=new Guid("778C408B-1C09-4CD3-BB5D-122E7D8EE4FD")},
+                    new TotalDetailModel{EntityCode="2",EntityName="شسی",Address="آدرس", GeoLocation_Lat=(decimal)35.77058910303877,GeoLocation_Long=(decimal)51.33699392144137,OrderId=new Guid("406A46C5-7A38-4BEC-B62D-0000D77B4258"),PartnerEntityId=new Guid("87013AA3-51CC-4913-B89C-75149D4C6C7F")},
+                    new TotalDetailModel{EntityCode="3",EntityName="سیبس",Address="آدرس", GeoLocation_Lat=(decimal)35.77819690121176,GeoLocation_Long=(decimal)51.33577083417429,OrderId=new Guid("F216BEE8-C22C-4595-8F65-00017C1EF608"),PartnerEntityId=new Guid("279FC028-FB45-4F10-841C-118FE99268D0")},
+                };
 
-                    
-                }; 
-                
                 var currentLocation = await Geolocation.GetLastKnownLocationAsync();
-                details.Data.Insert(0, new TotalDetailModel() { GeoLocation_Lat = (decimal?)currentLocation.Latitude, GeoLocation_Long = (decimal?)currentLocation.Longitude });
+
+                details.Data.Insert(0, new TotalDetailModel() { GeoLocation_Lat = (decimal)currentLocation.Latitude, GeoLocation_Long = (decimal)currentLocation.Longitude });
 
                 var orderedLocations = new List<Location>();
                 var orderedIndexes = new int[details.Data.Count];
@@ -275,28 +338,28 @@ namespace Kara
 
                 var totalCount = 0;
 
-                while (totalCount != locationCount-1)
+                while (totalCount != locationCount - 1)
                 {
                     int k = orderedIndexes[totalCount];
-                    
+
                     for (int m = 0; m < locationCount; m++)
                     {
                         if (k != m && distMatrix[k, m] < d && !orderedIndexes.Contians(m))
                         {
-                            orderedIndexes[totalCount+1] = m;
+                            orderedIndexes[totalCount + 1] = m;
                             d = distMatrix[k, m];
                         }
                     }
 
                     d = double.MaxValue;
-                    
+
                     totalCount++;
 
                 }
-                               
+
                 orderedResult = new List<TotalDetailModel>();
 
-                for (int x = 0; x < orderedIndexes.Length; x++)
+                for (int x = 1; x < orderedIndexes.Length; x++)
                 {
                     orderedResult.Add(details.Data[orderedIndexes[x]]);
                 }
@@ -304,14 +367,31 @@ namespace Kara
             }
             catch (Exception ex)
             {
-
+                App.ShowError("خطا", ex.Message, "باشه");
             }
             finally
             {
                 BusyIndicatorContainder.IsVisible = false;
             }
 
-            return orderedResult;
+            return orderedResult.Select(a => new TotalDetailViewModel
+            {
+                AccountingZone = a.AccountingZone,
+                Address = a.Address,
+                EntityCode = a.EntityCode,
+                EntityName = a.EntityName,
+                GeoLocation_Lat = a.GeoLocation_Lat,
+                GeoLocation_Long = a.GeoLocation_Long,
+                OrderId = a.OrderId,
+                OrderPreCode = a.OrderPreCode,
+                PersonLegalName = a.PersonLegalName,
+                Price = a.Price,
+                Selected = false,
+                SettlementName = a.SettlementName,
+                Tels = a.Tels,
+                Visitor = a.Visitor,
+                PartnerEntityId=a.PartnerEntityId
+            }).ToList();
         }
 
         private async void TotalDetailsView_OnLongClick(object sender, EventArgs e)
@@ -322,17 +402,17 @@ namespace Kara
             if (!MultiSelectionMode)
             {
                 MultiSelectionMode = true;
-                TotalDetailModel.Multiselection = true;
+                TotalDetailViewModel.Multiselection = true;
 
                 TotalDetailsView.ItemsSource = null;
                 TotalDetailsView.ItemsSource = TotalDetailsObservableCollection;
 
                 await Task.Delay(100);
-                FactorsView_ItemTapped(OrderedItem);
+                TotalDetailsView_ItemTapped(OrderedItem);
             }
         }
 
-        private void FactorsView_ItemTapped(TotalDetailModel TappedItem)
+        private void TotalDetailsView_ItemTapped(TotalDetailViewModel TappedItem)
         {
             if (MultiSelectionMode)
             {
@@ -384,43 +464,86 @@ namespace Kara
             }
         }
 
-                   
-            //var testResult = new List<UnSettledOrderModel>
-            //            {
-            //                new UnSettledOrderModel
-            //                {
-            //                    DriverName = "رضا محمودی",
-            //                    OrderCode = "1001",
-            //                    OrderDate = DateTime.Now.ToShortStringForDate().ReplaceLatinDigits(),
-            //                    OrderId = new Guid(),
-            //                    Remainder = 10000.ToString(),
-            //                    Price = 14000.ToString()
-            //                },
-            //                 new UnSettledOrderModel
-            //                {
-            //                    DriverName = "علی محمودی",
-            //                    OrderCode = "1002",
-            //                    OrderDate = DateTime.Now.AddDays(4). ToShortStringForDate().ReplaceLatinDigits(),
-            //                    OrderId = new Guid(),
-            //                    Remainder = 20000.ToString(),
-            //                    Price = 24000.ToString()
-            //                },
-            //                  new UnSettledOrderModel
-            //                {
-            //                    DriverName = "آرش سیبسی",
-            //                    OrderCode = "1003",
-            //                    OrderDate = DateTime.Now.AddDays(8).ToShortStringForDate().ReplaceLatinDigits(),
-            //                    OrderId = new Guid(),
-            //                    Remainder = 30000.ToString(),
-            //                    Price = 34000.ToString()
-            //                }
-            //            };
 
-            //    TotalsView.IsVisible = true;
-            //    FactorsObservableCollection = new ObservableCollection<UnSettledOrderModel>(testResult);
-            //    TotalsView.ItemsSource = FactorsObservableCollection;
-        
+        //var testResult = new List<UnSettledOrderModel>
+        //            {
+        //                new UnSettledOrderModel
+        //                {
+        //                    DriverName = "رضا محمودی",
+        //                    OrderCode = "1001",
+        //                    OrderDate = DateTime.Now.ToShortStringForDate().ReplaceLatinDigits(),
+        //                    OrderId = new Guid(),
+        //                    Remainder = 10000.ToString(),
+        //                    Price = 14000.ToString()
+        //                },
+        //                 new UnSettledOrderModel
+        //                {
+        //                    DriverName = "علی محمودی",
+        //                    OrderCode = "1002",
+        //                    OrderDate = DateTime.Now.AddDays(4). ToShortStringForDate().ReplaceLatinDigits(),
+        //                    OrderId = new Guid(),
+        //                    Remainder = 20000.ToString(),
+        //                    Price = 24000.ToString()
+        //                },
+        //                  new UnSettledOrderModel
+        //                {
+        //                    DriverName = "آرش سیبسی",
+        //                    OrderCode = "1003",
+        //                    OrderDate = DateTime.Now.AddDays(8).ToShortStringForDate().ReplaceLatinDigits(),
+        //                    OrderId = new Guid(),
+        //                    Remainder = 30000.ToString(),
+        //                    Price = 34000.ToString()
+        //                }
+        //            };
 
-       
+        //    TotalsView.IsVisible = true;
+        //    FactorsObservableCollection = new ObservableCollection<UnSettledOrderModel>(testResult);
+        //    TotalsView.ItemsSource = FactorsObservableCollection;
+
+
+
+    }
+
+    public class TotalDetailViewModel
+    {
+        private bool _Selected;
+        public bool Selected
+        {
+            get
+            {
+                return _Selected;
+            }
+
+            set
+            {
+                _Selected = value;
+                OnPropertyChanged("Selected");
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public static bool Multiselection { get; set; }
+        public GridLength CheckBoxColumnWidth { get { return Multiselection ? 60 : 0; } }
+
+
+        public Guid OrderId { get; internal set; }
+        public int OrderPreCode { get; internal set; }
+        public string EntityCode { get; internal set; }
+        public string EntityName { get; internal set; }
+        public string PersonLegalName { get; internal set; }
+        public string AccountingZone { get; internal set; }
+        public string Address { get; internal set; }
+        public string Tels { get; internal set; }
+        public decimal Price { get; internal set; }
+        public string Visitor { get; internal set; }
+        public string SettlementName { get; internal set; }
+        public decimal GeoLocation_Lat { get; internal set; }
+        public decimal GeoLocation_Long { get; internal set; }
+        public Guid PartnerEntityId { get; set; }
     }
 }

@@ -44,6 +44,7 @@
     <Compile Include="App.cs" />
     <Compile Include="Assets\Connectivity.cs" />
     <Compile Include="Assets\DBRepository.cs" />
+    <Compile Include="Assets\Dto.cs" />
     <Compile Include="Assets\Extensions.cs" />
     <Compile Include="Assets\MobileAppModels.cs" />
     <Compile Include="Assets\PredicateBuilder.cs" />
@@ -56,6 +57,9 @@
     </Compile>
     <Compile Include="MessageForm.xaml.cs">
       <DependentUpon>MessageForm.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ReversionForm.xaml.cs">
+      <DependentUpon>ReversionForm.xaml</DependentUpon>
     </Compile>
     <Compile Include="ReceiptCheque.xaml.cs">
       <DependentUpon>ReceiptCheque.xaml</DependentUpon>
@@ -596,6 +600,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SignPad.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ReversionForm.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

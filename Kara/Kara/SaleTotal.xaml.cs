@@ -129,8 +129,8 @@ namespace Kara
             try
             {
                 BusyIndicatorContainder.IsVisible = true;
-                //temp
 
+                //temp
                 //var totals = await Connectivity.GetPayeeSaleTotals(App.Username.Value, App.Password.Value, App.CurrentVersionNumber, App.UserId.Value, App.EntityCode.Value);
 
                 var totals = new ResultSuccess<List<SaleTotalsModel>>() { Success = true };

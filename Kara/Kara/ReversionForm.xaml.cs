@@ -14,505 +14,505 @@ using XLabs.Forms.Controls;
 
 namespace Kara
 {
-    public class CustomStuffListCell : ViewCell
-    {
-        public static EventHandler UnitNameTapEventHandler, QuantityPlusTapEventHandler, QuantityMinusTapEventHandler, QuantityTextBoxTapEventHandler, GroupTapEventHandler;
-        public static readonly BindableProperty IdProperty =
-            BindableProperty.Create("Id", typeof(string), typeof(CustomStuffListCell), string.Empty);
-        public string Id
-        {
-            get { return (string)GetValue(IdProperty); }
-            set { SetValue(IdProperty, value); }
-        }
+    //public class CustomStuffListCell : ViewCell
+    //{
+    //    public static EventHandler UnitNameTapEventHandler, QuantityPlusTapEventHandler, QuantityMinusTapEventHandler, QuantityTextBoxTapEventHandler, GroupTapEventHandler;
+    //    public static readonly BindableProperty IdProperty =
+    //        BindableProperty.Create("Id", typeof(string), typeof(CustomStuffListCell), string.Empty);
+    //    public string Id
+    //    {
+    //        get { return (string)GetValue(IdProperty); }
+    //        set { SetValue(IdProperty, value); }
+    //    }
 
-        public CustomStuffListCell()
-        {
-            this.SetBinding(CustomStuffListCell.IdProperty, "Id");
+    //    public CustomStuffListCell()
+    //    {
+    //        this.SetBinding(CustomStuffListCell.IdProperty, "Id");
 
-            Grid GridWrapper = new Grid()
-            {
-                Padding = new Thickness(5, 0),
-                RowSpacing = 1,
-                ColumnSpacing = 1,
-                HorizontalOptions = LayoutOptions.FillAndExpand
-            };
-            GridWrapper.SetBinding(Grid.BackgroundColorProperty, "RowColor");
-            var GroupRow1 = new RowDefinition() { };
-            GroupRow1.SetBinding(RowDefinition.HeightProperty, "ListGroupRow1Height");
-            var GroupRow2 = new RowDefinition() { };
-            GroupRow2.SetBinding(RowDefinition.HeightProperty, "ListGroupRow2Height");
-            var StuffRow1 = new RowDefinition() { };
-            StuffRow1.SetBinding(RowDefinition.HeightProperty, "ListStuffRowHeight");
-            var StuffRow2 = new RowDefinition() { };
-            StuffRow2.SetBinding(RowDefinition.HeightProperty, "ListStuffRowHeight");
-            var BatchNumberRow = new RowDefinition() { };
-            BatchNumberRow.SetBinding(RowDefinition.HeightProperty, "BatchNumberRowHeight");
-            GridWrapper.RowDefinitions = new RowDefinitionCollection() { GroupRow1, GroupRow2, StuffRow1, StuffRow2, BatchNumberRow };
+    //        Grid GridWrapper = new Grid()
+    //        {
+    //            Padding = new Thickness(5, 0),
+    //            RowSpacing = 1,
+    //            ColumnSpacing = 1,
+    //            HorizontalOptions = LayoutOptions.FillAndExpand
+    //        };
+    //        GridWrapper.SetBinding(Grid.BackgroundColorProperty, "RowColor");
+    //        var GroupRow1 = new RowDefinition() { };
+    //        GroupRow1.SetBinding(RowDefinition.HeightProperty, "ListGroupRow1Height");
+    //        var GroupRow2 = new RowDefinition() { };
+    //        GroupRow2.SetBinding(RowDefinition.HeightProperty, "ListGroupRow2Height");
+    //        var StuffRow1 = new RowDefinition() { };
+    //        StuffRow1.SetBinding(RowDefinition.HeightProperty, "ListStuffRowHeight");
+    //        var StuffRow2 = new RowDefinition() { };
+    //        StuffRow2.SetBinding(RowDefinition.HeightProperty, "ListStuffRowHeight");
+    //        var BatchNumberRow = new RowDefinition() { };
+    //        BatchNumberRow.SetBinding(RowDefinition.HeightProperty, "BatchNumberRowHeight");
+    //        GridWrapper.RowDefinitions = new RowDefinitionCollection() { GroupRow1, GroupRow2, StuffRow1, StuffRow2, BatchNumberRow };
             
-            GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
-            GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
-            if (App.ShowConsumerPrice.Value)
-                GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
-            GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
-            GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
+    //        GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
+    //        GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
+    //        if (App.ShowConsumerPrice.Value)
+    //            GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
+    //        GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+    //        GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
+    //        GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+    //        GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
 
-            Label GroupLabel = null, GroupPriceSumLabel = null, CodeLabel = null, NameLabel = null, UnitNameLabel = null, StockLabel = null, FeeLabel = null, ConsumerFeeLabel = null, PriceLabel = null, QuantityPlusLabel = null, QuantityMinusLabel = null, QuantityEntry = null;
-            Label BatchNumberLabel = null, ExpirationDateLabel = null, BatchNumberStockLabel = null, BatchNumberQuantityPlusLabel = null, BatchNumberQuantityMinusLabel = null, BatchNumberQuantityEntry = null;
-            Image GroupButtonImage = null;
+    //        Label GroupLabel = null, GroupPriceSumLabel = null, CodeLabel = null, NameLabel = null, UnitNameLabel = null, StockLabel = null, FeeLabel = null, ConsumerFeeLabel = null, PriceLabel = null, QuantityPlusLabel = null, QuantityMinusLabel = null, QuantityEntry = null;
+    //        Label BatchNumberLabel = null, ExpirationDateLabel = null, BatchNumberStockLabel = null, BatchNumberQuantityPlusLabel = null, BatchNumberQuantityMinusLabel = null, BatchNumberQuantityEntry = null;
+    //        Image GroupButtonImage = null;
 
-            GroupLabel = new Label() { LineBreakMode = LineBreakMode.NoWrap, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16 + 2 };
-            GroupButtonImage = new Image() { WidthRequest = 15, HorizontalOptions = LayoutOptions.Start, VerticalOptions = LayoutOptions.Center };
-            GroupPriceSumLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("1845A5"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 13 };
-            CodeLabel = new Label() { LineBreakMode = LineBreakMode.HeadTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
-            NameLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
-            UnitNameLabel = new FullRoundedLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 0 };
-            StockLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
-            FeeLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("1845A5"), HorizontalOptions = LayoutOptions.Start, HorizontalTextAlignment = TextAlignment.Start, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
-            ConsumerFeeLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("1845A5"), HorizontalOptions = LayoutOptions.Start, HorizontalTextAlignment = TextAlignment.Start, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
-            PriceLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("1845A5"), HorizontalOptions = LayoutOptions.Start, HorizontalTextAlignment = TextAlignment.Start, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
-            QuantityPlusLabel = new RightEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "+", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 1 };
-            QuantityMinusLabel = new LeftEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "-", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 1 };
-            QuantityEntry = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 0, BackgroundColor = Color.FromHex("fff"), Padding = new Thickness(10) };
+    //        GroupLabel = new Label() { LineBreakMode = LineBreakMode.NoWrap, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16 + 2 };
+    //        GroupButtonImage = new Image() { WidthRequest = 15, HorizontalOptions = LayoutOptions.Start, VerticalOptions = LayoutOptions.Center };
+    //        GroupPriceSumLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("1845A5"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 13 };
+    //        CodeLabel = new Label() { LineBreakMode = LineBreakMode.HeadTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
+    //        NameLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
+    //        UnitNameLabel = new FullRoundedLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 0 };
+    //        StockLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
+    //        FeeLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("1845A5"), HorizontalOptions = LayoutOptions.Start, HorizontalTextAlignment = TextAlignment.Start, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
+    //        ConsumerFeeLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("1845A5"), HorizontalOptions = LayoutOptions.Start, HorizontalTextAlignment = TextAlignment.Start, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
+    //        PriceLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("1845A5"), HorizontalOptions = LayoutOptions.Start, HorizontalTextAlignment = TextAlignment.Start, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
+    //        QuantityPlusLabel = new RightEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "+", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 1 };
+    //        QuantityMinusLabel = new LeftEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "-", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 1 };
+    //        QuantityEntry = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 0, BackgroundColor = Color.FromHex("fff"), Padding = new Thickness(10) };
 
-            BatchNumberLabel = new Label() { LineBreakMode = LineBreakMode.NoWrap, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 14 };
-            ExpirationDateLabel = new Label() { LineBreakMode = LineBreakMode.NoWrap, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 14 };
-            BatchNumberStockLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 14 };
-            BatchNumberQuantityPlusLabel = new RightEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "+", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 14, Margin = 1 };
-            BatchNumberQuantityMinusLabel = new LeftEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "-", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 14, Margin = 1 };
-            BatchNumberQuantityEntry = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 14, Margin = 0, BackgroundColor = Color.FromHex("fff"), Padding = new Thickness(10) };
+    //        BatchNumberLabel = new Label() { LineBreakMode = LineBreakMode.NoWrap, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 14 };
+    //        ExpirationDateLabel = new Label() { LineBreakMode = LineBreakMode.NoWrap, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 14 };
+    //        BatchNumberStockLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 14 };
+    //        BatchNumberQuantityPlusLabel = new RightEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "+", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 14, Margin = 1 };
+    //        BatchNumberQuantityMinusLabel = new LeftEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "-", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 14, Margin = 1 };
+    //        BatchNumberQuantityEntry = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 14, Margin = 0, BackgroundColor = Color.FromHex("fff"), Padding = new Thickness(10) };
 
-            var ShowConsumerPriceAddedSpace = App.ShowConsumerPrice.Value ? 1 : 0;
+    //        var ShowConsumerPriceAddedSpace = App.ShowConsumerPrice.Value ? 1 : 0;
 
-            GridWrapper.Children.Add(GroupLabel, 1, 0);
-            Grid.SetColumnSpan(GroupLabel, 5 + ShowConsumerPriceAddedSpace);
-            GridWrapper.Children.Add(GroupButtonImage, 0, 0);
-            Grid.SetRowSpan(GroupButtonImage, 2);
-            GridWrapper.Children.Add(GroupPriceSumLabel, 1, 1);
-            Grid.SetColumnSpan(GroupPriceSumLabel, 5 + ShowConsumerPriceAddedSpace);
+    //        GridWrapper.Children.Add(GroupLabel, 1, 0);
+    //        Grid.SetColumnSpan(GroupLabel, 5 + ShowConsumerPriceAddedSpace);
+    //        GridWrapper.Children.Add(GroupButtonImage, 0, 0);
+    //        Grid.SetRowSpan(GroupButtonImage, 2);
+    //        GridWrapper.Children.Add(GroupPriceSumLabel, 1, 1);
+    //        Grid.SetColumnSpan(GroupPriceSumLabel, 5 + ShowConsumerPriceAddedSpace);
 
-            if (App.ShowStuffCodeInOrderInsertForm.Value)
-            {
-                GridWrapper.Children.Add(CodeLabel, 5 + ShowConsumerPriceAddedSpace, 2);
-                GridWrapper.Children.Add(NameLabel, 1, 2);
-                Grid.SetColumnSpan(NameLabel, 4 + ShowConsumerPriceAddedSpace);
-            }
-            else
-            {
-                GridWrapper.Children.Add(NameLabel, 1, 2);
-                Grid.SetColumnSpan(NameLabel, 5 + ShowConsumerPriceAddedSpace);
-            }
-            GridWrapper.Children.Add(UnitNameLabel, 0, 2);
+    //        if (App.ShowStuffCodeInOrderInsertForm.Value)
+    //        {
+    //            GridWrapper.Children.Add(CodeLabel, 5 + ShowConsumerPriceAddedSpace, 2);
+    //            GridWrapper.Children.Add(NameLabel, 1, 2);
+    //            Grid.SetColumnSpan(NameLabel, 4 + ShowConsumerPriceAddedSpace);
+    //        }
+    //        else
+    //        {
+    //            GridWrapper.Children.Add(NameLabel, 1, 2);
+    //            Grid.SetColumnSpan(NameLabel, 5 + ShowConsumerPriceAddedSpace);
+    //        }
+    //        GridWrapper.Children.Add(UnitNameLabel, 0, 2);
 
-            GridWrapper.Children.Add(PriceLabel, 0, 3);
-            GridWrapper.Children.Add(FeeLabel, 1, 3);
-            if (App.ShowConsumerPrice.Value)
-                GridWrapper.Children.Add(ConsumerFeeLabel, 2, 3);
-            GridWrapper.Children.Add(QuantityMinusLabel, 2 + ShowConsumerPriceAddedSpace, 3);
-            GridWrapper.Children.Add(QuantityEntry, 3 + ShowConsumerPriceAddedSpace, 3);
-            GridWrapper.Children.Add(QuantityPlusLabel, 4 + ShowConsumerPriceAddedSpace, 3);
-            GridWrapper.Children.Add(StockLabel, 5 + ShowConsumerPriceAddedSpace, 3);
+    //        GridWrapper.Children.Add(PriceLabel, 0, 3);
+    //        GridWrapper.Children.Add(FeeLabel, 1, 3);
+    //        if (App.ShowConsumerPrice.Value)
+    //            GridWrapper.Children.Add(ConsumerFeeLabel, 2, 3);
+    //        GridWrapper.Children.Add(QuantityMinusLabel, 2 + ShowConsumerPriceAddedSpace, 3);
+    //        GridWrapper.Children.Add(QuantityEntry, 3 + ShowConsumerPriceAddedSpace, 3);
+    //        GridWrapper.Children.Add(QuantityPlusLabel, 4 + ShowConsumerPriceAddedSpace, 3);
+    //        GridWrapper.Children.Add(StockLabel, 5 + ShowConsumerPriceAddedSpace, 3);
 
-            GridWrapper.Children.Add(ExpirationDateLabel, 0, 4);
-            GridWrapper.Children.Add(BatchNumberLabel, 1, 4);
-            GridWrapper.Children.Add(BatchNumberQuantityMinusLabel, 2 + ShowConsumerPriceAddedSpace, 4);
-            GridWrapper.Children.Add(BatchNumberQuantityEntry, 3 + ShowConsumerPriceAddedSpace, 4);
-            GridWrapper.Children.Add(BatchNumberQuantityPlusLabel, 4 + ShowConsumerPriceAddedSpace, 4);
-            GridWrapper.Children.Add(BatchNumberStockLabel, 5 + ShowConsumerPriceAddedSpace, 4);
+    //        GridWrapper.Children.Add(ExpirationDateLabel, 0, 4);
+    //        GridWrapper.Children.Add(BatchNumberLabel, 1, 4);
+    //        GridWrapper.Children.Add(BatchNumberQuantityMinusLabel, 2 + ShowConsumerPriceAddedSpace, 4);
+    //        GridWrapper.Children.Add(BatchNumberQuantityEntry, 3 + ShowConsumerPriceAddedSpace, 4);
+    //        GridWrapper.Children.Add(BatchNumberQuantityPlusLabel, 4 + ShowConsumerPriceAddedSpace, 4);
+    //        GridWrapper.Children.Add(BatchNumberStockLabel, 5 + ShowConsumerPriceAddedSpace, 4);
             
-            GroupLabel.SetBinding(Label.TextProperty, "DisplayGroupName");
-            GroupButtonImage.SetBinding(Image.SourceProperty, "GroupButtonIcon");
-            GroupPriceSumLabel.SetBinding(Label.TextProperty, "GroupSummary");
+    //        GroupLabel.SetBinding(Label.TextProperty, "DisplayGroupName");
+    //        GroupButtonImage.SetBinding(Image.SourceProperty, "GroupButtonIcon");
+    //        GroupPriceSumLabel.SetBinding(Label.TextProperty, "GroupSummary");
 
-            CodeLabel.SetBinding(Label.TextProperty, "Code");
-            NameLabel.SetBinding(Label.TextProperty, "Name");
-            UnitNameLabel.SetBinding(Label.TextProperty, "UnitName");
-            StockLabel.SetBinding(Label.TextProperty, "Stock");
-            FeeLabel.SetBinding(Label.TextProperty, "Fee");
-            ConsumerFeeLabel.SetBinding(Label.TextProperty, "ConsumerFee");
-            PriceLabel.SetBinding(Label.TextProperty, "Price");
-            QuantityEntry.SetBinding(Label.TextProperty, "QuantityLabel");
+    //        CodeLabel.SetBinding(Label.TextProperty, "Code");
+    //        NameLabel.SetBinding(Label.TextProperty, "Name");
+    //        UnitNameLabel.SetBinding(Label.TextProperty, "UnitName");
+    //        StockLabel.SetBinding(Label.TextProperty, "Stock");
+    //        FeeLabel.SetBinding(Label.TextProperty, "Fee");
+    //        ConsumerFeeLabel.SetBinding(Label.TextProperty, "ConsumerFee");
+    //        PriceLabel.SetBinding(Label.TextProperty, "Price");
+    //        QuantityEntry.SetBinding(Label.TextProperty, "QuantityLabel");
 
-            QuantityPlusLabel.SetBinding(RightEntryCompanionLabel.DisabledProperty, "HasBatchNumbers");
-            QuantityMinusLabel.SetBinding(LeftEntryCompanionLabel.DisabledProperty, "HasBatchNumbers");
+    //        QuantityPlusLabel.SetBinding(RightEntryCompanionLabel.DisabledProperty, "HasBatchNumbers");
+    //        QuantityMinusLabel.SetBinding(LeftEntryCompanionLabel.DisabledProperty, "HasBatchNumbers");
 
-            ExpirationDateLabel.SetBinding(Label.TextProperty, "ExpirationDate");
-            BatchNumberLabel.SetBinding(Label.TextProperty, "BatchNumber");
-            BatchNumberQuantityEntry.SetBinding(Label.TextProperty, "QuantityLabel");
-            BatchNumberStockLabel.SetBinding(Label.TextProperty, "Stock");
+    //        ExpirationDateLabel.SetBinding(Label.TextProperty, "ExpirationDate");
+    //        BatchNumberLabel.SetBinding(Label.TextProperty, "BatchNumber");
+    //        BatchNumberQuantityEntry.SetBinding(Label.TextProperty, "QuantityLabel");
+    //        BatchNumberStockLabel.SetBinding(Label.TextProperty, "Stock");
 
-            var UnitNameTapGestureRecognizer = new TapGestureRecognizer();
-            UnitNameTapGestureRecognizer.Tapped += UnitNameTapEventHandler;
-            UnitNameTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
-            UnitNameLabel.GestureRecognizers.Add(UnitNameTapGestureRecognizer);
+    //        var UnitNameTapGestureRecognizer = new TapGestureRecognizer();
+    //        UnitNameTapGestureRecognizer.Tapped += UnitNameTapEventHandler;
+    //        UnitNameTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
+    //        UnitNameLabel.GestureRecognizers.Add(UnitNameTapGestureRecognizer);
 
-            var QuantityTextBoxTapGestureRecognizer = new TapGestureRecognizer();
-            QuantityTextBoxTapGestureRecognizer.Tapped += QuantityTextBoxTapEventHandler;
-            QuantityTextBoxTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
-            QuantityEntry.GestureRecognizers.Add(QuantityTextBoxTapGestureRecognizer);
-            BatchNumberQuantityEntry.GestureRecognizers.Add(QuantityTextBoxTapGestureRecognizer);
+    //        var QuantityTextBoxTapGestureRecognizer = new TapGestureRecognizer();
+    //        QuantityTextBoxTapGestureRecognizer.Tapped += QuantityTextBoxTapEventHandler;
+    //        QuantityTextBoxTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
+    //        QuantityEntry.GestureRecognizers.Add(QuantityTextBoxTapGestureRecognizer);
+    //        BatchNumberQuantityEntry.GestureRecognizers.Add(QuantityTextBoxTapGestureRecognizer);
 
-            var QuantityPlusTapGestureRecognizer = new TapGestureRecognizer();
-            QuantityPlusTapGestureRecognizer.Tapped += QuantityPlusTapEventHandler;
-            QuantityPlusTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
-            QuantityPlusLabel.GestureRecognizers.Add(QuantityPlusTapGestureRecognizer);
-            BatchNumberQuantityPlusLabel.GestureRecognizers.Add(QuantityPlusTapGestureRecognizer);
+    //        var QuantityPlusTapGestureRecognizer = new TapGestureRecognizer();
+    //        QuantityPlusTapGestureRecognizer.Tapped += QuantityPlusTapEventHandler;
+    //        QuantityPlusTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
+    //        QuantityPlusLabel.GestureRecognizers.Add(QuantityPlusTapGestureRecognizer);
+    //        BatchNumberQuantityPlusLabel.GestureRecognizers.Add(QuantityPlusTapGestureRecognizer);
 
-            var QuantityMinusTapGestureRecognizer = new TapGestureRecognizer();
-            QuantityMinusTapGestureRecognizer.Tapped += QuantityMinusTapEventHandler;
-            QuantityMinusTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
-            QuantityMinusLabel.GestureRecognizers.Add(QuantityMinusTapGestureRecognizer);
-            BatchNumberQuantityMinusLabel.GestureRecognizers.Add(QuantityMinusTapGestureRecognizer);
+    //        var QuantityMinusTapGestureRecognizer = new TapGestureRecognizer();
+    //        QuantityMinusTapGestureRecognizer.Tapped += QuantityMinusTapEventHandler;
+    //        QuantityMinusTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
+    //        QuantityMinusLabel.GestureRecognizers.Add(QuantityMinusTapGestureRecognizer);
+    //        BatchNumberQuantityMinusLabel.GestureRecognizers.Add(QuantityMinusTapGestureRecognizer);
 
-            var GroupTapGestureRecognizer = new TapGestureRecognizer();
-            GroupTapGestureRecognizer.Tapped += GroupTapEventHandler;
-            GroupTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
-            GridWrapper.GestureRecognizers.Add(GroupTapGestureRecognizer);
+    //        var GroupTapGestureRecognizer = new TapGestureRecognizer();
+    //        GroupTapGestureRecognizer.Tapped += GroupTapEventHandler;
+    //        GroupTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
+    //        GridWrapper.GestureRecognizers.Add(GroupTapGestureRecognizer);
 
-            View = GridWrapper;
-        }
-    }
+    //        View = GridWrapper;
+    //    }
+    //}
 
-    public class StuffGallaryView : ContentView
-    {
-        public static EventHandler UnitNameTapEventHandler, QuantityPlusTapEventHandler, QuantityMinusTapEventHandler, QuantityTextBoxTapEventHandler;
+    //public class StuffGallaryView : ContentView
+    //{
+    //    public static EventHandler UnitNameTapEventHandler, QuantityPlusTapEventHandler, QuantityMinusTapEventHandler, QuantityTextBoxTapEventHandler;
 
-        Label TopContentBG = null, BottomContentBG = null, CodeLabel = null, NameLabel = null, UnitNameLabel = null, StockLabel = null, FeeLabel = null, ConsumerFeeLabel = null, PriceLabel = null, QuantityPlusLabel = null, QuantityMinusLabel = null, QuantityEntry = null;
-        public CachedImage NewStuffImage;
-        Grid GridWrapper;
+    //    Label TopContentBG = null, BottomContentBG = null, CodeLabel = null, NameLabel = null, UnitNameLabel = null, StockLabel = null, FeeLabel = null, ConsumerFeeLabel = null, PriceLabel = null, QuantityPlusLabel = null, QuantityMinusLabel = null, QuantityEntry = null;
+    //    public CachedImage NewStuffImage;
+    //    Grid GridWrapper;
 
-        public static readonly BindableProperty IdProperty =
-            BindableProperty.Create("Id", typeof(string), typeof(CustomStuffListCell), string.Empty);
-        public string Id
-        {
-            get { return (string)GetValue(IdProperty); }
-            set { SetValue(IdProperty, value); }
-        }
+    //    public static readonly BindableProperty IdProperty =
+    //        BindableProperty.Create("Id", typeof(string), typeof(CustomStuffListCell), string.Empty);
+    //    public string Id
+    //    {
+    //        get { return (string)GetValue(IdProperty); }
+    //        set { SetValue(IdProperty, value); }
+    //    }
 
-        public StuffGallaryView()
-        {
-            this.SetBinding(StuffGallaryView.IdProperty, "Id");
+    //    public StuffGallaryView()
+    //    {
+    //        this.SetBinding(StuffGallaryView.IdProperty, "Id");
 
-            GridWrapper = new Grid()
-            {
-                Padding = 3,
-                RowSpacing = 0,
-                ColumnSpacing = 0,
-                Margin = 0,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                VerticalOptions = LayoutOptions.FillAndExpand,
-            };
+    //        GridWrapper = new Grid()
+    //        {
+    //            Padding = 3,
+    //            RowSpacing = 0,
+    //            ColumnSpacing = 0,
+    //            Margin = 0,
+    //            HorizontalOptions = LayoutOptions.FillAndExpand,
+    //            VerticalOptions = LayoutOptions.FillAndExpand,
+    //        };
 
-            GridWrapper.RowDefinitions = new RowDefinitionCollection();
-            GridWrapper.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
-            GridWrapper.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
-            GridWrapper.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
+    //        GridWrapper.RowDefinitions = new RowDefinitionCollection();
+    //        GridWrapper.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
+    //        GridWrapper.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
+    //        GridWrapper.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
 
-            GridWrapper.ColumnDefinitions = new ColumnDefinitionCollection();
-            GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
-            GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
-            if (App.ShowConsumerPrice.Value)
-                GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
-            GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
-            GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
+    //        GridWrapper.ColumnDefinitions = new ColumnDefinitionCollection();
+    //        GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
+    //        GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
+    //        if (App.ShowConsumerPrice.Value)
+    //            GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
+    //        GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+    //        GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
+    //        GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+    //        GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
 
-            TopContentBG = new MyLabel() { IsGallaryTopBG = true, HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand };
-            BottomContentBG = new MyLabel() { IsGallaryBottomBG = true, HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand };
-            NewStuffImage = new CachedImage() { HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand, DownsampleToViewSize = true };
-            CodeLabel = new MyLabel() { LineBreakMode = LineBreakMode.HeadTruncation, TextColor = Color.FromHex("fff"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16, Padding = new Thickness(8) };
-            NameLabel = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("fff"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16, Padding = new Thickness(8) };
-            UnitNameLabel = new FullRoundedLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 3 };
-            StockLabel = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("fff"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16, Padding = new Thickness(8) };
-            FeeLabel = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("fff"), HorizontalOptions = LayoutOptions.Start, HorizontalTextAlignment = TextAlignment.Start, VerticalOptions = LayoutOptions.Center, FontSize = 16, Padding = new Thickness(8) };
-            ConsumerFeeLabel = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("fff"), HorizontalOptions = LayoutOptions.Start, HorizontalTextAlignment = TextAlignment.Start, VerticalOptions = LayoutOptions.Center, FontSize = 16, Padding = new Thickness(8) };
-            PriceLabel = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("fff"), HorizontalOptions = LayoutOptions.Start, HorizontalTextAlignment = TextAlignment.Start, VerticalOptions = LayoutOptions.Center, FontSize = 16, Padding = new Thickness(8) };
-            QuantityPlusLabel = new RightEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "+", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 1 };
-            QuantityMinusLabel = new LeftEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "-", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 1 };
-            QuantityEntry = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 0, BackgroundColor = Color.FromHex("fff"), Padding = new Thickness(10) };
+    //        TopContentBG = new MyLabel() { IsGallaryTopBG = true, HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand };
+    //        BottomContentBG = new MyLabel() { IsGallaryBottomBG = true, HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand };
+    //        NewStuffImage = new CachedImage() { HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand, DownsampleToViewSize = true };
+    //        CodeLabel = new MyLabel() { LineBreakMode = LineBreakMode.HeadTruncation, TextColor = Color.FromHex("fff"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16, Padding = new Thickness(8) };
+    //        NameLabel = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("fff"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16, Padding = new Thickness(8) };
+    //        UnitNameLabel = new FullRoundedLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 3 };
+    //        StockLabel = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("fff"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16, Padding = new Thickness(8) };
+    //        FeeLabel = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("fff"), HorizontalOptions = LayoutOptions.Start, HorizontalTextAlignment = TextAlignment.Start, VerticalOptions = LayoutOptions.Center, FontSize = 16, Padding = new Thickness(8) };
+    //        ConsumerFeeLabel = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("fff"), HorizontalOptions = LayoutOptions.Start, HorizontalTextAlignment = TextAlignment.Start, VerticalOptions = LayoutOptions.Center, FontSize = 16, Padding = new Thickness(8) };
+    //        PriceLabel = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("fff"), HorizontalOptions = LayoutOptions.Start, HorizontalTextAlignment = TextAlignment.Start, VerticalOptions = LayoutOptions.Center, FontSize = 16, Padding = new Thickness(8) };
+    //        QuantityPlusLabel = new RightEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "+", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 1 };
+    //        QuantityMinusLabel = new LeftEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "-", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 1 };
+    //        QuantityEntry = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 0, BackgroundColor = Color.FromHex("fff"), Padding = new Thickness(10) };
 
-            var ShowConsumerPriceAddedSpace = App.ShowConsumerPrice.Value ? 1 : 0;
+    //        var ShowConsumerPriceAddedSpace = App.ShowConsumerPrice.Value ? 1 : 0;
 
-            var BackgroundLabel = new MyLabel() { HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand, IsGallaryBG = true };
-            GridWrapper.Children.Add(BackgroundLabel, 0, 0);
-            Grid.SetRowSpan(BackgroundLabel, 3);
-            Grid.SetColumnSpan(BackgroundLabel, 6 + ShowConsumerPriceAddedSpace);
-            GridWrapper.Children.Add(NewStuffImage, 0, 0);
-            Grid.SetRowSpan(NewStuffImage, 3);
-            Grid.SetColumnSpan(NewStuffImage, 6 + ShowConsumerPriceAddedSpace);
-            GridWrapper.Children.Add(TopContentBG, 0, 0);
-            Grid.SetColumnSpan(TopContentBG, 6 + ShowConsumerPriceAddedSpace);
-            GridWrapper.Children.Add(BottomContentBG, 0, 2);
-            Grid.SetColumnSpan(BottomContentBG, 6 + ShowConsumerPriceAddedSpace);
+    //        var BackgroundLabel = new MyLabel() { HorizontalOptions = LayoutOptions.FillAndExpand, VerticalOptions = LayoutOptions.FillAndExpand, IsGallaryBG = true };
+    //        GridWrapper.Children.Add(BackgroundLabel, 0, 0);
+    //        Grid.SetRowSpan(BackgroundLabel, 3);
+    //        Grid.SetColumnSpan(BackgroundLabel, 6 + ShowConsumerPriceAddedSpace);
+    //        GridWrapper.Children.Add(NewStuffImage, 0, 0);
+    //        Grid.SetRowSpan(NewStuffImage, 3);
+    //        Grid.SetColumnSpan(NewStuffImage, 6 + ShowConsumerPriceAddedSpace);
+    //        GridWrapper.Children.Add(TopContentBG, 0, 0);
+    //        Grid.SetColumnSpan(TopContentBG, 6 + ShowConsumerPriceAddedSpace);
+    //        GridWrapper.Children.Add(BottomContentBG, 0, 2);
+    //        Grid.SetColumnSpan(BottomContentBG, 6 + ShowConsumerPriceAddedSpace);
 
-            if (App.ShowStuffCodeInOrderInsertForm.Value)
-            {
-                GridWrapper.Children.Add(CodeLabel, 5 + ShowConsumerPriceAddedSpace, 0);
-                GridWrapper.Children.Add(NameLabel, 1, 0);
-                Grid.SetColumnSpan(NameLabel, 4 + ShowConsumerPriceAddedSpace);
-            }
-            else
-            {
-                GridWrapper.Children.Add(NameLabel, 1, 0);
-                Grid.SetColumnSpan(NameLabel, 5 + ShowConsumerPriceAddedSpace);
-            }
-            GridWrapper.Children.Add(UnitNameLabel, 0, 0);
+    //        if (App.ShowStuffCodeInOrderInsertForm.Value)
+    //        {
+    //            GridWrapper.Children.Add(CodeLabel, 5 + ShowConsumerPriceAddedSpace, 0);
+    //            GridWrapper.Children.Add(NameLabel, 1, 0);
+    //            Grid.SetColumnSpan(NameLabel, 4 + ShowConsumerPriceAddedSpace);
+    //        }
+    //        else
+    //        {
+    //            GridWrapper.Children.Add(NameLabel, 1, 0);
+    //            Grid.SetColumnSpan(NameLabel, 5 + ShowConsumerPriceAddedSpace);
+    //        }
+    //        GridWrapper.Children.Add(UnitNameLabel, 0, 0);
 
-            GridWrapper.Children.Add(PriceLabel, 0, 2);
-            GridWrapper.Children.Add(FeeLabel, 1, 2);
-            if (App.ShowConsumerPrice.Value)
-                GridWrapper.Children.Add(ConsumerFeeLabel, 2, 2);
-            GridWrapper.Children.Add(QuantityMinusLabel, 2 + ShowConsumerPriceAddedSpace, 2);
-            GridWrapper.Children.Add(QuantityEntry, 3 + ShowConsumerPriceAddedSpace, 2);
-            GridWrapper.Children.Add(QuantityPlusLabel, 4 + ShowConsumerPriceAddedSpace, 2);
-            GridWrapper.Children.Add(StockLabel, 5 + ShowConsumerPriceAddedSpace, 2);
+    //        GridWrapper.Children.Add(PriceLabel, 0, 2);
+    //        GridWrapper.Children.Add(FeeLabel, 1, 2);
+    //        if (App.ShowConsumerPrice.Value)
+    //            GridWrapper.Children.Add(ConsumerFeeLabel, 2, 2);
+    //        GridWrapper.Children.Add(QuantityMinusLabel, 2 + ShowConsumerPriceAddedSpace, 2);
+    //        GridWrapper.Children.Add(QuantityEntry, 3 + ShowConsumerPriceAddedSpace, 2);
+    //        GridWrapper.Children.Add(QuantityPlusLabel, 4 + ShowConsumerPriceAddedSpace, 2);
+    //        GridWrapper.Children.Add(StockLabel, 5 + ShowConsumerPriceAddedSpace, 2);
 
-            CodeLabel.SetBinding(Label.TextProperty, "Code");
-            NameLabel.SetBinding(Label.TextProperty, "Name");
-            UnitNameLabel.SetBinding(Label.TextProperty, "UnitName");
-            StockLabel.SetBinding(Label.TextProperty, "Stock");
-            FeeLabel.SetBinding(Label.TextProperty, "Fee");
-            ConsumerFeeLabel.SetBinding(Label.TextProperty, "ConsumerFee");
-            PriceLabel.SetBinding(Label.TextProperty, "Price");
-            QuantityEntry.SetBinding(Label.TextProperty, "QuantityLabel");
-            NewStuffImage.SetBinding(CachedImage.SourceProperty, "ImageSource");
+    //        CodeLabel.SetBinding(Label.TextProperty, "Code");
+    //        NameLabel.SetBinding(Label.TextProperty, "Name");
+    //        UnitNameLabel.SetBinding(Label.TextProperty, "UnitName");
+    //        StockLabel.SetBinding(Label.TextProperty, "Stock");
+    //        FeeLabel.SetBinding(Label.TextProperty, "Fee");
+    //        ConsumerFeeLabel.SetBinding(Label.TextProperty, "ConsumerFee");
+    //        PriceLabel.SetBinding(Label.TextProperty, "Price");
+    //        QuantityEntry.SetBinding(Label.TextProperty, "QuantityLabel");
+    //        NewStuffImage.SetBinding(CachedImage.SourceProperty, "ImageSource");
 
-            QuantityPlusLabel.SetBinding(RightEntryCompanionLabel.DisabledProperty, "HasBatchNumbers");
-            QuantityMinusLabel.SetBinding(LeftEntryCompanionLabel.DisabledProperty, "HasBatchNumbers");
+    //        QuantityPlusLabel.SetBinding(RightEntryCompanionLabel.DisabledProperty, "HasBatchNumbers");
+    //        QuantityMinusLabel.SetBinding(LeftEntryCompanionLabel.DisabledProperty, "HasBatchNumbers");
 
-            CodeLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
-            NameLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
-            UnitNameLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
-            StockLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
-            FeeLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
-            ConsumerFeeLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
-            PriceLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
-            QuantityEntry.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
-            TopContentBG.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
-            BottomContentBG.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
-            QuantityPlusLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
-            QuantityMinusLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
+    //        CodeLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
+    //        NameLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
+    //        UnitNameLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
+    //        StockLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
+    //        FeeLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
+    //        ConsumerFeeLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
+    //        PriceLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
+    //        QuantityEntry.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
+    //        TopContentBG.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
+    //        BottomContentBG.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
+    //        QuantityPlusLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
+    //        QuantityMinusLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
             
-            var UnitNameTapGestureRecognizer = new TapGestureRecognizer();
-            UnitNameTapGestureRecognizer.Tapped += UnitNameTapEventHandler;
-            UnitNameTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
-            UnitNameLabel.GestureRecognizers.Add(UnitNameTapGestureRecognizer);
+    //        var UnitNameTapGestureRecognizer = new TapGestureRecognizer();
+    //        UnitNameTapGestureRecognizer.Tapped += UnitNameTapEventHandler;
+    //        UnitNameTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
+    //        UnitNameLabel.GestureRecognizers.Add(UnitNameTapGestureRecognizer);
 
-            var QuantityTextBoxTapGestureRecognizer = new TapGestureRecognizer();
-            QuantityTextBoxTapGestureRecognizer.Tapped += QuantityTextBoxTapEventHandler;
-            QuantityTextBoxTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
-            QuantityEntry.GestureRecognizers.Add(QuantityTextBoxTapGestureRecognizer);
+    //        var QuantityTextBoxTapGestureRecognizer = new TapGestureRecognizer();
+    //        QuantityTextBoxTapGestureRecognizer.Tapped += QuantityTextBoxTapEventHandler;
+    //        QuantityTextBoxTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
+    //        QuantityEntry.GestureRecognizers.Add(QuantityTextBoxTapGestureRecognizer);
 
-            var StuffImageTapGestureRecognizer = new TapGestureRecognizer();
-            StuffImageTapGestureRecognizer.Tapped += QuantityPlusTapEventHandler;
-            StuffImageTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
-            NewStuffImage.GestureRecognizers.Add(StuffImageTapGestureRecognizer);
+    //        var StuffImageTapGestureRecognizer = new TapGestureRecognizer();
+    //        StuffImageTapGestureRecognizer.Tapped += QuantityPlusTapEventHandler;
+    //        StuffImageTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
+    //        NewStuffImage.GestureRecognizers.Add(StuffImageTapGestureRecognizer);
 
-            var QuantityPlusTapGestureRecognizer = new TapGestureRecognizer();
-            QuantityPlusTapGestureRecognizer.Tapped += QuantityPlusTapEventHandler;
-            QuantityPlusTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
-            QuantityPlusLabel.GestureRecognizers.Add(QuantityPlusTapGestureRecognizer);
+    //        var QuantityPlusTapGestureRecognizer = new TapGestureRecognizer();
+    //        QuantityPlusTapGestureRecognizer.Tapped += QuantityPlusTapEventHandler;
+    //        QuantityPlusTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
+    //        QuantityPlusLabel.GestureRecognizers.Add(QuantityPlusTapGestureRecognizer);
 
-            var QuantityMinusTapGestureRecognizer = new TapGestureRecognizer();
-            QuantityMinusTapGestureRecognizer.Tapped += QuantityMinusTapEventHandler;
-            QuantityMinusTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
-            QuantityMinusLabel.GestureRecognizers.Add(QuantityMinusTapGestureRecognizer);
+    //        var QuantityMinusTapGestureRecognizer = new TapGestureRecognizer();
+    //        QuantityMinusTapGestureRecognizer.Tapped += QuantityMinusTapEventHandler;
+    //        QuantityMinusTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
+    //        QuantityMinusLabel.GestureRecognizers.Add(QuantityMinusTapGestureRecognizer);
 
-            Content = new StackLayout()
-            {
-                Orientation = StackOrientation.Horizontal,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                VerticalOptions = LayoutOptions.FillAndExpand,
-                Children = { GridWrapper }
-            };
-        }
-    }
+    //        Content = new StackLayout()
+    //        {
+    //            Orientation = StackOrientation.Horizontal,
+    //            HorizontalOptions = LayoutOptions.FillAndExpand,
+    //            VerticalOptions = LayoutOptions.FillAndExpand,
+    //            Children = { GridWrapper }
+    //        };
+    //    }
+    //}
 
-    public class StuffGallaryViewGrid : ContentView
-    {
-        readonly Grid _grid;
-        public static int RowCount = 1, ColumnCount = 1;
+    //public class StuffGallaryViewGrid : ContentView
+    //{
+    //    readonly Grid _grid;
+    //    public static int RowCount = 1, ColumnCount = 1;
 
-        public static readonly BindableProperty StuffsArrayProperty =
-            BindableProperty.Create("StuffsArray", typeof(DBRepository.StuffListModel[]), typeof(StuffGallaryViewGrid), null, propertyChanged: OnStuffsArrayChanged);
-        public static Dictionary<Guid, StuffGallaryView> StuffViewHistory;
-        public static Dictionary<int, Guid[]> PageStuffIds;
+    //    public static readonly BindableProperty StuffsArrayProperty =
+    //        BindableProperty.Create("StuffsArray", typeof(DBRepository.StuffListModel[]), typeof(StuffGallaryViewGrid), null, propertyChanged: OnStuffsArrayChanged);
+    //    public static Dictionary<Guid, StuffGallaryView> StuffViewHistory;
+    //    public static Dictionary<int, Guid[]> PageStuffIds;
         
-        static Guid[] LastStuffIds = null;
-        static void OnStuffsArrayChanged(BindableObject bindable, object oldValue, object newValue)
-        {
-            var OldStuffsArray = LastStuffIds != null ? LastStuffIds.ToArray() : null;
-            var NewStuffsArray = ((DBRepository.StuffListModel[])newValue).Where(a => !a.BatchNumberId.HasValue).Select(a => a.StuffId);
-            LastStuffIds = NewStuffsArray.ToArray();
+    //    static Guid[] LastStuffIds = null;
+    //    static void OnStuffsArrayChanged(BindableObject bindable, object oldValue, object newValue)
+    //    {
+    //        var OldStuffsArray = LastStuffIds != null ? LastStuffIds.ToArray() : null;
+    //        var NewStuffsArray = ((DBRepository.StuffListModel[])newValue).Where(a => !a.BatchNumberId.HasValue).Select(a => a.StuffId);
+    //        LastStuffIds = NewStuffsArray.ToArray();
 
-            var OldPageIndex = OldStuffsArray == null ? -1 : PageStuffIds.Single(a => OldStuffsArray.All(b => a.Value.Contains(b))).Key;
-            var NewPageIndex = PageStuffIds.Single(a => NewStuffsArray.All(b => a.Value.Contains(b))).Key;
+    //        var OldPageIndex = OldStuffsArray == null ? -1 : PageStuffIds.Single(a => OldStuffsArray.All(b => a.Value.Contains(b))).Key;
+    //        var NewPageIndex = PageStuffIds.Single(a => NewStuffsArray.All(b => a.Value.Contains(b))).Key;
 
-            var ShouldBeRemovedPageIndex = NewPageIndex + (OldPageIndex > NewPageIndex ? 3 : -3);
-            if(PageStuffIds.Any(a => a.Key == ShouldBeRemovedPageIndex))
-            {
-                var ShouldBeRemovedStuffIds = PageStuffIds.Single(a => a.Key == ShouldBeRemovedPageIndex).Value;
+    //        var ShouldBeRemovedPageIndex = NewPageIndex + (OldPageIndex > NewPageIndex ? 3 : -3);
+    //        if(PageStuffIds.Any(a => a.Key == ShouldBeRemovedPageIndex))
+    //        {
+    //            var ShouldBeRemovedStuffIds = PageStuffIds.Single(a => a.Key == ShouldBeRemovedPageIndex).Value;
 
-                foreach (var item in ShouldBeRemovedStuffIds)
-                {
-                    if (StuffViewHistory.ContainsKey(item))
-                    {
-                        var OldView = StuffViewHistory[item];
-                        OldView.NewStuffImage.Source = null;
-                        StuffViewHistory.Remove(item);
-                    }
-                }
-            }
+    //            foreach (var item in ShouldBeRemovedStuffIds)
+    //            {
+    //                if (StuffViewHistory.ContainsKey(item))
+    //                {
+    //                    var OldView = StuffViewHistory[item];
+    //                    OldView.NewStuffImage.Source = null;
+    //                    StuffViewHistory.Remove(item);
+    //                }
+    //            }
+    //        }
 
-            //foreach (var item in NewStuffsArray)
-            //{
-            //    if(StuffViewHistory.ContainsKey(item.Id))
-            //    {
-            //        var OldView = StuffViewHistory[item.Id];
-            //        OldView.NewStuffImage.Source = null;
-            //        StuffViewHistory.Remove(item.Id);
-            //    }
-            //}
+    //        //foreach (var item in NewStuffsArray)
+    //        //{
+    //        //    if(StuffViewHistory.ContainsKey(item.Id))
+    //        //    {
+    //        //        var OldView = StuffViewHistory[item.Id];
+    //        //        OldView.NewStuffImage.Source = null;
+    //        //        StuffViewHistory.Remove(item.Id);
+    //        //    }
+    //        //}
 
-            ((StuffGallaryViewGrid)bindable).CreatePageContents();
-        }
+    //        ((StuffGallaryViewGrid)bindable).CreatePageContents();
+    //    }
 
-        public static void SetPageStuffIds(Dictionary<int, Guid[]> _PageStuffIds)
-        {
-            if (StuffViewHistory != null)
-            {
-                var _StuffViewHistory = StuffViewHistory.ToArray();
-                foreach (var item in _StuffViewHistory)
-                {
-                    var OldView = StuffViewHistory[item.Key];
-                    OldView.NewStuffImage.Source = null;
-                    StuffViewHistory.Remove(item.Key);
-                }
-            }
-            LastStuffIds = null;
-            StuffViewHistory = new Dictionary<Guid, StuffGallaryView>();
-            PageStuffIds = _PageStuffIds;
-        }
+    //    public static void SetPageStuffIds(Dictionary<int, Guid[]> _PageStuffIds)
+    //    {
+    //        if (StuffViewHistory != null)
+    //        {
+    //            var _StuffViewHistory = StuffViewHistory.ToArray();
+    //            foreach (var item in _StuffViewHistory)
+    //            {
+    //                var OldView = StuffViewHistory[item.Key];
+    //                OldView.NewStuffImage.Source = null;
+    //                StuffViewHistory.Remove(item.Key);
+    //            }
+    //        }
+    //        LastStuffIds = null;
+    //        StuffViewHistory = new Dictionary<Guid, StuffGallaryView>();
+    //        PageStuffIds = _PageStuffIds;
+    //    }
 
-        public DBRepository.StuffListModel[] StuffsArray
-        {
-            get { return (DBRepository.StuffListModel[])GetValue(StuffsArrayProperty); }
-            set { SetValue(StuffsArrayProperty, value); }
-        }
+    //    public DBRepository.StuffListModel[] StuffsArray
+    //    {
+    //        get { return (DBRepository.StuffListModel[])GetValue(StuffsArrayProperty); }
+    //        set { SetValue(StuffsArrayProperty, value); }
+    //    }
         
-        public StuffGallaryViewGrid()
-        {
-            this.SetBinding(StuffGallaryViewGrid.StuffsArrayProperty, "Stuffs");
+    //    public StuffGallaryViewGrid()
+    //    {
+    //        this.SetBinding(StuffGallaryViewGrid.StuffsArrayProperty, "Stuffs");
             
-            _grid = new Grid()
-            {
-                RowSpacing = 0,
-                ColumnSpacing = 0,
-                Padding = 0,
-                Margin = 0,
-                HorizontalOptions = LayoutOptions.FillAndExpand,
-                VerticalOptions = LayoutOptions.FillAndExpand,
-                RowDefinitions = new RowDefinitionCollection() { },
-                ColumnDefinitions = new ColumnDefinitionCollection() { }
-            };
+    //        _grid = new Grid()
+    //        {
+    //            RowSpacing = 0,
+    //            ColumnSpacing = 0,
+    //            Padding = 0,
+    //            Margin = 0,
+    //            HorizontalOptions = LayoutOptions.FillAndExpand,
+    //            VerticalOptions = LayoutOptions.FillAndExpand,
+    //            RowDefinitions = new RowDefinitionCollection() { },
+    //            ColumnDefinitions = new ColumnDefinitionCollection() { }
+    //        };
 
-            Content = _grid;
-        }
+    //        Content = _grid;
+    //    }
         
-        public IList<View> Children { get { return _grid.Children; } }
+    //    public IList<View> Children { get { return _grid.Children; } }
 
-        private Guid LastLayingoutRequestId;
-        private double ThisWidth, ThisHeight;
-        protected override async void LayoutChildren(double x, double y, double width, double height)
-        {
-            base.LayoutChildren(x, y, width, height);
-            var ThisLayingoutRequestId = Guid.NewGuid();
-            LastLayingoutRequestId = ThisLayingoutRequestId;
-            await Task.Delay(100);
-            if (LastLayingoutRequestId != ThisLayingoutRequestId)
-                return;
+    //    private Guid LastLayingoutRequestId;
+    //    private double ThisWidth, ThisHeight;
+    //    protected override async void LayoutChildren(double x, double y, double width, double height)
+    //    {
+    //        base.LayoutChildren(x, y, width, height);
+    //        var ThisLayingoutRequestId = Guid.NewGuid();
+    //        LastLayingoutRequestId = ThisLayingoutRequestId;
+    //        await Task.Delay(100);
+    //        if (LastLayingoutRequestId != ThisLayingoutRequestId)
+    //            return;
 
-            var OldIsHorizontal = ThisWidth > ThisHeight;
-            var NewIsHorizontal = width > height;
+    //        var OldIsHorizontal = ThisWidth > ThisHeight;
+    //        var NewIsHorizontal = width > height;
             
-            ThisWidth = width;
-            ThisHeight = height;
-            foreach (var child in Children)
-            {
-                child.WidthRequest = ThisWidth;
-                child.HeightRequest = ThisHeight;
-            }
+    //        ThisWidth = width;
+    //        ThisHeight = height;
+    //        foreach (var child in Children)
+    //        {
+    //            child.WidthRequest = ThisWidth;
+    //            child.HeightRequest = ThisHeight;
+    //        }
 
-            if (OldIsHorizontal != NewIsHorizontal)
-            {
-                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
-                {
-                    var Children = this.Children.ToList();
-                    foreach (var child in Children)
-                        _grid.Children.Remove(child);
+    //        if (OldIsHorizontal != NewIsHorizontal)
+    //        {
+    //            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+    //            {
+    //                var Children = this.Children.ToList();
+    //                foreach (var child in Children)
+    //                    _grid.Children.Remove(child);
             
-                    _grid.RowDefinitions.Clear();
-                    _grid.ColumnDefinitions.Clear();
-                    for (int i = 0; i < (NewIsHorizontal ? RowCount : ColumnCount); i++)
-                        _grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Star });
-                    for (int j = 0; j < (NewIsHorizontal ? ColumnCount : RowCount); j++)
-                        _grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Star });
+    //                _grid.RowDefinitions.Clear();
+    //                _grid.ColumnDefinitions.Clear();
+    //                for (int i = 0; i < (NewIsHorizontal ? RowCount : ColumnCount); i++)
+    //                    _grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Star });
+    //                for (int j = 0; j < (NewIsHorizontal ? ColumnCount : RowCount); j++)
+    //                    _grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Star });
             
-                    for (int i = 0; i < (NewIsHorizontal ? RowCount : ColumnCount); i++)
-                    {
-                        for (int j = 0; j < (NewIsHorizontal ? ColumnCount : RowCount); j++)
-                        {
-                            if (i * (NewIsHorizontal ? ColumnCount : RowCount) + j < Children.Count)
-                            {
-                                var Child = Children[i * (NewIsHorizontal ? ColumnCount : RowCount) + j];
-                                _grid.Children.Add(Child, j, i);
-                            }
-                        }
-                    }
-                });
-            }
-        }
+    //                for (int i = 0; i < (NewIsHorizontal ? RowCount : ColumnCount); i++)
+    //                {
+    //                    for (int j = 0; j < (NewIsHorizontal ? ColumnCount : RowCount); j++)
+    //                    {
+    //                        if (i * (NewIsHorizontal ? ColumnCount : RowCount) + j < Children.Count)
+    //                        {
+    //                            var Child = Children[i * (NewIsHorizontal ? ColumnCount : RowCount) + j];
+    //                            _grid.Children.Add(Child, j, i);
+    //                        }
+    //                    }
+    //                }
+    //            });
+    //        }
+    //    }
 
-        static DataTemplate ItemTemplate = new DataTemplate(typeof(StuffGallaryView));
-        public View MakeNewItemInPage(object dataSource)
-        {
-            var view = (View)ItemTemplate.CreateContent();
-            var bindableObject = view as BindableObject;
-            if (bindableObject != null)
-                bindableObject.BindingContext = dataSource;
-            return view;
-        }
+    //    static DataTemplate ItemTemplate = new DataTemplate(typeof(StuffGallaryView));
+    //    public View MakeNewItemInPage(object dataSource)
+    //    {
+    //        var view = (View)ItemTemplate.CreateContent();
+    //        var bindableObject = view as BindableObject;
+    //        if (bindableObject != null)
+    //            bindableObject.BindingContext = dataSource;
+    //        return view;
+    //    }
         
-        static bool Initialized = false;
-        public void CreatePageContents()
-        {
-            if (!Initialized)
-            {
-                Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
-                {
-                    var IsHorizontal = ThisWidth > ThisHeight;
-                    for (int i = 0; i < (IsHorizontal ? RowCount : ColumnCount); i++)
-                    {
-                        for (int j = 0; j < (IsHorizontal ? ColumnCount : RowCount); j++)
-                        {
-                            if (i * (IsHorizontal ? ColumnCount : RowCount) + j < StuffsArray.Length)
-                            {
-                                var dataSource = StuffsArray[i * (IsHorizontal ? ColumnCount : RowCount) + j];
-                                var NewItemInPage = MakeNewItemInPage(dataSource);
-                                _grid.Children.Add(NewItemInPage, j, i);
-                                if(!StuffViewHistory.ContainsKey(dataSource.StuffId))
-                                    StuffViewHistory.Add(dataSource.StuffId, (StuffGallaryView)NewItemInPage);
-                            }
-                        }
-                    }
-                });
-            }
-        }
-    }
+    //    static bool Initialized = false;
+    //    public void CreatePageContents()
+    //    {
+    //        if (!Initialized)
+    //        {
+    //            Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+    //            {
+    //                var IsHorizontal = ThisWidth > ThisHeight;
+    //                for (int i = 0; i < (IsHorizontal ? RowCount : ColumnCount); i++)
+    //                {
+    //                    for (int j = 0; j < (IsHorizontal ? ColumnCount : RowCount); j++)
+    //                    {
+    //                        if (i * (IsHorizontal ? ColumnCount : RowCount) + j < StuffsArray.Length)
+    //                        {
+    //                            var dataSource = StuffsArray[i * (IsHorizontal ? ColumnCount : RowCount) + j];
+    //                            var NewItemInPage = MakeNewItemInPage(dataSource);
+    //                            _grid.Children.Add(NewItemInPage, j, i);
+    //                            if(!StuffViewHistory.ContainsKey(dataSource.StuffId))
+    //                                StuffViewHistory.Add(dataSource.StuffId, (StuffGallaryView)NewItemInPage);
+    //                        }
+    //                    }
+    //                }
+    //            });
+    //        }
+    //    }
+    //}
     
-    public partial class OrderInsertForm : GradientContentPage
+    public partial class ReversionForm : GradientContentPage
     {
         public static SettingField<bool> InsertOrderForm_ShowGallaryMode = new SettingField<bool>("InsertOrderForm_ShowGallaryMode", false);
 
@@ -552,7 +552,7 @@ namespace Kara
 
         Guid LastSearchWhenTypingId = Guid.NewGuid();
         
-        public OrderInsertForm(Partner Partner, SaleOrder SaleOrder, InsertedInformations_Orders OrdersForm, PartnerListForm PartnerListForm, Guid? __WarehouseId,bool fromTour=false)
+        public ReversionForm(Partner Partner, SaleOrder SaleOrder, InsertedInformations_Orders OrdersForm, PartnerListForm PartnerListForm, Guid? __WarehouseId,bool fromTour=false)
         {
             App.UniversalLineInApp = 875234001;
 
@@ -659,7 +659,6 @@ namespace Kara
             }
 
             var PartnerChangeButtonTapGestureRecognizer = new TapGestureRecognizer();
-            //App.UniversalLineInApp = 875234042;
             PartnerChangeButtonTapGestureRecognizer.Tapped += (sender, e) => {
                 if (!TapEventHandlingInProgress)
                 {
@@ -667,20 +666,14 @@ namespace Kara
 
                     try
                     {
-                        //App.UniversalLineInApp = 875234043;
                         if (PartnerChangeButton.IsEnabled)
                         {
                             App.UniversalLineInApp = 875234044;
                             FocusedQuantityTextBoxId = null;
-                            //App.UniversalLineInApp = 875234045;
                             var PartnerListForm1 = new PartnerListForm();
-                            //App.UniversalLineInApp = 875234046;
-                            PartnerListForm1.OrderInsertForm = this;
-                            //App.UniversalLineInApp = 875234047;
+                            PartnerListForm1.ReversionForm = this;
                             Navigation.PushAsync(PartnerListForm1);
-                            //App.UniversalLineInApp = 875234048;
                         }
-                        //App.UniversalLineInApp = 875234049;
                     }
                     catch (Exception)
                     { }
@@ -690,11 +683,8 @@ namespace Kara
             };
             App.UniversalLineInApp = 875234050;
             PartnerChangeButtonTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
-            //App.UniversalLineInApp = 875234051;
             PartnerChangeButton.GestureRecognizers.Add(PartnerChangeButtonTapGestureRecognizer);
-            //App.UniversalLineInApp = 875234052;
             PartnerChangeButton.WidthRequest = 150;
-            //App.UniversalLineInApp = 875234053;
 
             var PartnerRemainderDetailButtonTapGestureRecognizer = new TapGestureRecognizer();
             //App.UniversalLineInApp = 875234054;

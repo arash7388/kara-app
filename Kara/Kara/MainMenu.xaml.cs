@@ -34,8 +34,8 @@ namespace Kara
 
         ToolbarItem LogoutMenu, UserNameMenu;
 
-        Image Image_InsertFailedVisit, Image_InsertOrder, Image_Customers, Image_Settings, Image_UpdateDB, Image_Visits, Image_Backups, Image_PartnerReport, Image_Report, Image_Receipts, Image_ReceiptsNaghd, Image_Tour;
-        Label Label_InsertFailedVisit, Label_InsertOrder, Label_Customers, Label_Settings, Label_UpdateDB, Label_Visits, Label_Backups, Label_PartnerReport, Label_Report, Label_Receipts, Label_ReceiptsNaghd, Label_Tour;
+        Image Image_InsertFailedVisit, Image_InsertOrder, Image_Customers, Image_Settings, Image_UpdateDB, Image_Visits, Image_Backups, Image_PartnerReport, Image_Report, Image_Receipts, Image_ReceiptsNaghd, Image_Tour, Image_Reversion;
+        Label Label_InsertFailedVisit, Label_InsertOrder, Label_Customers, Label_Settings, Label_UpdateDB, Label_Visits, Label_Backups, Label_PartnerReport, Label_Report, Label_Receipts, Label_ReceiptsNaghd, Label_Tour,Label_Reversion;
         List<ImageHelper> MenuImages;
         List<LabelHelper> MenuLabels;
 
@@ -66,6 +66,7 @@ namespace Kara
             Image_Receipts = new Image() { Source = "MainMenu_AddInvoice.png" };
             Image_ReceiptsNaghd = new Image() { Source = "MainMenu_AddInvoice.png" };
             Image_Tour = new Image() { Source = "tour.png" };
+            Image_Reversion = new Image() { Source = "MainMenu_AddFailedInvoice.png" };
 
             Label_Customers = new Label() { Text = "لیست مشتریان", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
             Label_InsertOrder = new Label() { Text = "ثبت سفارش", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
@@ -78,6 +79,7 @@ namespace Kara
             Label_Report = new Label() { Text = "گزارشات", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
             Label_Receipts = new Label() { Text = "ثبت دریافت", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
             Label_Tour = new Label() { Text = "تور توزیع", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
+            Label_Reversion = new Label() { Text = "برگشت کالا", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
 
             MenuImages = new List<ImageHelper>();
 
@@ -92,6 +94,7 @@ namespace Kara
             MenuImages.Add(new ImageHelper { Image = Image_Backups });
             MenuImages.Add(new ImageHelper { Image = Image_Receipts, Invisible = !App.UseCollectorAndroidApplication.Value });
             MenuImages.Add(new ImageHelper { Image = Image_Tour });
+            MenuImages.Add(new ImageHelper { Image = Image_Reversion });
 
             MenuLabels = new List<LabelHelper>();
             MenuLabels.Add(new LabelHelper { Label = Label_Customers });
@@ -105,6 +108,7 @@ namespace Kara
             MenuLabels.Add(new LabelHelper { Label = Label_Backups });
             MenuLabels.Add(new LabelHelper { Label = Label_Receipts, Invisible = !App.UseCollectorAndroidApplication.Value });
             MenuLabels.Add(new LabelHelper { Label = Label_Tour });
+            MenuLabels.Add(new LabelHelper { Label = Label_Reversion });
 
             Image_Customers.GestureRecognizers.Add(new TapGestureRecognizer(MainMenu_GoToPartnerListForm));
             Image_InsertOrder.GestureRecognizers.Add(new TapGestureRecognizer(MainMenu_GoToOrderInsertForm));
@@ -118,6 +122,7 @@ namespace Kara
             Image_Receipts.GestureRecognizers.Add(new TapGestureRecognizer(MainMenu_GoToTahsildarForm));
             Image_ReceiptsNaghd.GestureRecognizers.Add(new TapGestureRecognizer(MainMenu_GoToNaghdForm));
             Image_Tour.GestureRecognizers.Add(new TapGestureRecognizer(MainMenu_GoToTour));
+            Image_Reversion.GestureRecognizers.Add(new TapGestureRecognizer(MainMenu_GoToReversion));
 
 
             MessagingCenter.Subscribe<object, string>(this, "CheckGps", (sender, msg) =>
@@ -128,6 +133,16 @@ namespace Kara
                     //App.ToastMessageHandler.ShowMessage( msg,Helpers.ToastMessageDuration.Long);
                 });
             });
+        }
+
+        private async void MainMenu_GoToReversion(View arg1, object arg2)
+        {
+            var naghdForm = new ReceiptPecuniary(12345678, new Guid())
+            {
+                StartColor = Color.FromHex("E6EBEF"),
+                EndColor = Color.FromHex("A6CFED")
+            };
+            await Navigation.PushAsync(naghdForm, false);
         }
 
         private async void MainMenu_GoToNaghdForm(View arg1, object arg2)
