@@ -870,7 +870,7 @@ namespace Kara
         public async void PrepareWarehousePicker()
         {
             var _Warehouses = (await App.DB.GetWarehousesAsync()).Data.ToArray()
-                .Select(a => new KeyValuePair<Warehouse, string>(a, a.WarehouseName.ReplaceLatinDigits())).ToArray();
+                .Select(a => new KeyValuePair<Warehouse, string>(a, a.WarehouseName.ToPersianDigits())).ToArray();
             if (_Warehouses.Length == 1)
             {
                 WarehouseId = _Warehouses.Single().Key.WarehouseId;
@@ -944,7 +944,7 @@ namespace Kara
                 App.ShowAccountingCycleOfPartner_UncashedCheques.Value ? ("چک های وصول نشده: " + (PartnerUncashedChequesCount.HasValue ? (PartnerUncashedChequesCount.Value == 0 ? "0" : PartnerUncashedChequesCount.Value + " فقره چک به مجموع مبلغ " + PartnerUncashedChequesPrice.Value.ToString("###,###,###,###,###,###,##0.") + " ریال") : (GettingPartnerCycleInformations == 0 ? "---" : "".PadLeft(GettingPartnerCycleInformations, '.')))) : "",
                 App.ShowAccountingCycleOfPartner_ReturnedCheques.Value ? ("چک های برگشتی: " + (PartnerReturnedChequesCount.HasValue ? (PartnerReturnedChequesCount.Value == 0 ? "0" : PartnerReturnedChequesCount.Value + " فقره چک به مجموع مبلغ " + PartnerReturnedChequesPrice.Value.ToString("###,###,###,###,###,###,##0.") + " ریال") : (GettingPartnerCycleInformations == 0 ? "---" : "".PadLeft(GettingPartnerCycleInformations, '.')))) : ""
             };
-            return Strs.Any(a => !string.IsNullOrWhiteSpace(a)) ? Strs.Where(a => !string.IsNullOrWhiteSpace(a)).Aggregate((sum, x) => sum + "\n" + x).ReplaceLatinDigits() : "";
+            return Strs.Any(a => !string.IsNullOrWhiteSpace(a)) ? Strs.Where(a => !string.IsNullOrWhiteSpace(a)).Aggregate((sum, x) => sum + "\n" + x).ToPersianDigits() : "";
         }
 
         async Task RefreshPartnerCycleInformation()
@@ -1242,7 +1242,7 @@ namespace Kara
                         OrderedStuffs.Count() + " قلم، " +
                         OrderedStuffs.SelectMany(a => a.HasBatchNumbers ? a.StuffRow_BatchNumberRows.SelectMany(b => b.PackagesData.Where(c => c.Quantity != 0)) : a.PackagesData.Where(b => b.Quantity != 0)).GroupBy(a => a.Package.Name).Select(a => a.Sum(b => b.Quantity) + " " + a.Key).Aggregate((sum, x) => sum + " + " + x) + "، " +
                         (OrderedStuffs.Sum(a => a._Price).GetValueOrDefault(0) == 0 ? "---" : OrderedStuffs.Sum(a => a._Price).GetValueOrDefault(0).ToString("###,###,###,###,###,###,##0.")) + " ریال"
-                        ).ReplaceLatinDigits();
+                        ).ToPersianDigits();
                     var GroupInStuffsList = AllStuffsData.SingleOrDefault(a => a.Id == Group.Group.Id);
                     if (GroupInStuffsList != null)
                         GroupInStuffsList.GroupSummary = Group.Group.GroupSummary;

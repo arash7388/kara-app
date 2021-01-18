@@ -5,173 +5,177 @@ using System.Threading.Tasks;
 using Kara.Models;
 using Xamarin.Forms;
 using System.Collections.ObjectModel;
-using Kara.Assets;
 using Kara.CustomRenderer;
 using Kara.Helpers;
 using CarouselView.FormsPlugin.Abstractions;
 using FFImageLoading.Forms;
 using XLabs.Forms.Controls;
+using static Kara.Assets.Connectivity;
+using Kara.Assets;
 
 namespace Kara
 {
-    //public class CustomStuffListCell : ViewCell
+    //public class ReversionCustomStuffListCell : CustomStuffListCell
     //{
-    //    public static EventHandler UnitNameTapEventHandler, QuantityPlusTapEventHandler, QuantityMinusTapEventHandler, QuantityTextBoxTapEventHandler, GroupTapEventHandler;
-    //    public static readonly BindableProperty IdProperty =
-    //        BindableProperty.Create("Id", typeof(string), typeof(CustomStuffListCell), string.Empty);
-    //    public string Id
-    //    {
-    //        get { return (string)GetValue(IdProperty); }
-    //        set { SetValue(IdProperty, value); }
-    //    }
+    //    //public ReversionCustomStuffListCell()
+    //    //{
+    //    //    this.SetBinding(CustomStuffListCell.IdProperty, "Id");
 
-    //    public CustomStuffListCell()
-    //    {
-    //        this.SetBinding(CustomStuffListCell.IdProperty, "Id");
+    //    //    //var ShowConsumerPrice = App.ShowConsumerPrice.Value;
+    //    //    //var ShowConsumerPrice = false;
+    //    //    //Grid GridWrapper = new Grid()
+    //    //    //{
+    //    //    //    Padding = new Thickness(5, 0),
+    //    //    //    RowSpacing = 1,
+    //    //    //    ColumnSpacing = 1,
+    //    //    //    HorizontalOptions = LayoutOptions.FillAndExpand
+    //    //    //};
+    //    //    //GridWrapper.SetBinding(Grid.BackgroundColorProperty, "RowColor");
+    //    //    //var GroupRow1 = new RowDefinition() { };
+    //    //    //GroupRow1.SetBinding(RowDefinition.HeightProperty, "ListGroupRow1Height");
+    //    //    //var GroupRow2 = new RowDefinition() { };
+    //    //    //GroupRow2.SetBinding(RowDefinition.HeightProperty, "ListGroupRow2Height");
+    //    //    //var StuffRow1 = new RowDefinition() { };
+    //    //    //StuffRow1.SetBinding(RowDefinition.HeightProperty, "ListStuffRowHeight");
+    //    //    //var StuffRow2 = new RowDefinition() { };
+    //    //    //StuffRow2.SetBinding(RowDefinition.HeightProperty, "ListStuffRowHeight");
+    //    //    //var BatchNumberRow = new RowDefinition() { };
+    //    //    //BatchNumberRow.SetBinding(RowDefinition.HeightProperty, "BatchNumberRowHeight");
+    //    //    //GridWrapper.RowDefinitions = new RowDefinitionCollection() { GroupRow1, GroupRow2, StuffRow1, StuffRow2, BatchNumberRow };
 
-    //        Grid GridWrapper = new Grid()
-    //        {
-    //            Padding = new Thickness(5, 0),
-    //            RowSpacing = 1,
-    //            ColumnSpacing = 1,
-    //            HorizontalOptions = LayoutOptions.FillAndExpand
-    //        };
-    //        GridWrapper.SetBinding(Grid.BackgroundColorProperty, "RowColor");
-    //        var GroupRow1 = new RowDefinition() { };
-    //        GroupRow1.SetBinding(RowDefinition.HeightProperty, "ListGroupRow1Height");
-    //        var GroupRow2 = new RowDefinition() { };
-    //        GroupRow2.SetBinding(RowDefinition.HeightProperty, "ListGroupRow2Height");
-    //        var StuffRow1 = new RowDefinition() { };
-    //        StuffRow1.SetBinding(RowDefinition.HeightProperty, "ListStuffRowHeight");
-    //        var StuffRow2 = new RowDefinition() { };
-    //        StuffRow2.SetBinding(RowDefinition.HeightProperty, "ListStuffRowHeight");
-    //        var BatchNumberRow = new RowDefinition() { };
-    //        BatchNumberRow.SetBinding(RowDefinition.HeightProperty, "BatchNumberRowHeight");
-    //        GridWrapper.RowDefinitions = new RowDefinitionCollection() { GroupRow1, GroupRow2, StuffRow1, StuffRow2, BatchNumberRow };
+    //    //    //GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
+    //    //    //GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
+    //    //    //GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
             
-    //        GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
-    //        GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
-    //        if (App.ShowConsumerPrice.Value)
-    //            GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
-    //        GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-    //        GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
-    //        GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-    //        GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
+    //    //    //if (ShowConsumerPrice)
+    //    //    //    GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
 
-    //        Label GroupLabel = null, GroupPriceSumLabel = null, CodeLabel = null, NameLabel = null, UnitNameLabel = null, StockLabel = null, FeeLabel = null, ConsumerFeeLabel = null, PriceLabel = null, QuantityPlusLabel = null, QuantityMinusLabel = null, QuantityEntry = null;
-    //        Label BatchNumberLabel = null, ExpirationDateLabel = null, BatchNumberStockLabel = null, BatchNumberQuantityPlusLabel = null, BatchNumberQuantityMinusLabel = null, BatchNumberQuantityEntry = null;
-    //        Image GroupButtonImage = null;
+    //    //    //GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+    //    //    //GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
+    //    //    //GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+    //    //    //GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
 
-    //        GroupLabel = new Label() { LineBreakMode = LineBreakMode.NoWrap, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16 + 2 };
-    //        GroupButtonImage = new Image() { WidthRequest = 15, HorizontalOptions = LayoutOptions.Start, VerticalOptions = LayoutOptions.Center };
-    //        GroupPriceSumLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("1845A5"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 13 };
-    //        CodeLabel = new Label() { LineBreakMode = LineBreakMode.HeadTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
-    //        NameLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
-    //        UnitNameLabel = new FullRoundedLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 0 };
-    //        StockLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
-    //        FeeLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("1845A5"), HorizontalOptions = LayoutOptions.Start, HorizontalTextAlignment = TextAlignment.Start, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
-    //        ConsumerFeeLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("1845A5"), HorizontalOptions = LayoutOptions.Start, HorizontalTextAlignment = TextAlignment.Start, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
-    //        PriceLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("1845A5"), HorizontalOptions = LayoutOptions.Start, HorizontalTextAlignment = TextAlignment.Start, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
-    //        QuantityPlusLabel = new RightEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "+", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 1 };
-    //        QuantityMinusLabel = new LeftEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "-", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 1 };
-    //        QuantityEntry = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 0, BackgroundColor = Color.FromHex("fff"), Padding = new Thickness(10) };
+    //    //    //Label GroupLabel = null, GroupPriceSumLabel = null, CodeLabel = null, NameLabel = null, UnitNameLabel = null, StockLabel = null, ConsumerFeeLabel = null, PriceLabel = null, QuantityPlusLabel = null, QuantityMinusLabel = null, QuantityEntry = null;
+    //    //    //Entry FeeText;
+    //    //    //Label FeeLabel;
+    //    //    //Label BatchNumberLabel = null, ExpirationDateLabel = null, BatchNumberStockLabel = null, BatchNumberQuantityPlusLabel = null, BatchNumberQuantityMinusLabel = null, BatchNumberQuantityEntry = null;
+    //    //    //Image GroupButtonImage = null;
 
-    //        BatchNumberLabel = new Label() { LineBreakMode = LineBreakMode.NoWrap, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 14 };
-    //        ExpirationDateLabel = new Label() { LineBreakMode = LineBreakMode.NoWrap, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 14 };
-    //        BatchNumberStockLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 14 };
-    //        BatchNumberQuantityPlusLabel = new RightEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "+", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 14, Margin = 1 };
-    //        BatchNumberQuantityMinusLabel = new LeftEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "-", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 14, Margin = 1 };
-    //        BatchNumberQuantityEntry = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 14, Margin = 0, BackgroundColor = Color.FromHex("fff"), Padding = new Thickness(10) };
-
-    //        var ShowConsumerPriceAddedSpace = App.ShowConsumerPrice.Value ? 1 : 0;
-
-    //        GridWrapper.Children.Add(GroupLabel, 1, 0);
-    //        Grid.SetColumnSpan(GroupLabel, 5 + ShowConsumerPriceAddedSpace);
-    //        GridWrapper.Children.Add(GroupButtonImage, 0, 0);
-    //        Grid.SetRowSpan(GroupButtonImage, 2);
-    //        GridWrapper.Children.Add(GroupPriceSumLabel, 1, 1);
-    //        Grid.SetColumnSpan(GroupPriceSumLabel, 5 + ShowConsumerPriceAddedSpace);
-
-    //        if (App.ShowStuffCodeInOrderInsertForm.Value)
-    //        {
-    //            GridWrapper.Children.Add(CodeLabel, 5 + ShowConsumerPriceAddedSpace, 2);
-    //            GridWrapper.Children.Add(NameLabel, 1, 2);
-    //            Grid.SetColumnSpan(NameLabel, 4 + ShowConsumerPriceAddedSpace);
-    //        }
-    //        else
-    //        {
-    //            GridWrapper.Children.Add(NameLabel, 1, 2);
-    //            Grid.SetColumnSpan(NameLabel, 5 + ShowConsumerPriceAddedSpace);
-    //        }
-    //        GridWrapper.Children.Add(UnitNameLabel, 0, 2);
-
-    //        GridWrapper.Children.Add(PriceLabel, 0, 3);
-    //        GridWrapper.Children.Add(FeeLabel, 1, 3);
-    //        if (App.ShowConsumerPrice.Value)
-    //            GridWrapper.Children.Add(ConsumerFeeLabel, 2, 3);
-    //        GridWrapper.Children.Add(QuantityMinusLabel, 2 + ShowConsumerPriceAddedSpace, 3);
-    //        GridWrapper.Children.Add(QuantityEntry, 3 + ShowConsumerPriceAddedSpace, 3);
-    //        GridWrapper.Children.Add(QuantityPlusLabel, 4 + ShowConsumerPriceAddedSpace, 3);
-    //        GridWrapper.Children.Add(StockLabel, 5 + ShowConsumerPriceAddedSpace, 3);
-
-    //        GridWrapper.Children.Add(ExpirationDateLabel, 0, 4);
-    //        GridWrapper.Children.Add(BatchNumberLabel, 1, 4);
-    //        GridWrapper.Children.Add(BatchNumberQuantityMinusLabel, 2 + ShowConsumerPriceAddedSpace, 4);
-    //        GridWrapper.Children.Add(BatchNumberQuantityEntry, 3 + ShowConsumerPriceAddedSpace, 4);
-    //        GridWrapper.Children.Add(BatchNumberQuantityPlusLabel, 4 + ShowConsumerPriceAddedSpace, 4);
-    //        GridWrapper.Children.Add(BatchNumberStockLabel, 5 + ShowConsumerPriceAddedSpace, 4);
+    //    //    //GroupLabel = new Label() { LineBreakMode = LineBreakMode.NoWrap, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16 + 2 ,BackgroundColor=Color.Red};
+    //    //    //GroupButtonImage = new Image() { WidthRequest = 15, HorizontalOptions = LayoutOptions.Start, VerticalOptions = LayoutOptions.Center ,BackgroundColor=Color.Yellow};
+    //    //    //GroupPriceSumLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("1845A5"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 13,BackgroundColor=Color.Blue };
+    //    //    //CodeLabel = new Label() { LineBreakMode = LineBreakMode.HeadTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16,BackgroundColor=Color.Cyan };
+    //    //    //NameLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16 , BackgroundColor = Color.Purple };
+    //    //    //UnitNameLabel = new FullRoundedLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 0,BackgroundColor = Color.Gray };
+    //    //    //StockLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
             
-    //        GroupLabel.SetBinding(Label.TextProperty, "DisplayGroupName");
-    //        GroupButtonImage.SetBinding(Image.SourceProperty, "GroupButtonIcon");
-    //        GroupPriceSumLabel.SetBinding(Label.TextProperty, "GroupSummary");
+    //    //    //FeeLabel = new Label() {Text="فی:", LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.Start, HorizontalTextAlignment = TextAlignment.Start, VerticalOptions = LayoutOptions.Center, FontSize = 16 , BackgroundColor = Color.Cornsilk };
+    //    //    //FeeText = new Entry() { TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.Start, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 16 , BackgroundColor = Color.Aqua };
+    //    //    //ConsumerFeeLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("1845A5"), HorizontalOptions = LayoutOptions.StartAndExpand, HorizontalTextAlignment = TextAlignment.Start, VerticalOptions = LayoutOptions.Center, FontSize = 16 };
+    //    //    //PriceLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("1845A5"), HorizontalOptions = LayoutOptions.Start, HorizontalTextAlignment = TextAlignment.Start, VerticalOptions = LayoutOptions.Center, FontSize = 16, BackgroundColor = Color.DeepPink };
+    //    //    //QuantityPlusLabel = new RightEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "+", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 1 };
+    //    //    //QuantityMinusLabel = new LeftEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "-", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 1 };
+    //    //    //QuantityEntry = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 16, Margin = 0, BackgroundColor = Color.FromHex("fff"), Padding = new Thickness(10) };
 
-    //        CodeLabel.SetBinding(Label.TextProperty, "Code");
-    //        NameLabel.SetBinding(Label.TextProperty, "Name");
-    //        UnitNameLabel.SetBinding(Label.TextProperty, "UnitName");
-    //        StockLabel.SetBinding(Label.TextProperty, "Stock");
-    //        FeeLabel.SetBinding(Label.TextProperty, "Fee");
-    //        ConsumerFeeLabel.SetBinding(Label.TextProperty, "ConsumerFee");
-    //        PriceLabel.SetBinding(Label.TextProperty, "Price");
-    //        QuantityEntry.SetBinding(Label.TextProperty, "QuantityLabel");
+    //    //    //BatchNumberLabel = new Label() { LineBreakMode = LineBreakMode.NoWrap, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 14 };
+    //    //    //ExpirationDateLabel = new Label() { LineBreakMode = LineBreakMode.NoWrap, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 14 };
+    //    //    //BatchNumberStockLabel = new Label() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.End, HorizontalTextAlignment = TextAlignment.End, VerticalOptions = LayoutOptions.Center, FontSize = 14 };
+    //    //    //BatchNumberQuantityPlusLabel = new RightEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "+", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 14, Margin = 1 };
+    //    //    //BatchNumberQuantityMinusLabel = new LeftEntryCompanionLabel() { LineBreakMode = LineBreakMode.TailTruncation, Text = "-", TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 14, Margin = 1 };
+    //    //    //BatchNumberQuantityEntry = new MyLabel() { LineBreakMode = LineBreakMode.TailTruncation, TextColor = Color.FromHex("222"), HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, VerticalOptions = LayoutOptions.Center, VerticalTextAlignment = TextAlignment.Center, FontSize = 14, Margin = 0, BackgroundColor = Color.FromHex("fff"), Padding = new Thickness(10) };
 
-    //        QuantityPlusLabel.SetBinding(RightEntryCompanionLabel.DisabledProperty, "HasBatchNumbers");
-    //        QuantityMinusLabel.SetBinding(LeftEntryCompanionLabel.DisabledProperty, "HasBatchNumbers");
+    //    //    //var ShowConsumerPriceAddedSpace = ShowConsumerPrice ? 1 : 0;
 
-    //        ExpirationDateLabel.SetBinding(Label.TextProperty, "ExpirationDate");
-    //        BatchNumberLabel.SetBinding(Label.TextProperty, "BatchNumber");
-    //        BatchNumberQuantityEntry.SetBinding(Label.TextProperty, "QuantityLabel");
-    //        BatchNumberStockLabel.SetBinding(Label.TextProperty, "Stock");
+    //    //    //GridWrapper.Children.Add(GroupLabel, 1, 0);
+    //    //    //Grid.SetColumnSpan(GroupLabel, 5 + ShowConsumerPriceAddedSpace);
+    //    //    //GridWrapper.Children.Add(GroupButtonImage, 0, 0);
+    //    //    //Grid.SetRowSpan(GroupButtonImage, 2);
+    //    //    //GridWrapper.Children.Add(GroupPriceSumLabel, 1, 1);
+    //    //    //Grid.SetColumnSpan(GroupPriceSumLabel, 5 + ShowConsumerPriceAddedSpace);
 
-    //        var UnitNameTapGestureRecognizer = new TapGestureRecognizer();
-    //        UnitNameTapGestureRecognizer.Tapped += UnitNameTapEventHandler;
-    //        UnitNameTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
-    //        UnitNameLabel.GestureRecognizers.Add(UnitNameTapGestureRecognizer);
+    //    //    //if (App.ShowStuffCodeInOrderInsertForm.Value)
+    //    //    //{
+    //    //    //    GridWrapper.Children.Add(CodeLabel, 5 + ShowConsumerPriceAddedSpace, 2);
+    //    //    //    GridWrapper.Children.Add(NameLabel, 1, 2);
+    //    //    //    Grid.SetColumnSpan(NameLabel, 4 + ShowConsumerPriceAddedSpace);
+    //    //    //}
+    //    //    //else
+    //    //    //{
+    //    //    //    GridWrapper.Children.Add(NameLabel, 1, 2);
+    //    //    //    Grid.SetColumnSpan(NameLabel, 5 + ShowConsumerPriceAddedSpace);
+    //    //    //}
+    //    //    //GridWrapper.Children.Add(UnitNameLabel, 0, 2);
 
-    //        var QuantityTextBoxTapGestureRecognizer = new TapGestureRecognizer();
-    //        QuantityTextBoxTapGestureRecognizer.Tapped += QuantityTextBoxTapEventHandler;
-    //        QuantityTextBoxTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
-    //        QuantityEntry.GestureRecognizers.Add(QuantityTextBoxTapGestureRecognizer);
-    //        BatchNumberQuantityEntry.GestureRecognizers.Add(QuantityTextBoxTapGestureRecognizer);
+    //    //    //GridWrapper.Children.Add(PriceLabel, 0, 3);
+    //    //    //GridWrapper.Children.Add(FeeText, 1, 3);
+    //    //    //GridWrapper.Children.Add(FeeLabel, 1, 3);
+            
+    //    //    //if (ShowConsumerPrice)
+    //    //    //    GridWrapper.Children.Add(ConsumerFeeLabel, 2, 3);
 
-    //        var QuantityPlusTapGestureRecognizer = new TapGestureRecognizer();
-    //        QuantityPlusTapGestureRecognizer.Tapped += QuantityPlusTapEventHandler;
-    //        QuantityPlusTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
-    //        QuantityPlusLabel.GestureRecognizers.Add(QuantityPlusTapGestureRecognizer);
-    //        BatchNumberQuantityPlusLabel.GestureRecognizers.Add(QuantityPlusTapGestureRecognizer);
+    //    //    //GridWrapper.Children.Add(QuantityMinusLabel, 2 + ShowConsumerPriceAddedSpace, 3);
+    //    //    //GridWrapper.Children.Add(QuantityEntry, 3 + ShowConsumerPriceAddedSpace, 3);
+    //    //    //GridWrapper.Children.Add(QuantityPlusLabel, 4 + ShowConsumerPriceAddedSpace, 3);
+    //    //    //GridWrapper.Children.Add(StockLabel, 5 + ShowConsumerPriceAddedSpace, 3);
 
-    //        var QuantityMinusTapGestureRecognizer = new TapGestureRecognizer();
-    //        QuantityMinusTapGestureRecognizer.Tapped += QuantityMinusTapEventHandler;
-    //        QuantityMinusTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
-    //        QuantityMinusLabel.GestureRecognizers.Add(QuantityMinusTapGestureRecognizer);
-    //        BatchNumberQuantityMinusLabel.GestureRecognizers.Add(QuantityMinusTapGestureRecognizer);
+    //    //    //GridWrapper.Children.Add(ExpirationDateLabel, 0, 4);
+    //    //    //GridWrapper.Children.Add(BatchNumberLabel, 1, 4);
+    //    //    //GridWrapper.Children.Add(BatchNumberQuantityMinusLabel, 2 + ShowConsumerPriceAddedSpace, 4);
+    //    //    //GridWrapper.Children.Add(BatchNumberQuantityEntry, 3 + ShowConsumerPriceAddedSpace, 4);
+    //    //    //GridWrapper.Children.Add(BatchNumberQuantityPlusLabel, 4 + ShowConsumerPriceAddedSpace, 4);
+    //    //    //GridWrapper.Children.Add(BatchNumberStockLabel, 5 + ShowConsumerPriceAddedSpace, 4);
 
-    //        var GroupTapGestureRecognizer = new TapGestureRecognizer();
-    //        GroupTapGestureRecognizer.Tapped += GroupTapEventHandler;
-    //        GroupTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
-    //        GridWrapper.GestureRecognizers.Add(GroupTapGestureRecognizer);
+    //    //    //GroupLabel.SetBinding(Label.TextProperty, "DisplayGroupName");
+    //    //    //GroupButtonImage.SetBinding(Image.SourceProperty, "GroupButtonIcon");
+    //    //    //GroupPriceSumLabel.SetBinding(Label.TextProperty, "GroupSummary");
 
-    //        View = GridWrapper;
-    //    }
+    //    //    //CodeLabel.SetBinding(Label.TextProperty, "Code");
+    //    //    //NameLabel.SetBinding(Label.TextProperty, "Name");
+    //    //    //UnitNameLabel.SetBinding(Label.TextProperty, "UnitName");
+    //    //    //StockLabel.SetBinding(Label.TextProperty, "Stock");
+    //    //    //FeeText.SetBinding(Entry.TextProperty, "Fee");
+    //    //    //ConsumerFeeLabel.SetBinding(Label.TextProperty, "ConsumerFee");
+    //    //    //PriceLabel.SetBinding(Label.TextProperty, "Price");
+    //    //    //QuantityEntry.SetBinding(Label.TextProperty, "QuantityLabel");
+
+    //    //    //QuantityPlusLabel.SetBinding(RightEntryCompanionLabel.DisabledProperty, "HasBatchNumbers");
+    //    //    //QuantityMinusLabel.SetBinding(LeftEntryCompanionLabel.DisabledProperty, "HasBatchNumbers");
+
+    //    //    //ExpirationDateLabel.SetBinding(Label.TextProperty, "ExpirationDate");
+    //    //    //BatchNumberLabel.SetBinding(Label.TextProperty, "BatchNumber");
+    //    //    //BatchNumberQuantityEntry.SetBinding(Label.TextProperty, "QuantityLabel");
+    //    //    //BatchNumberStockLabel.SetBinding(Label.TextProperty, "Stock");
+
+    //    //    //var UnitNameTapGestureRecognizer = new TapGestureRecognizer();
+    //    //    //UnitNameTapGestureRecognizer.Tapped += UnitNameTapEventHandler;
+    //    //    //UnitNameTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
+    //    //    //UnitNameLabel.GestureRecognizers.Add(UnitNameTapGestureRecognizer);
+
+    //    //    //var QuantityTextBoxTapGestureRecognizer = new TapGestureRecognizer();
+    //    //    //QuantityTextBoxTapGestureRecognizer.Tapped += QuantityTextBoxTapEventHandler;
+    //    //    //QuantityTextBoxTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
+    //    //    //QuantityEntry.GestureRecognizers.Add(QuantityTextBoxTapGestureRecognizer);
+    //    //    //BatchNumberQuantityEntry.GestureRecognizers.Add(QuantityTextBoxTapGestureRecognizer);
+
+    //    //    //var QuantityPlusTapGestureRecognizer = new TapGestureRecognizer();
+    //    //    //QuantityPlusTapGestureRecognizer.Tapped += QuantityPlusTapEventHandler;
+    //    //    //QuantityPlusTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
+    //    //    //QuantityPlusLabel.GestureRecognizers.Add(QuantityPlusTapGestureRecognizer);
+    //    //    //BatchNumberQuantityPlusLabel.GestureRecognizers.Add(QuantityPlusTapGestureRecognizer);
+
+    //    //    //var QuantityMinusTapGestureRecognizer = new TapGestureRecognizer();
+    //    //    //QuantityMinusTapGestureRecognizer.Tapped += QuantityMinusTapEventHandler;
+    //    //    //QuantityMinusTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
+    //    //    //QuantityMinusLabel.GestureRecognizers.Add(QuantityMinusTapGestureRecognizer);
+    //    //    //BatchNumberQuantityMinusLabel.GestureRecognizers.Add(QuantityMinusTapGestureRecognizer);
+
+    //    //    //var GroupTapGestureRecognizer = new TapGestureRecognizer();
+    //    //    //GroupTapGestureRecognizer.Tapped += GroupTapEventHandler;
+    //    //    //GroupTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
+    //    //    //GridWrapper.GestureRecognizers.Add(GroupTapGestureRecognizer);
+
+    //    //    //View = GridWrapper;
+    //    //}
     //}
 
     //public class StuffGallaryView : ContentView
@@ -294,7 +298,7 @@ namespace Kara
     //        BottomContentBG.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
     //        QuantityPlusLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
     //        QuantityMinusLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
-            
+
     //        var UnitNameTapGestureRecognizer = new TapGestureRecognizer();
     //        UnitNameTapGestureRecognizer.Tapped += UnitNameTapEventHandler;
     //        UnitNameTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
@@ -339,7 +343,7 @@ namespace Kara
     //        BindableProperty.Create("StuffsArray", typeof(DBRepository.StuffListModel[]), typeof(StuffGallaryViewGrid), null, propertyChanged: OnStuffsArrayChanged);
     //    public static Dictionary<Guid, StuffGallaryView> StuffViewHistory;
     //    public static Dictionary<int, Guid[]> PageStuffIds;
-        
+
     //    static Guid[] LastStuffIds = null;
     //    static void OnStuffsArrayChanged(BindableObject bindable, object oldValue, object newValue)
     //    {
@@ -401,11 +405,11 @@ namespace Kara
     //        get { return (DBRepository.StuffListModel[])GetValue(StuffsArrayProperty); }
     //        set { SetValue(StuffsArrayProperty, value); }
     //    }
-        
+
     //    public StuffGallaryViewGrid()
     //    {
     //        this.SetBinding(StuffGallaryViewGrid.StuffsArrayProperty, "Stuffs");
-            
+
     //        _grid = new Grid()
     //        {
     //            RowSpacing = 0,
@@ -420,7 +424,7 @@ namespace Kara
 
     //        Content = _grid;
     //    }
-        
+
     //    public IList<View> Children { get { return _grid.Children; } }
 
     //    private Guid LastLayingoutRequestId;
@@ -436,7 +440,7 @@ namespace Kara
 
     //        var OldIsHorizontal = ThisWidth > ThisHeight;
     //        var NewIsHorizontal = width > height;
-            
+
     //        ThisWidth = width;
     //        ThisHeight = height;
     //        foreach (var child in Children)
@@ -452,14 +456,14 @@ namespace Kara
     //                var Children = this.Children.ToList();
     //                foreach (var child in Children)
     //                    _grid.Children.Remove(child);
-            
+
     //                _grid.RowDefinitions.Clear();
     //                _grid.ColumnDefinitions.Clear();
     //                for (int i = 0; i < (NewIsHorizontal ? RowCount : ColumnCount); i++)
     //                    _grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Star });
     //                for (int j = 0; j < (NewIsHorizontal ? ColumnCount : RowCount); j++)
     //                    _grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Star });
-            
+
     //                for (int i = 0; i < (NewIsHorizontal ? RowCount : ColumnCount); i++)
     //                {
     //                    for (int j = 0; j < (NewIsHorizontal ? ColumnCount : RowCount); j++)
@@ -484,7 +488,7 @@ namespace Kara
     //            bindableObject.BindingContext = dataSource;
     //        return view;
     //    }
-        
+
     //    static bool Initialized = false;
     //    public void CreatePageContents()
     //    {
@@ -511,12 +515,14 @@ namespace Kara
     //        }
     //    }
     //}
-    
+
     public partial class ReversionForm : GradientContentPage
     {
+        //public static EventHandler UnitNameTapEventHandler, QuantityPlusTapEventHandler, QuantityMinusTapEventHandler, QuantityTextBoxTapEventHandler, GroupTapEventHandler;
         public static SettingField<bool> InsertOrderForm_ShowGallaryMode = new SettingField<bool>("InsertOrderForm_ShowGallaryMode", false);
+        ObservableCollection<DBRepository.StuffListModel> _StuffsList = null;
+        private ToolbarItem ToolbarItem_SendToServer, ToolbarItem_LocalSave;
 
-        //public ObservableCollection<DBRepository.StuffListModel> _StuffsList;
         private Partner _BeforeSelectedPartner;
         private Partner _SelectedPartner;
         public Partner SelectedPartner
@@ -546,18 +552,18 @@ namespace Kara
         Picker GallaryStuffGroupPicker;
         Guid? WarehouseId;
         bool TapEventHandlingInProgress = false;
-        bool FromTour;
 
         CarouselViewControl gallaryCarousel;
 
         Guid LastSearchWhenTypingId = Guid.NewGuid();
-        
+        DtoReversionReason[] ReversionReasons = null;
+        DtoPersonnelForSaleOrder[] Visitors = null;
+
         public ReversionForm(Partner Partner, SaleOrder SaleOrder, InsertedInformations_Orders OrdersForm, PartnerListForm PartnerListForm, Guid? __WarehouseId,bool fromTour=false)
         {
             App.UniversalLineInApp = 875234001;
 
             InitializeComponent();
-            FromTour = fromTour;
             App.UniversalLineInApp = 875234002;
 
             WarehouseId = __WarehouseId;
@@ -639,7 +645,7 @@ namespace Kara
                 _BeforeSelectedPartner = _Partner;
                 _SelectedPartner = _Partner;
                 PartnerLabel.Text = !string.IsNullOrEmpty(SelectedPartner.LegalName) ? (SelectedPartner.LegalName + (!string.IsNullOrEmpty(SelectedPartner.Name) ? (" (" + SelectedPartner.Name + ")") : "")) : (SelectedPartner.Name);
-                FetchPartnerCycleInformationFromServer();
+                //FetchPartnerCycleInformationFromServer();
 
             }
             App.UniversalLineInApp = 875234037;
@@ -721,65 +727,61 @@ namespace Kara
             StuffItems.HasUnevenRows = true;
             App.UniversalLineInApp = 875234064;
             StuffItems.SeparatorVisibility = SeparatorVisibility.None;
-            //App.UniversalLineInApp = 875234065;
             StuffItems.ItemSelected += VisitItems_ItemSelected;
-            //App.UniversalLineInApp = 875234066;
 
             GallaryStuffBatchNumbersList.HasUnevenRows = true;
-            //App.UniversalLineInApp = 875234067;
             GallaryStuffBatchNumbersList.SeparatorVisibility = SeparatorVisibility.None;
-            //App.UniversalLineInApp = 875234068;
             GallaryStuffBatchNumbersList.ItemSelected += VisitItems_ItemSelected;
-            //App.UniversalLineInApp = 875234069;
 
             ToolbarItem_SearchBar = new ToolbarItem();
-            //App.UniversalLineInApp = 875234070;
             ToolbarItem_SearchBar.Text = "جستجو";
-            //App.UniversalLineInApp = 875234071;
             ToolbarItem_SearchBar.Icon = "Search.png";
-            //App.UniversalLineInApp = 875234072;
             ToolbarItem_SearchBar.Activated += ToolbarItem_SearchBar_Activated;
-            //App.UniversalLineInApp = 875234073;
             ToolbarItem_SearchBar.Order = ToolbarItemOrder.Primary;
-            //App.UniversalLineInApp = 875234074;
             ToolbarItem_SearchBar.Priority = 10;
-            //App.UniversalLineInApp = 875234075;
             if (!this.ToolbarItems.Contains(ToolbarItem_SearchBar) && !StuffsSearchBar.IsVisible)
                 this.ToolbarItems.Add(ToolbarItem_SearchBar);
-            //App.UniversalLineInApp = 875234076;
 
             ToolbarItem_QRSearchBar = new ToolbarItem();
-            //App.UniversalLineInApp = 875234077;
             ToolbarItem_QRSearchBar.Text = "اسکنر بارکد";
-            //App.UniversalLineInApp = 875234078;
             ToolbarItem_QRSearchBar.Icon = "SearchQR.png";
-            //App.UniversalLineInApp = 875234079;
             ToolbarItem_QRSearchBar.Activated += ToolbarItem_QRSearchBar_Activated;
-            //App.UniversalLineInApp = 875234080;
             ToolbarItem_QRSearchBar.Order = ToolbarItemOrder.Primary;
-            //App.UniversalLineInApp = 875234081;
             ToolbarItem_QRSearchBar.Priority = 10;
-            //App.UniversalLineInApp = 875234082;
             if (!this.ToolbarItems.Contains(ToolbarItem_QRSearchBar) && (App.UseBarcodeScannerInVisitorAppToSelectStuff.Value || App.UseQRScannerInVisitorAppToSelectStuff.Value))
                 this.ToolbarItems.Add(ToolbarItem_QRSearchBar);
-            //App.UniversalLineInApp = 875234083;
 
             ToolbarItem_GallaryMode = new ToolbarItem();
-            //App.UniversalLineInApp = 875234084;
             ToolbarItem_GallaryMode.Text = "گالری تصاویر";
-            //App.UniversalLineInApp = 875234085;
             ToolbarItem_GallaryMode.Icon = "ImageGallary.png";
-            //App.UniversalLineInApp = 875234086;
             ToolbarItem_GallaryMode.Activated += ToolbarItem_GallaryMode_Activated;
-            //App.UniversalLineInApp = 875234087;
             ToolbarItem_GallaryMode.Order = ToolbarItemOrder.Primary;
-            //App.UniversalLineInApp = 875234088;
+
+            ToolbarItem_LocalSave = new ToolbarItem();
+            ToolbarItem_LocalSave.Text = "ذخیره محلی";
+            ToolbarItem_LocalSave.Icon = "Save.png";
+            ToolbarItem_LocalSave.Clicked += SubmitToStorage;
+            ToolbarItem_LocalSave.Order = ToolbarItemOrder.Primary;
+            ToolbarItem_LocalSave.Priority = 0;
+            //if (!JustShow)
+            //    this.ToolbarItems.Add(ToolbarItem_LocalSave);
+            if (!this.ToolbarItems.Contains(ToolbarItem_LocalSave)) 
+                this.ToolbarItems.Add(ToolbarItem_LocalSave);
+
+            ToolbarItem_SendToServer = new ToolbarItem();
+            ToolbarItem_SendToServer.Text = "ارسال به سرور";
+            ToolbarItem_SendToServer.Icon = "Upload.png";
+            ToolbarItem_SendToServer.Activated += SubmitToServer;
+            ToolbarItem_SendToServer.Order = ToolbarItemOrder.Primary;
+            ToolbarItem_SendToServer.Priority = 0;
+            //if (!JustShow)
+            //    this.ToolbarItems.Add(ToolbarItem_SendToServer);
+            if (!this.ToolbarItems.Contains(ToolbarItem_SendToServer))
+                this.ToolbarItems.Add(ToolbarItem_SendToServer);
 
             ToolbarItem_GallaryMode.Priority = 11;
-            //App.UniversalLineInApp = 875234089;
-            if (!InsertOrderForm_ShowGallaryMode.Value && !this.ToolbarItems.Contains(ToolbarItem_GallaryMode))
-                this.ToolbarItems.Add(ToolbarItem_GallaryMode);
-            //App.UniversalLineInApp = 875234090;
+            //if (!InsertOrderForm_ShowGallaryMode.Value && !this.ToolbarItems.Contains(ToolbarItem_GallaryMode))
+            //    this.ToolbarItems.Add(ToolbarItem_GallaryMode);
 
             ToolbarItem_StuffListMode = new ToolbarItem();
             ToolbarItem_StuffListMode.Text = "لیست کالاها";
@@ -799,11 +801,8 @@ namespace Kara
             StuffsSearchBar.TextChanged += async (sender, args) => {
                 App.UniversalLineInApp = 875234103;
                 var thisTextSearchId = Guid.NewGuid();
-                //App.UniversalLineInApp = 875234104;
                 LastSearchWhenTypingId = thisTextSearchId;
-                //App.UniversalLineInApp = 875234105;
                 await Task.Delay(1000);
-                //App.UniversalLineInApp = 875234106;
                 if (LastSearchWhenTypingId == thisTextSearchId)
                     await FillStuffs(args.NewTextValue, null, false, false);
                 App.UniversalLineInApp = 875234107;
@@ -812,28 +811,21 @@ namespace Kara
             {
                 App.UniversalLineInApp = 875234108;
                 await StuffsSearchBar.FadeTo(0, 350);
-                //App.UniversalLineInApp = 875234109;
                 StuffsSearchBar.IsVisible = false;
-                //App.UniversalLineInApp = 875234110;
                 ToolbarItem_SearchBar.Icon = "Search.png";
                 App.UniversalLineInApp = 875234111;
             };
-            //App.UniversalLineInApp = 875234112;
 
             StuffGallaryViewGrid.RowCount = App.GallaryStuffCount[0];
-            //App.UniversalLineInApp = 875234113;
             StuffGallaryViewGrid.ColumnCount = App.GallaryStuffCount[1];
-            //App.UniversalLineInApp = 875234114;
             gallaryCarousel = new CarouselViewControl()
             {
                 HorizontalOptions = LayoutOptions.FillAndExpand,
                 VerticalOptions = LayoutOptions.FillAndExpand,
                 ItemTemplate = new DataTemplate(typeof(StuffGallaryViewGrid))
             };
-            //App.UniversalLineInApp = 875234115;
 
             GallaryContainer.Children.Add(gallaryCarousel);
-            //App.UniversalLineInApp = 875234116;
 
             FillStuffs(StuffsSearchBar.Text, SaleOrder, true, false);
             App.UniversalLineInApp = 875234117;
@@ -851,16 +843,65 @@ namespace Kara
             );
             App.UniversalLineInApp = 875234118;
 
-            if (FromTour)
+            FillReversionReasons();
+            Task.Delay(100);
+        }
+        
+
+        private async Task FillReversionReasons()
+        {
+            try
             {
-                PartnerChangeButton.IsEnabled = false;
+                var result = await Connectivity.GetReversionReasons();
+
+                if (result.Success && result.Data != null)
+                {
+                    ReversionReasons = result.Data.ToArray();
+
+                    if (ReversionReasons != null)
+                        foreach (var r in ReversionReasons)
+                            ReversionReasonPicker.Items.Add(r.Name);
+                }
+                else
+                {
+                    App.ShowError("خطا", "هیچ علتی در سیستم تعریف نشده است ", "خوب");
+                }
+            }
+            catch (Exception ex)
+            {
+                App.ShowError("خطا", ex.Message, "خوب");
+            }
+        }
+
+        private async Task FillVisitors()
+        {
+            try
+            {
+                var result = await Connectivity.GetReversionVisitors();
+
+                if (result.Success && result.Data != null)
+                {
+                    Visitors = result.Data.ToArray();
+
+                    if (Visitors != null)
+                        foreach (var r in Visitors)
+                            VisitorPicker.Items.Add(r.Name);
+                }
+                else
+                {
+                    App.ShowError("خطا", "هیچ ویزیتوری یافت نشد ", "خوب");
+                }
+            }
+            catch (Exception ex)
+            {
+                App.ShowError("خطا", ex.Message, "خوب");
             }
         }
 
         public async void PrepareWarehousePicker()
         {
             var _Warehouses = (await App.DB.GetWarehousesAsync()).Data.ToArray()
-                .Select(a => new KeyValuePair<Warehouse, string>(a, a.WarehouseName.ReplaceLatinDigits())).ToArray();
+                .Select(a => new KeyValuePair<Warehouse, string>(a, a.WarehouseName.ToPersianDigits())).ToArray();
             if (_Warehouses.Length == 1)
             {
                 WarehouseId = _Warehouses.Single().Key.WarehouseId;
@@ -934,7 +975,7 @@ namespace Kara
                 App.ShowAccountingCycleOfPartner_UncashedCheques.Value ? ("چک های وصول نشده: " + (PartnerUncashedChequesCount.HasValue ? (PartnerUncashedChequesCount.Value == 0 ? "0" : PartnerUncashedChequesCount.Value + " فقره چک به مجموع مبلغ " + PartnerUncashedChequesPrice.Value.ToString("###,###,###,###,###,###,##0.") + " ریال") : (GettingPartnerCycleInformations == 0 ? "---" : "".PadLeft(GettingPartnerCycleInformations, '.')))) : "",
                 App.ShowAccountingCycleOfPartner_ReturnedCheques.Value ? ("چک های برگشتی: " + (PartnerReturnedChequesCount.HasValue ? (PartnerReturnedChequesCount.Value == 0 ? "0" : PartnerReturnedChequesCount.Value + " فقره چک به مجموع مبلغ " + PartnerReturnedChequesPrice.Value.ToString("###,###,###,###,###,###,##0.") + " ریال") : (GettingPartnerCycleInformations == 0 ? "---" : "".PadLeft(GettingPartnerCycleInformations, '.')))) : ""
             };
-            return Strs.Any(a => !string.IsNullOrWhiteSpace(a)) ? Strs.Where(a => !string.IsNullOrWhiteSpace(a)).Aggregate((sum, x) => sum + "\n" + x).ReplaceLatinDigits() : "";
+            return Strs.Any(a => !string.IsNullOrWhiteSpace(a)) ? Strs.Where(a => !string.IsNullOrWhiteSpace(a)).Aggregate((sum, x) => sum + "\n" + x).ToPersianDigits() : "";
         }
 
         async Task RefreshPartnerCycleInformation()
@@ -951,6 +992,114 @@ namespace Kara
             }
         }
 
+        private void UnitNameTapEventHandler(object s, EventArgs e)
+        {
+            if (!TapEventHandlingInProgress)
+            {
+                TapEventHandlingInProgress = true;
+
+                try
+                {
+                    App.UniversalLineInApp = 875234121;
+                    var Ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+                    var StuffId = new Guid(Ids[0]);
+                    var BatchNumberId = Ids.Length == 2 ? new Guid(Ids[1]) : new Nullable<Guid>();
+                    UnitNameClicked(StuffId);
+                    App.UniversalLineInApp = 875234125;
+                }
+                catch (Exception)
+                { }
+
+                TapEventHandlingInProgress = false;
+            }
+        }
+
+        private void QuantityTextBoxTapEventHandler(object s, EventArgs e)
+        {
+            if (!TapEventHandlingInProgress)
+            {
+                TapEventHandlingInProgress = true;
+
+                try
+                {
+                    App.UniversalLineInApp = 875234127;
+                    var Ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+                    var StuffId = new Guid(Ids[0]);
+                    var BatchNumberId = Ids.Length == 2 ? new Guid(Ids[1]) : new Nullable<Guid>();
+                    FocusedQuantityTextBoxId = BatchNumberId.HasValue ? new Guid[] { StuffId, BatchNumberId.Value } : new Guid[] { StuffId };
+                    App.UniversalLineInApp = 875234131;
+                }
+                catch (Exception)
+                { }
+
+                TapEventHandlingInProgress = false;
+            }
+        }
+
+        private void QuantityPlusTapEventHandler(object s, EventArgs e)
+        {
+            if (!TapEventHandlingInProgress)
+            {
+                TapEventHandlingInProgress = true;
+
+                try
+                {
+                    App.UniversalLineInApp = 875234133;
+                    var Ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+                    var StuffId = new Guid(Ids[0]);
+                    var BatchNumberId = Ids.Length == 2 ? new Guid(Ids[1]) : new Nullable<Guid>();
+                    QuantityPlusClicked(StuffId, BatchNumberId);
+                }
+                catch (Exception)
+                { }
+
+                TapEventHandlingInProgress = false;
+            }
+        }
+
+        private void UnitNameTapEventHandle(object s, EventArgs e)
+        {
+            if (!TapEventHandlingInProgress)
+            {
+                TapEventHandlingInProgress = true;
+
+                try
+                {
+                    App.UniversalLineInApp = 875234121;
+                    var Ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+                    var StuffId = new Guid(Ids[0]);
+                    var BatchNumberId = Ids.Length == 2 ? new Guid(Ids[1]) : new Nullable<Guid>();
+                    UnitNameClicked(StuffId);
+                    App.UniversalLineInApp = 875234125;
+                }
+                catch (Exception)
+                { }
+
+                TapEventHandlingInProgress = false;
+            }
+        }
+
+        private void QuantityMinusTapEventHandler(object s, EventArgs e)
+        {
+            if (!TapEventHandlingInProgress)
+            {
+                TapEventHandlingInProgress = true;
+
+                try
+                {
+                    App.UniversalLineInApp = 875234138;
+                    var Ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+                    var StuffId = new Guid(Ids[0]);
+                    var BatchNumberId = Ids.Length == 2 ? new Guid(Ids[1]) : new Nullable<Guid>();
+                    QuantityMinusClicked(StuffId, BatchNumberId);
+                    App.UniversalLineInApp = 875234142;
+                }
+                catch (Exception)
+                { }
+
+                TapEventHandlingInProgress = false;
+            }
+        }
         protected override async void OnAppearing()
         {
             try
@@ -959,129 +1108,37 @@ namespace Kara
                 base.OnAppearing();
                 App.UniversalLineInApp = 875234120;
 
-                CustomStuffListCell.UnitNameTapEventHandler = (s, e) => {
-                    if (!TapEventHandlingInProgress)
-                    {
-                        TapEventHandlingInProgress = true;
-
-                        try
-                        {
-                            App.UniversalLineInApp = 875234121;
-                            var Ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
-                            //App.UniversalLineInApp = 875234122;
-                            var StuffId = new Guid(Ids[0]);
-                            //App.UniversalLineInApp = 875234123;
-                            var BatchNumberId = Ids.Length == 2 ? new Guid(Ids[1]) : new Nullable<Guid>();
-                            //App.UniversalLineInApp = 875234124;
-                            UnitNameClicked(StuffId);
-                            App.UniversalLineInApp = 875234125;
-                        }
-                        catch (Exception)
-                        { }
-
-                        TapEventHandlingInProgress = false;
-                    }
-                };
-                //App.UniversalLineInApp = 875234126;
-
-                CustomStuffListCell.QuantityTextBoxTapEventHandler = (s, e) => {
-                    if (!TapEventHandlingInProgress)
-                    {
-                        TapEventHandlingInProgress = true;
-
-                        try
-                        {
-                            App.UniversalLineInApp = 875234127;
-                            var Ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
-                            //App.UniversalLineInApp = 875234128;
-                            var StuffId = new Guid(Ids[0]);
-                            //App.UniversalLineInApp = 875234129;
-                            var BatchNumberId = Ids.Length == 2 ? new Guid(Ids[1]) : new Nullable<Guid>();
-                            //App.UniversalLineInApp = 875234130;
-                            FocusedQuantityTextBoxId = BatchNumberId.HasValue ? new Guid[] { StuffId, BatchNumberId.Value } : new Guid[] { StuffId };
-                            App.UniversalLineInApp = 875234131;
-                        }
-                        catch (Exception)
-                        { }
-
-                        TapEventHandlingInProgress = false;
-                    }
-                };
+                                
                 App.UniversalLineInApp = 875234132;
 
-                CustomStuffListCell.QuantityPlusTapEventHandler = (s, e) => {
-                    if (!TapEventHandlingInProgress)
-                    {
-                        TapEventHandlingInProgress = true;
+                
 
-                        try
-                        {
-                            App.UniversalLineInApp = 875234133;
-                            var Ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
-                            //App.UniversalLineInApp = 875234134;
-                            var StuffId = new Guid(Ids[0]);
-                            //App.UniversalLineInApp = 875234135;
-                            var BatchNumberId = Ids.Length == 2 ? new Guid(Ids[1]) : new Nullable<Guid>();
-                            //App.UniversalLineInApp = 875234136;
-                            QuantityPlusClicked(StuffId, BatchNumberId);
-                            //App.UniversalLineInApp = 875234137;
-                        }
-                        catch (Exception)
-                        { }
+               
 
-                        TapEventHandlingInProgress = false;
-                    }
-                };
+                //ReversionCustomStuffListCell.GroupTapEventHandler = (s, e) => {
+                //    if (!TapEventHandlingInProgress)
+                //    {
+                //        TapEventHandlingInProgress = true;
 
-                CustomStuffListCell.QuantityMinusTapEventHandler = (s, e) => {
-                    if (!TapEventHandlingInProgress)
-                    {
-                        TapEventHandlingInProgress = true;
+                //        try
+                //        {
+                //            App.UniversalLineInApp = 875234143;//THISLINE
+                //            var Ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+                //            App.UniversalLineInApp = 875234144;
+                //            var GroupId = new Guid(Ids[0]);
+                //            App.UniversalLineInApp = 875234145;
+                //            GroupClicked(GroupId);
+                //            App.UniversalLineInApp = 875234146;
+                //        }
+                //        catch (Exception)
+                //        { }
 
-                        try
-                        {
-                            App.UniversalLineInApp = 875234138;
-                            var Ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
-                            //App.UniversalLineInApp = 875234139;
-                            var StuffId = new Guid(Ids[0]);
-                            //App.UniversalLineInApp = 875234140;
-                            var BatchNumberId = Ids.Length == 2 ? new Guid(Ids[1]) : new Nullable<Guid>();
-                            //App.UniversalLineInApp = 875234141;
-                            QuantityMinusClicked(StuffId, BatchNumberId);
-                            App.UniversalLineInApp = 875234142;
-                        }
-                        catch (Exception)
-                        { }
+                //        TapEventHandlingInProgress = false;
+                //    }
+                //};
 
-                        TapEventHandlingInProgress = false;
-                    }
-                };
-                CustomStuffListCell.GroupTapEventHandler = (s, e) => {
-                    if (!TapEventHandlingInProgress)
-                    {
-                        TapEventHandlingInProgress = true;
-
-                        try
-                        {
-                            App.UniversalLineInApp = 875234143;//THISLINE
-                            var Ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
-                            App.UniversalLineInApp = 875234144;
-                            var GroupId = new Guid(Ids[0]);
-                            App.UniversalLineInApp = 875234145;
-                            GroupClicked(GroupId);
-                            App.UniversalLineInApp = 875234146;
-                        }
-                        catch (Exception)
-                        { }
-
-                        TapEventHandlingInProgress = false;
-                    }
-                };
-                //App.UniversalLineInApp = 875234147;
-                StuffItems.ItemTemplate = new DataTemplate(typeof(CustomStuffListCell));
-                //App.UniversalLineInApp = 875234148;
-                GallaryStuffBatchNumbersList.ItemTemplate = new DataTemplate(typeof(CustomStuffListCell));
-                //App.UniversalLineInApp = 875234149;
+                //StuffItems.ItemTemplate = new DataTemplate(typeof(ReversionCustomStuffListCell));
+                //GallaryStuffBatchNumbersList.ItemTemplate = new DataTemplate(typeof(ReversionCustomStuffListCell));
 
 
                 StuffGallaryView.UnitNameTapEventHandler = (s, e) => {
@@ -1093,11 +1150,8 @@ namespace Kara
                         {
                             App.UniversalLineInApp = 875234150;
                             var Ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
-                            //App.UniversalLineInApp = 875234151;
                             var StuffId = new Guid(Ids[0]);
-                            //App.UniversalLineInApp = 875234152;
                             var BatchNumberId = Ids.Length == 2 ? new Guid(Ids[1]) : new Nullable<Guid>();
-                            //App.UniversalLineInApp = 875234153;
                             UnitNameClicked(StuffId);
                             App.UniversalLineInApp = 875234154;
                         }
@@ -1118,11 +1172,8 @@ namespace Kara
                         {
                             App.UniversalLineInApp = 875234156;
                             var Ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
-                            //App.UniversalLineInApp = 875234157;
                             var StuffId = new Guid(Ids[0]);
-                            //App.UniversalLineInApp = 875234158;
                             var BatchNumberId = Ids.Length == 2 ? new Guid(Ids[1]) : new Nullable<Guid>();
-                            //App.UniversalLineInApp = 875234159;
                             FocusedQuantityTextBoxId = BatchNumberId.HasValue ? new Guid[] { StuffId, BatchNumberId.Value } : new Guid[] { StuffId };
                             App.UniversalLineInApp = 875234160;
                         }
@@ -1196,13 +1247,13 @@ namespace Kara
                     }
                 };
 
-                if(FromTour)
-                {
-                    
-                }
+                if(Visitors==null)
+                   await FillVisitors();
+
             }
             catch (Exception err)
             {
+                App.ShowError("خطا", err.Message, "خوب");
             }
         }
 
@@ -1211,8 +1262,8 @@ namespace Kara
             var OrderStuffsCount = AllStuffsData.Count(a => a.TotalStuffQuantity > 0);
             if (OrderStuffsCount != 0)
             {
-                if (!this.ToolbarItems.Contains(ToolbarItem_OrderBasket))
-                    this.ToolbarItems.Add(ToolbarItem_OrderBasket);
+                //if (!this.ToolbarItems.Contains(ToolbarItem_OrderBasket))
+                //    this.ToolbarItems.Add(ToolbarItem_OrderBasket);
 
                 ToolbarItem_OrderBasket.Icon = "OrderListOK.png";
             }
@@ -1232,7 +1283,7 @@ namespace Kara
                         OrderedStuffs.Count() + " قلم، " +
                         OrderedStuffs.SelectMany(a => a.HasBatchNumbers ? a.StuffRow_BatchNumberRows.SelectMany(b => b.PackagesData.Where(c => c.Quantity != 0)) : a.PackagesData.Where(b => b.Quantity != 0)).GroupBy(a => a.Package.Name).Select(a => a.Sum(b => b.Quantity) + " " + a.Key).Aggregate((sum, x) => sum + " + " + x) + "، " +
                         (OrderedStuffs.Sum(a => a._Price).GetValueOrDefault(0) == 0 ? "---" : OrderedStuffs.Sum(a => a._Price).GetValueOrDefault(0).ToString("###,###,###,###,###,###,##0.")) + " ریال"
-                        ).ReplaceLatinDigits();
+                        ).ToPersianDigits();
                     var GroupInStuffsList = AllStuffsData.SingleOrDefault(a => a.Id == Group.Group.Id);
                     if (GroupInStuffsList != null)
                         GroupInStuffsList.GroupSummary = Group.Group.GroupSummary;
@@ -1272,14 +1323,14 @@ namespace Kara
 
         private void ToolbarItem_OrderBasket_Activated(object sender, EventArgs e)
         {
-            FocusedQuantityTextBoxId = null;
+            //FocusedQuantityTextBoxId = null;
 
-            var BewforePreviewForm = new OrderBeforePreviewForm(AllStuffsData, SelectedPartner, EditingSaleOrder, PartnerListForm, OrdersForm, SettlementTypeId, Description, this, PartnerChangeButton.IsEnabled, WarehouseId,FromTour)
-            {
-                StartColor = Color.FromHex("E6EBEF"),
-                EndColor = Color.FromHex("A6CFED")
-            };
-            Navigation.PushAsync(BewforePreviewForm);
+            //var BewforePreviewForm = new OrderBeforePreviewForm(AllStuffsData, SelectedPartner, EditingSaleOrder, PartnerListForm, OrdersForm, SettlementTypeId, Description, this, PartnerChangeButton.IsEnabled, WarehouseId,FromTour)
+            //{
+            //    StartColor = Color.FromHex("E6EBEF"),
+            //    EndColor = Color.FromHex("A6CFED")
+            //};
+            //Navigation.PushAsync(BewforePreviewForm);
         }
         
         private async void PartnerSelected()
@@ -1292,11 +1343,11 @@ namespace Kara
             if (SelectedPartner != null && BeforeSelectedPartnerId != NewSelectedPartnerId)
             {
                 await FillStuffs(StuffsSearchBar.Text, null, true, false);
-                await FetchPartnerCycleInformationFromServer();
+                //await FetchPartnerCycleInformationFromServer();
             }
         }
 
-        class QuantityEditingStuffModel
+        private class QuantityEditingStuffModel
         {
             DBRepository.StuffListModel StuffModel;
             
@@ -1407,6 +1458,13 @@ namespace Kara
             }
         }
 
+        private Guid GetSelectedPackageId(DBRepository.StuffListModel item)
+        {
+            var CurrentPackageIndex = item.PackagesData.Select((a, index) => new { a, index }).Single(a => item.SelectedPackage.Id == a.a.Package.Id).index;
+            //var NewPackageIndex = CurrentPackageIndex == item.PackagesData.Length - 1 ? 0 : CurrentPackageIndex + 1;
+            return item.PackagesData[CurrentPackageIndex].Package.Id;
+        }
+
         public static string MultipleRecordsInAllStuffsData_Log;
         public void QuantityPlusClicked(Guid StuffId, Guid? BatchNumberId)
         {
@@ -1508,7 +1566,7 @@ namespace Kara
                 GallaryStuffBatchNumbersListContainer.IsVisible = false;
             else
             {
-                Task<bool> action = DisplayAlert("انصراف از ثبت سفارش", "با خروج از این قسمت اطلاعات وارد شده از دست خواهد رفت. آیا مطمئنید؟", "بله", "خیر");
+                Task<bool> action = DisplayAlert("انصراف از ثبت ", "با خروج از این قسمت اطلاعات وارد شده از دست خواهد رفت. آیا مطمئنید؟", "بله", "خیر");
                 action.ContinueWith(task =>
                 {
                     if (task.Result)
@@ -1658,6 +1716,8 @@ namespace Kara
                     App.ShowAccountingCycleOfPartner_ReturnedCheques.Value
                 );
 
+            ShowAccountingCycleOfPartner = false;
+
             if (Horizental)
             {
                 PartnerSection.RowDefinitions.Add(new RowDefinition() { Height = 50 });
@@ -1678,7 +1738,7 @@ namespace Kara
                 PartnerSection.Children.Add(PartnerChangeButton, 0 + GallaryStuffGroupOffset, 0);
                 PartnerSection.Children.Add(PartnerLabel, 1 + GallaryStuffGroupOffset, 0);
 
-                if (ShowAccountingCycleOfPartner && !FromTour)
+                if (ShowAccountingCycleOfPartner)
                 {
                     PartnerSection.Children.Add(PartnerRemainderDetailButton, 0 + GallaryStuffGroupOffset, 1);
                     PartnerSection.Children.Add(PartnerRemainderLabel, 1 + GallaryStuffGroupOffset, 1);
@@ -1835,7 +1895,7 @@ namespace Kara
                     GallaryStuffGroupPicker.Items.Add(item.DisplayGroupName);
             }
 
-            ObservableCollection<DBRepository.StuffListModel> _StuffsList = null;
+            
             try
             {
                 var StuffsListTemp = StuffsWithGroupsData.ToList();
@@ -1845,8 +1905,11 @@ namespace Kara
                 StuffsListTemp.AddRange(BatchNumbers);
                 
                 var StuffsListOrderDic = StuffsListTemp.Where(a => !a.BatchNumberId.HasValue).Select((a, index) => new { a, index }).ToDictionary(a => a.a.StuffId, a => a.index);
+
                 foreach (var item in StuffsListTemp)
+                {
                     item.OddRow = StuffsListOrderDic[item.StuffId] % 2 == 1;
+                }
 
                 StuffsListTemp = StuffsListTemp.OrderBy(a => StuffsListOrderDic[a.StuffId]).ThenBy(a => a.BatchNumberId.HasValue).ToList();
 
@@ -1860,20 +1923,22 @@ namespace Kara
             StuffItems.ItemsSource = null;
             StuffItems.ItemsSource = _StuffsList;
 
-            if (WithRefreshingAnimation) StuffItems.IsRefreshing = false;
+            if (WithRefreshingAnimation) 
+                StuffItems.IsRefreshing = false;
 
-            await Task.Delay(300);
-            var StuffsListForGallaryCarousel = _StuffsList.Where(a => !a.IsGroup && !a.BatchNumberId.HasValue).Select((a, index) => new
-            {
-                a,
-                PageIndex = Math.Floor((double)(index / (App.GallaryStuffCount[0] * App.GallaryStuffCount[1])))
-            }).GroupBy(a => a.PageIndex).Select(a => new
-            {
-                a.Key,
-                Stuffs = a.Select(b => b.a).ToArray()
-            }).ToArray();
-            StuffGallaryViewGrid.SetPageStuffIds(StuffsListForGallaryCarousel.ToDictionary(a => (int)a.Key, a => a.Stuffs.Select(b => b.StuffId).ToArray()));
-            gallaryCarousel.ItemsSource = new ObservableCollection<DBRepository.StuffListModelArray>(StuffsListForGallaryCarousel.Select(a => new DBRepository.StuffListModelArray() { Stuffs = a.Stuffs }));
+            await Task.Delay(100);
+
+            //var StuffsListForGallaryCarousel = _StuffsList.Where(a => !a.IsGroup && !a.BatchNumberId.HasValue).Select((a, index) => new
+            //{
+            //    a,
+            //    PageIndex = Math.Floor((double)(index / (App.GallaryStuffCount[0] * App.GallaryStuffCount[1])))
+            //}).GroupBy(a => a.PageIndex).Select(a => new
+            //{
+            //    a.Key,
+            //    Stuffs = a.Select(b => b.a).ToArray()
+            //}).ToArray();
+            //StuffGallaryViewGrid.SetPageStuffIds(StuffsListForGallaryCarousel.ToDictionary(a => (int)a.Key, a => a.Stuffs.Select(b => b.StuffId).ToArray()));
+            //gallaryCarousel.ItemsSource = new ObservableCollection<DBRepository.StuffListModelArray>(StuffsListForGallaryCarousel.Select(a => new DBRepository.StuffListModelArray() { Stuffs = a.Stuffs }));
             
             if (EditingOrder != null)
                 CheckToShowOrderBasketTollbar();
@@ -1893,6 +1958,134 @@ namespace Kara
             GallaryStuffBatchNumbersList.ItemsSource = _BatchNumbersList;
             
             FocusedQuantityTextBoxId = null;
+        }
+
+
+        private async void SubmitToServer(object sender, System.EventArgs e)
+        {
+            WaitToggle(false);
+            await Task.Delay(100);
+            var SaveResult = await SaveReversion();
+
+            if (!SaveResult.Success)
+            {
+                WaitToggle(false);
+                App.ShowError("خطا", SaveResult.Message, "خوب");
+            }
+            else
+            {
+                var submitResult = await Connectivity.SubmitReversion( SaveResult.Data);
+
+                if (!submitResult.Success)
+                {
+                    WaitToggle(false);
+                    App.ShowError("خطا", "اطلاعات به صورت محلی ثبت شد اما در ارسال اطلاعات به سرور خطایی رخ داده است: " + submitResult.Message, "خوب");
+                }
+                else
+                {
+                    WaitToggle(true);
+
+                    Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 1]);
+
+                    App.ToastMessageHandler.ShowMessage("اطلاعات با موفقیت به سرور ارسال شد.", Helpers.ToastMessageDuration.Long);
+                    try { await Navigation.PopAsync(); } catch (Exception) { }
+                }
+            }
+        }
+
+        private async void SubmitToStorage(object sender, System.EventArgs e)
+        {
+            WaitToggle(false);
+            await Task.Delay(100);
+            var SaveResult = await SaveReversion();
+
+            if (!SaveResult.Success)
+            {
+                WaitToggle(false);
+                App.ShowError("خطا", SaveResult.Message, "خوب");
+            }
+            else
+            {
+                WaitToggle(true);
+                App.ToastMessageHandler.ShowMessage("اطلاعات با موفقیت به صورت محلی ثبت شد.", Helpers.ToastMessageDuration.Long);
+                try { await Navigation.PopAsync(); } catch (Exception) { }
+            }
+        }
+
+        private async Task<ResultSuccess<Reversion>> SaveReversion()
+        {
+            try
+            {
+                if (ReversionReasonPicker.SelectedIndex == -1)
+                    return new ResultSuccess<Reversion>(false, "دلیل انتخاب نشده است.");
+
+                if (SelectedPartner==null || SelectedPartner.Id == null)
+                    return new ResultSuccess<Reversion>(false, "مشتری انتخاب نشده است.");
+
+                if (VisitorPicker.SelectedIndex == -1)
+                    return new ResultSuccess<Reversion>(false, "بازاریاب انتخاب نشده است.");
+
+                if(txtDate.Text?.Length!=10)
+                    return new ResultSuccess<Reversion>(false, "تاریخ وارد شده صحیح نیست.");
+
+                Guid newId = Guid.NewGuid();
+
+                var newReversion = new Reversion()
+                {
+                    Id = newId,
+                    PartnerId = SelectedPartner.Id,
+                    Description="***",
+                    ReversionDate = txtDate.Text.PersianDateStringToDate(),
+                    PersonelId = Visitors[VisitorPicker.SelectedIndex].Id,
+                    ReasonId = ReversionReasons[ReversionReasonPicker.SelectedIndex].Id,
+                    Stuffs = _StuffsList.Where(a=>a.Quantity>0).Select(a => new ReversionStuff
+                    {
+                        //BatchNumber = a.BatchNumber,
+                        ReversionId = newId,
+                        Id = Guid.NewGuid(),
+                        DiscountPercent = a.ReversionDiscountPercent.ToSafeString().ToLatinDigits().ToSafeDecimal(),
+                        IsFreeProduct = a.ReversionIsFreeProduct,
+                        Quantity = a.Quantity,
+                        VATAmount = a.ReversionVATAmount.ToLatinDigits().ToSafeDecimal(),
+                        VATPercent = a.ReversionVATPercent.ToLatinDigits().ToSafeDecimal(),
+                        StuffId = a.StuffId,
+                        MinorPackagePrice= a.ReversionFee.ToLatinDigits().ToSafeDecimal(), //???
+                        ReversionFee = a.ReversionFee.ToLatinDigits().ToSafeDecimal(),
+                        PackageId = GetSelectedPackageId(a)
+                    }).ToArray()
+                };
+
+                var result = await App.DB.InsertOrUpdateRecordAsync<Reversion>(newReversion);
+                result = await App.DB.InsertOrUpdateAllRecordsAsync<ReversionStuff>(newReversion.Stuffs);
+                
+                if (!result.Success)
+                    return new ResultSuccess<Reversion>(false, result.Message);
+                
+                return new ResultSuccess<Reversion>(true, "", newReversion);
+            }
+            catch (Exception err)
+            {
+                return new ResultSuccess<Reversion>(false, err.ProperMessage());
+            }
+        }
+
+        public void WaitToggle(bool FormWorkFinished)
+        {
+            //if (!BusyIndicatorContainder.IsVisible)
+            //{
+            //    BusyIndicatorContainder.IsVisible = true;
+            //    this.ToolbarItems.Remove(ToolbarItem_LocalSave);
+            //    this.ToolbarItems.Remove(ToolbarItem_SendToServer);
+            //}
+            //else
+            //{
+            //    BusyIndicatorContainder.IsVisible = false;
+            //    if (!FormWorkFinished && !JustShow)
+            //    {
+            //        this.ToolbarItems.Add(ToolbarItem_LocalSave);
+            //        this.ToolbarItems.Add(ToolbarItem_SendToServer);
+            //    }
+            //}
         }
     }
 }

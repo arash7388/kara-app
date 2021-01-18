@@ -137,12 +137,12 @@ namespace Kara
 
         private async void MainMenu_GoToReversion(View arg1, object arg2)
         {
-            var naghdForm = new ReceiptPecuniary(12345678, new Guid())
+            var reversionForm = new ReversionForm(null,null,null,null,null)
             {
                 StartColor = Color.FromHex("E6EBEF"),
                 EndColor = Color.FromHex("A6CFED")
             };
-            await Navigation.PushAsync(naghdForm, false);
+            await Navigation.PushAsync(reversionForm, false);
         }
 
         private async void MainMenu_GoToNaghdForm(View arg1, object arg2)
@@ -167,7 +167,7 @@ namespace Kara
 
         private async void SetTodayDateAsTitle()
         {
-            this.Title = DateTime.Now.ToShortStringForDate().ReplaceLatinDigits();
+            this.Title = DateTime.Now.ToShortStringForDate().ToPersianDigits();
             await Task.Delay(30000);
             SetTodayDateAsTitle();
         }

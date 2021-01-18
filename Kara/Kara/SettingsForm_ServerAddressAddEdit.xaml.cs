@@ -15,7 +15,7 @@ namespace Kara
     public partial class SettingsForm_ServerAddressAddEdit : GradientContentPage
     {
         SettingsForm_ServerAddress SettingsForm_ServerAddress;
-        Entry ServerAddress = new MyEntry() { HorizontalTextAlignment = TextAlignment.End, Placeholder = "آدرس سرور، مثلا: 192.168.1.2".ReplaceLatinDigits(), LeftRounded = true };
+        Entry ServerAddress = new MyEntry() { HorizontalTextAlignment = TextAlignment.End, Placeholder = "آدرس سرور، مثلا: 192.168.1.2".ToPersianDigits(), LeftRounded = true };
         ToolbarItem ToolbarItem_OK;
         string EditingAddress;
 
@@ -55,7 +55,7 @@ namespace Kara
 
             if (EditingAddress == "")//Insert
             {
-                if(AllAddresses.Any(a => a.Address == ServerAddress.Text.ReplacePersianDigits()))
+                if(AllAddresses.Any(a => a.Address == ServerAddress.Text.ToLatinDigits()))
                 {
                     App.ShowError("خطا", "آدرس وارد شده به ثبت رسیده است.", "خوب");
                     return;
@@ -67,7 +67,7 @@ namespace Kara
                     Selected = false
                 }).Union(new[] { new
                 {
-                    Address = ServerAddress.Text.ReplacePersianDigits(),
+                    Address = ServerAddress.Text.ToLatinDigits(),
                     Selected = true
                 } }).ToArray();
             }
@@ -75,7 +75,7 @@ namespace Kara
             {
                 AllAddresses = AllAddresses.Select(a => new
                 {
-                    Address = a.Address == EditingAddress.ReplacePersianDigits() ? ServerAddress.Text.ReplacePersianDigits() : a.Address,
+                    Address = a.Address == EditingAddress.ToLatinDigits() ? ServerAddress.Text.ToLatinDigits() : a.Address,
                     Selected = a.Selected
                 }).ToArray();
             }

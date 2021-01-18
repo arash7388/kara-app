@@ -8,7 +8,7 @@ namespace Kara
 {
     public partial class LoginForm : GradientContentPage
     {
-        private Entry ServerAddress = new MyEntry() { HorizontalTextAlignment = TextAlignment.End, Placeholder = "آدرس سرور، مثلا: 192.168.1.2".ReplaceLatinDigits(), LeftRounded = true };
+        private Entry ServerAddress = new MyEntry() { HorizontalTextAlignment = TextAlignment.End, Placeholder = "آدرس سرور، مثلا: 192.168.1.2".ToPersianDigits(), LeftRounded = true };
         private Image ServerAddressIcon = new EntryCompanionIcon() { Source = "url.png" };
         private Entry Username = new MyEntry() { HorizontalTextAlignment = TextAlignment.End, Placeholder = "نام کاربری", LeftRounded = true };
         private Image UsernameIcon = new EntryCompanionIcon() { Source = "username.png" };
@@ -113,7 +113,7 @@ namespace Kara
                 var locationTask = App.CheckGps();
 
                 LoginErrorText.IsVisible = false;
-                var _ServerAddress = ServerAddress != null ? ServerAddress.Text != null ? ServerAddress.Text.ReplacePersianDigits() : "" : "";
+                var _ServerAddress = ServerAddress != null ? ServerAddress.Text != null ? ServerAddress.Text.ToLatinDigits() : "" : "";
                 App.ServerAddress = _ServerAddress;
 
                 var loginTask = Kara.Assets.Connectivity.Login(Username.Text, Password.Text);

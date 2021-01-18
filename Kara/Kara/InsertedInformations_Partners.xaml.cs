@@ -363,7 +363,7 @@ namespace Kara
             PartnerItems.IsRefreshing = true;
             await Task.Delay(100);
 
-            var PartnersResult = await App.DB.GetAllPartnersListAsync(true, justToday, justLocal, null, Filter.ReplacePersianDigits());
+            var PartnersResult = await App.DB.GetAllPartnersListAsync(true, justToday, justLocal, null, Filter.ToLatinDigits());
             if (!PartnersResult.Success)
             {
                 App.ShowError("خطا", "در نمایش لیست عدم سفارشات خطایی رخ داد.\n" + PartnersResult.Message, "خوب");
@@ -374,12 +374,12 @@ namespace Kara
             PartnersList = new ObservableCollection<DBRepository.PartnerListModel>(PartnersResult.Data.Select(a => new DBRepository.PartnerListModel()
             {
                 Id = a.Id,
-                Code = a.Code.StartsWith("-") ? "---" : a.Code.ReplaceLatinDigits(),
-                Name = a.Name.ReplaceLatinDigits(),
-                Group = !string.IsNullOrWhiteSpace(a.Group) ? a.Group.ReplaceLatinDigits() : "---",
-                Zone = a.Zone.ReplaceLatinDigits(),
-                Address = (a.Zone + " - " + a.Address).ReplaceLatinDigits(),
-                Phone = a.Phone.ReplaceLatinDigits(),
+                Code = a.Code.StartsWith("-") ? "---" : a.Code.ToPersianDigits(),
+                Name = a.Name.ToPersianDigits(),
+                Group = !string.IsNullOrWhiteSpace(a.Group) ? a.Group.ToPersianDigits() : "---",
+                Zone = a.Zone.ToPersianDigits(),
+                Address = (a.Zone + " - " + a.Address).ToPersianDigits(),
+                Phone = a.Phone.ToPersianDigits(),
                 HasOrder = a.HasOrder,
                 HasFailedVisit = a.HasFailedVisit,
                 Sent = a.Sent,

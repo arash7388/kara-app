@@ -30,12 +30,12 @@ namespace Kara
                 OnPropertyChanged("Price");
             }
         }
-        public string UnitName { get { return _SelectedPackage.Name.ReplaceLatinDigits(); } }
-        public string StuffCode { get { return StuffData.Code.ReplaceLatinDigits(); } }
-        public string StuffName { get { return StuffData.Name.ReplaceLatinDigits(); } }
+        public string UnitName { get { return _SelectedPackage.Name.ToPersianDigits(); } }
+        public string StuffCode { get { return StuffData.Code.ToPersianDigits(); } }
+        public string StuffName { get { return StuffData.Name.ToPersianDigits(); } }
         public decimal _UnitStock { get; set; }
         public decimal _CurrentQuantity { get; set; }
-        public string CurrentQuantity { get { return " + " + _CurrentQuantity.ToString().ReplaceLatinDigits(); } }
+        public string CurrentQuantity { get { return " + " + _CurrentQuantity.ToString().ToPersianDigits(); } }
         bool PointJustEntered;
         private decimal _AddedQuantity;
         public decimal AddedQuantity
@@ -67,14 +67,14 @@ namespace Kara
                 OnPropertyChanged("AddedQuantityLabel");
             }
         }
-        public string AddedQuantityLabel { get { return AddedQuantity.ToString().ReplaceLatinDigits().Replace(".", "/") + (PointJustEntered ? "/" : "") + (_AddedQuantityFocused ? "|" : ""); } }
+        public string AddedQuantityLabel { get { return AddedQuantity.ToString().ToPersianDigits().Replace(".", "/") + (PointJustEntered ? "/" : "") + (_AddedQuantityFocused ? "|" : ""); } }
         public decimal Quantity { get { return _CurrentQuantity + _AddedQuantity; } }
         public decimal? _UnitPrice { get; set; }
         public decimal? _ConsumerUnitPrice { get; set; }
-        public string Price { get { return _UnitPrice.HasValue ? ((_CurrentQuantity + _AddedQuantity) * _UnitPrice.GetValueOrDefault(0) * _SelectedPackage.Coefficient).ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits() : "---"; } }
-        public string Stock { get { return (_UnitStock < 0 ? "0" : Math.Round(_UnitStock / _SelectedPackage.Coefficient).ToString("###,###,###,##0.")).ReplaceLatinDigits(); } }
-        public string Fee { get { return !_UnitPrice.HasValue ? "---" : (_UnitPrice.Value * _SelectedPackage.Coefficient).ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits(); } }
-        public string ConsumerFee { get { return !_ConsumerUnitPrice.HasValue ? "---" : (_ConsumerUnitPrice.Value * _SelectedPackage.Coefficient).ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits(); } }
+        public string Price { get { return _UnitPrice.HasValue ? ((_CurrentQuantity + _AddedQuantity) * _UnitPrice.GetValueOrDefault(0) * _SelectedPackage.Coefficient).ToString("###,###,###,###,###,###,##0.").ToPersianDigits() : "---"; } }
+        public string Stock { get { return (_UnitStock < 0 ? "0" : Math.Round(_UnitStock / _SelectedPackage.Coefficient).ToString("###,###,###,##0.")).ToPersianDigits(); } }
+        public string Fee { get { return !_UnitPrice.HasValue ? "---" : (_UnitPrice.Value * _SelectedPackage.Coefficient).ToString("###,###,###,###,###,###,##0.").ToPersianDigits(); } }
+        public string ConsumerFee { get { return !_ConsumerUnitPrice.HasValue ? "---" : (_ConsumerUnitPrice.Value * _SelectedPackage.Coefficient).ToString("###,###,###,###,###,###,##0.").ToPersianDigits(); } }
         
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string propertyName)
@@ -516,7 +516,7 @@ namespace Kara
                 }
             }
 
-            TotalAddedFreeProductsPrice.Text = "جمع مبلغ اشانتیون های اضافه شده: " + (SaleOrder.SaleOrderStuffs.Any(a => a.FreeProductAddedQuantity != 0) ? SaleOrder.SaleOrderStuffs.Sum(a => a.FreeProductAddedQuantity * a.FreeProduct_UnitPrice.GetValueOrDefault(0) * a.Package.Coefficient) : 0).ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits() + " ریال";
+            TotalAddedFreeProductsPrice.Text = "جمع مبلغ اشانتیون های اضافه شده: " + (SaleOrder.SaleOrderStuffs.Any(a => a.FreeProductAddedQuantity != 0) ? SaleOrder.SaleOrderStuffs.Sum(a => a.FreeProductAddedQuantity * a.FreeProduct_UnitPrice.GetValueOrDefault(0) * a.Package.Coefficient) : 0).ToString("###,###,###,###,###,###,##0.").ToPersianDigits() + " ریال";
             
             if (ShowingOrder)
             {

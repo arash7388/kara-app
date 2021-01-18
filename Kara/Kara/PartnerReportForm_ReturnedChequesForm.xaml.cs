@@ -122,7 +122,7 @@ namespace Kara
             ReturnedChequesItems.ItemsSource = null;
             ReturnedChequesItems.ItemsSource = ReturnedChequesList;
 
-            Title = ("چک های برگشتی (" + ReturnedChequesList.Count + " فقره)").ReplaceLatinDigits();
+            Title = ("چک های برگشتی (" + ReturnedChequesList.Count + " فقره)").ToPersianDigits();
             
             ReturnedChequesItems.IsRefreshing = false;
         }

@@ -903,17 +903,17 @@ namespace Kara.Droid
                 
                 if (CustomerName != null)
                 {
-                    CustomerName.Text = (!string.IsNullOrWhiteSpace(Partner.PartnerData.Name) ? (Partner.PartnerData.Name + (!string.IsNullOrWhiteSpace(Partner.PartnerData.LegalName) ? (" (" + Partner.PartnerData.LegalName + ")") : "")) : Partner.PartnerData.LegalName).ReplaceLatinDigits();
+                    CustomerName.Text = (!string.IsNullOrWhiteSpace(Partner.PartnerData.Name) ? (Partner.PartnerData.Name + (!string.IsNullOrWhiteSpace(Partner.PartnerData.LegalName) ? (" (" + Partner.PartnerData.LegalName + ")") : "")) : Partner.PartnerData.LegalName).ToPersianDigits();
                     CustomerName.Typeface = MainActivity.IranSansFont;
                 }
                 if (CustomerCode != null)
                 {
-                    CustomerCode.Text = "کد: " + (Partner.PartnerData.Code).ReplaceLatinDigits();
+                    CustomerCode.Text = "کد: " + (Partner.PartnerData.Code).ToPersianDigits();
                     CustomerCode.Typeface = MainActivity.IranSansFont;
                 }
                 if (CustomerGroup != null)
                 {
-                    CustomerGroup.Text = "گروه: " + (Partner.PartnerData.Groups.Any() ? Partner.PartnerData.Groups.Select(a => a.Name).Aggregate((sum, x) => sum + "، " + x) : "---").ReplaceLatinDigits();
+                    CustomerGroup.Text = "گروه: " + (Partner.PartnerData.Groups.Any() ? Partner.PartnerData.Groups.Select(a => a.Name).Aggregate((sum, x) => sum + "، " + x) : "---").ToPersianDigits();
                     CustomerGroup.Typeface = MainActivity.IranSansFont;
                 }
                 if (CustomerZone != null)
@@ -923,19 +923,19 @@ namespace Kara.Droid
                 }
                 if (CustomerAddress != null)
                 {
-                    CustomerAddress.Text = "آدرس: " + (Partner.PartnerData.Address).ReplaceLatinDigits();
+                    CustomerAddress.Text = "آدرس: " + (Partner.PartnerData.Address).ToPersianDigits();
                     CustomerAddress.Typeface = MainActivity.IranSansFont;
                 }
                 if (CustomerPhone != null)
                 {
                     var PartnerPhones = new string[] { Partner.PartnerData.Phone1, Partner.PartnerData.Phone2, Partner.PartnerData.Mobile }.Where(a => !string.IsNullOrWhiteSpace(a));
-                    CustomerPhone.Text = "تلفن ها: " + (PartnerPhones.Any() ? PartnerPhones.Aggregate((sum, x) => sum.Replace(" و ", "، ") + " و " + x) : "---").ReplaceLatinDigits();
+                    CustomerPhone.Text = "تلفن ها: " + (PartnerPhones.Any() ? PartnerPhones.Aggregate((sum, x) => sum.Replace(" و ", "، ") + " و " + x) : "---").ToPersianDigits();
                     CustomerPhone.Typeface = MainActivity.IranSansFont;
                 }
                 if (DistanceFromMe != null)
                 {
                     var PartnerPhones = new string[] { Partner.PartnerData.Phone1, Partner.PartnerData.Phone2, Partner.PartnerData.Mobile }.Where(a => !string.IsNullOrWhiteSpace(a));
-                    DistanceFromMe.Text = "فاصله از من: " + (!Partner.DistanceFromMe.HasValue ? "---" : (Partner.DistanceFromMe.Value < 1000 ? (Partner.DistanceFromMe.Value.ToString() + " متر") : ((Partner.DistanceFromMe.Value / 1000.0).ToString("##0.#") + " کیلومتر"))).ReplaceLatinDigits();
+                    DistanceFromMe.Text = "فاصله از من: " + (!Partner.DistanceFromMe.HasValue ? "---" : (Partner.DistanceFromMe.Value < 1000 ? (Partner.DistanceFromMe.Value.ToString() + " متر") : ((Partner.DistanceFromMe.Value / 1000.0).ToString("##0.#") + " کیلومتر"))).ToPersianDigits();
                     DistanceFromMe.Typeface = MainActivity.IranSansFont;
                 }
 

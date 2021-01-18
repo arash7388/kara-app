@@ -256,7 +256,7 @@ namespace Kara.UserControls
             var JulianMonthName = JulianMonthNames[BDate.Month - 1] + (BDate.Year != EDate.Year ? (BDate.Year.ToString() + " ") : "")
                 + " - " + JulianMonthNames[EDate.Month - 1] + " " + EDate.Year.ToString();
 
-            PersianMonthNameLabel.Text = PersianMonthName.ReplaceLatinDigits();
+            PersianMonthNameLabel.Text = PersianMonthName.ToPersianDigits();
             JulianMonthNameLabel.Text = JulianMonthName;
 
             var MonthDays = new int[31].Select((a, index) => BDate.AddDays(index)).Select(a => new
@@ -290,7 +290,7 @@ namespace Kara.UserControls
                 {
                     if (!DaysArray[i][j].Equals(default(KeyValuePair<DateTime, string>)))
                     {
-                        DayLabels[i][j].Text = Convert.ToInt32(DaysArray[i][j].Value.Substring(8)).ToString().ReplaceLatinDigits();
+                        DayLabels[i][j].Text = Convert.ToInt32(DaysArray[i][j].Value.Substring(8)).ToString().ToPersianDigits();
                         DayLabels[i][j].BackgroundColor = DaysArray[i][j].Key == SelectedDate ? Color.SkyBlue : Color.FromHex("fff");
                         if(DaysArray[i][j].Key == SelectedDate)
                             SelectedDateLabel = DayLabels[i][j];

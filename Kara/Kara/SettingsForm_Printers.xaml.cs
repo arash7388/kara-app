@@ -51,7 +51,7 @@ namespace Kara
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
-        public string Title { get { return PrinterSetting.Title.ReplaceLatinDigits(); } }
+        public string Title { get { return PrinterSetting.Title.ToPersianDigits(); } }
         private bool _Selected;
         public bool Selected { get { return _Selected; } set { _Selected = value; OnPropertyChanged("RowColor"); } }
         public string RowColor { get { return _Selected ? "#A4DEF5" : "#DCE6FA"; } }
@@ -226,7 +226,7 @@ namespace Kara
             await Task.Delay(100);
             PrintersList.IsRefreshing = false;
 
-            SettingsForm.PrintersLabel2.Text = App.SelectedPrinter != null ? App.SelectedPrinter.Title.ReplaceLatinDigits() : "تعریف نشده";
+            SettingsForm.PrintersLabel2.Text = App.SelectedPrinter != null ? App.SelectedPrinter.Title.ToPersianDigits() : "تعریف نشده";
         }
     }
 }

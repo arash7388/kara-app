@@ -355,7 +355,7 @@ namespace Kara
             FailedVisitItems.IsRefreshing = true;
             await Task.Delay(100);
 
-            var FailedVisitsResult = await App.DB.GetFailedVisitsListAsync(justToday, justLocal, Filter.ReplacePersianDigits());
+            var FailedVisitsResult = await App.DB.GetFailedVisitsListAsync(justToday, justLocal, Filter.ToLatinDigits());
             if (!FailedVisitsResult.Success)
             {
                 App.ShowError("خطا", "در نمایش لیست عدم سفارشات خطایی رخ داد.\n" + FailedVisitsResult.Message, "خوب");

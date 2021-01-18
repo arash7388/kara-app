@@ -317,7 +317,7 @@ namespace Kara.Assets
         }
         public async Task<ResultSuccess<List<PartnerListModel>>> GetDayPartnersListAsync(int day, bool IncludeVisited, int? NearbyCustomers_Distance, string Filter)
         {
-            Filter = Filter.ReplacePersianDigits();
+            Filter = Filter.ToLatinDigits();
             return await Task.Run(() =>
             {
                 try
@@ -394,7 +394,7 @@ namespace Kara.Assets
         
         public async Task<ResultSuccess<List<PartnerListModel>>> GetAllPartnersListAsync(bool JustChanged, bool? JustToday, bool? JustLocal, int? NearbyCustomers_Distance, string Filter)
         {
-            Filter = Filter.ReplacePersianDigits();
+            Filter = Filter.ToLatinDigits();
             return await Task.Run(() =>
             {
                 try
@@ -487,7 +487,7 @@ namespace Kara.Assets
 
         private List<Partner> FilterPartners(List<Partner> AllPartners, string Filter)
         {
-            Filter = Filter.ReplacePersianDigits();
+            Filter = Filter.ToLatinDigits();
             if (!string.IsNullOrWhiteSpace(Filter))
             {
                 var TotalPoints = AllPartners.Select(a => new KeyValuePair<Partner, int>(a, 0)).ToList();
@@ -773,11 +773,11 @@ namespace Kara.Assets
             public decimal _Price { get; set; }
             
             public Guid Id { get; set; }
-            public string PreCode { get { return _PreCode.HasValue ? _PreCode.Value.ToString().ReplaceLatinDigits() : "---"; } }
+            public string PreCode { get { return _PreCode.HasValue ? _PreCode.Value.ToString().ToPersianDigits() : "---"; } }
             public string PartnerName { get; set; }
-            public string Date { get { return _DateTime.Date.ToTooShortStringForDate().ReplaceLatinDigits(); } }
-            public string Time { get { return _DateTime.ToTooShortStringForTime().ReplaceLatinDigits(); } }
-            public string Price { get { return _Price.ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits(); } }
+            public string Date { get { return _DateTime.Date.ToTooShortStringForDate().ToPersianDigits(); } }
+            public string Time { get { return _DateTime.ToTooShortStringForTime().ToPersianDigits(); } }
+            public string Price { get { return _Price.ToString("###,###,###,###,###,###,##0.").ToPersianDigits(); } }
             public string Description { get; set; }
             public string DescriptionColor { get { return "#21822D"; } }
             public bool Sent { get; set; }
@@ -799,7 +799,7 @@ namespace Kara.Assets
         }
         public async Task<ResultSuccess<List<OrderListModel>>> GetOrdersListAsync(bool justToday, bool justLocal, string Filter)
         {
-            Filter = Filter.ReplacePersianDigits();
+            Filter = Filter.ToLatinDigits();
             return await Task.Run(() =>
             {
                 try
@@ -839,7 +839,7 @@ namespace Kara.Assets
                             Id = order.Id,
                             _PreCode = order.PreCode,
                             _DateTime = order.DateTime,
-                            PartnerName = (!string.IsNullOrEmpty(partner.LegalName) ? (partner.LegalName + (!string.IsNullOrEmpty(partner.Name) ? ("(" + partner.Name + ")") : "")) : partner.Name).ReplaceLatinDigits(),
+                            PartnerName = (!string.IsNullOrEmpty(partner.LegalName) ? (partner.LegalName + (!string.IsNullOrEmpty(partner.Name) ? ("(" + partner.Name + ")") : "")) : partner.Name).ToPersianDigits(),
                             _Price = order.FinalPrice,
                             Description = order.Description != null ? order.Description.Replace("\n", " ") : "",
                             Sent = order.Sent,
@@ -891,9 +891,9 @@ namespace Kara.Assets
             public Guid Id { get; set; }
             public string PartnerName { get; set; }
             public string Date { get {
-                    return _DateTime.Date.ToTooShortStringForDate().ReplaceLatinDigits(); } }
+                    return _DateTime.Date.ToTooShortStringForDate().ToPersianDigits(); } }
             public string Time { get {
-                    return _DateTime.ToTooShortStringForTime().ReplaceLatinDigits(); } }
+                    return _DateTime.ToTooShortStringForTime().ToPersianDigits(); } }
             public string Description { get; set; }
             public string DescriptionColor { get { return "#CE4242"; } }
             public bool Sent { get; set; }
@@ -914,7 +914,7 @@ namespace Kara.Assets
         }
         public async Task<ResultSuccess<List<FailedVisitListModel>>> GetFailedVisitsListAsync(bool justToday, bool justLocal, string Filter)
         {
-            Filter = Filter.ReplacePersianDigits();
+            Filter = Filter.ToLatinDigits();
             return await Task.Run(() =>
             {
                 try
@@ -952,7 +952,7 @@ namespace Kara.Assets
                         {
                             Id = failedVisit.Id,
                             _DateTime = failedVisit.DateTime,
-                            PartnerName = (!string.IsNullOrEmpty(partner.LegalName) ? (partner.LegalName + (!string.IsNullOrEmpty(partner.Name) ? ("(" + partner.Name + ")") : "")) : partner.Name).ReplaceLatinDigits(),
+                            PartnerName = (!string.IsNullOrEmpty(partner.LegalName) ? (partner.LegalName + (!string.IsNullOrEmpty(partner.Name) ? ("(" + partner.Name + ")") : "")) : partner.Name).ToPersianDigits(),
                             Description = failedVisit.Description != null ? failedVisit.Description.Replace("\n", " ") : "",
                             Sent = failedVisit.Sent,
                             FailedVisitData = failedVisit.FailedVisit
@@ -1286,30 +1286,30 @@ namespace Kara.Assets
             public Guid StuffId { get; set; }
             public Guid? BatchNumberId { get; set; }
             public string Id { get { return StuffId.ToString() + "|" + (BatchNumberId.HasValue ? BatchNumberId.Value.ToString() : ""); } }
-            public string Code { get { return StuffData == null ? null : StuffData.Code.ReplaceLatinDigits(); } }
-            public string BarCode { get { return StuffData == null ? null : StuffData.BarCode.ReplaceLatinDigits(); } }
-            public string Name { get { return StuffData == null ? null : StuffData.Name.ReplaceLatinDigits(); } }
-            public string ReportName { get { return StuffData == null ? null : StuffData.ReportName.ReplaceLatinDigits(); } }
+            public string Code { get { return StuffData == null ? null : StuffData.Code.ToPersianDigits(); } }
+            public string BarCode { get { return StuffData == null ? null : StuffData.BarCode.ToPersianDigits(); } }
+            public string Name { get { return StuffData == null ? null : StuffData.Name.ToPersianDigits(); } }
+            public string ReportName { get { return StuffData == null ? null : StuffData.ReportName.ToPersianDigits(); } }
             public string GallaryTitle { get { return Code + " - " + Name; } }
-            public string ExpirationDate { get { return BatchNumberData == null ? "---" : (BatchNumberData.ExpirationDatePresentation == (int)DatePresentation.Shamsi ? BatchNumberData.ExpirationDate.ToShortStringForDate() : BatchNumberData.ExpirationDate.ToString("yyyy/MM/dd")).ReplaceLatinDigits(); } }
-            public string BatchNumber { get { return BatchNumberData == null ? "---" : BatchNumberData.BatchNumber.ReplaceLatinDigits(); } }
+            public string ExpirationDate { get { return BatchNumberData == null ? "---" : (BatchNumberData.ExpirationDatePresentation == (int)DatePresentation.Shamsi ? BatchNumberData.ExpirationDate.ToShortStringForDate() : BatchNumberData.ExpirationDate.ToString("yyyy/MM/dd")).ToPersianDigits(); } }
+            public string BatchNumber { get { return BatchNumberData == null ? "---" : BatchNumberData.BatchNumber.ToPersianDigits(); } }
             private bool _QRScannedThisBatchNumber;
             public bool QRScannedThisBatchNumber { get { return _QRScannedThisBatchNumber; } set { _QRScannedThisBatchNumber = value; OnPropertyChanged("RowColor"); } }
-            public string Description { get { return StuffData == null ? null : StuffData.Description.ReplaceLatinDigits(); } }
+            public string Description { get { return StuffData == null ? null : StuffData.Description.ToPersianDigits(); } }
             private string _GroupName;
-            public string GroupName { get { return _GroupName == null ? null : _GroupName.ReplaceLatinDigits(); } set { _GroupName = value; OnPropertyChanged("GroupName"); } }
+            public string GroupName { get { return _GroupName == null ? null : _GroupName.ToPersianDigits(); } set { _GroupName = value; OnPropertyChanged("GroupName"); } }
 
             private string _GroupCode;
-            public string GroupCode { get { return _GroupCode == null ? null : _GroupCode.ReplaceLatinDigits(); } set { _GroupCode = value; OnPropertyChanged("GroupCode"); } }
+            public string GroupCode { get { return _GroupCode == null ? null : _GroupCode.ToPersianDigits(); } set { _GroupCode = value; OnPropertyChanged("GroupCode"); } }
             private int _GroupStuffsCount;
             public int GroupStuffsCount { get { return _GroupStuffsCount; } set { _GroupStuffsCount = value; OnPropertyChanged("DisplayGroupName"); } }
-            public string DisplayGroupName { get { return (GroupName + " (" + _GroupStuffsCount + ")").ReplaceLatinDigits(); } }
+            public string DisplayGroupName { get { return (GroupName + " (" + _GroupStuffsCount + ")").ToPersianDigits(); } }
             public bool IsGroup { get; set; }
             private bool _IsGroupOpen;
             public bool IsGroupOpen { get { return _IsGroupOpen; } set { _IsGroupOpen = value; OnPropertyChanged("GroupButtonIcon"); } }
             public int? GroupNumber { get; set; }
             private string _GroupSummary;
-            public string GroupSummary { get { return _GroupSummary == null ? null : _GroupSummary.ReplaceLatinDigits(); } set { _GroupSummary = value; OnPropertyChanged("GroupSummary"); } }
+            public string GroupSummary { get { return _GroupSummary == null ? null : _GroupSummary.ToPersianDigits(); } set { _GroupSummary = value; OnPropertyChanged("GroupSummary"); } }
             public int ListGroupRow1Height { get { return BatchNumberId.HasValue ? 0 : IsGroup ? 35 : 0; } }
             public int ListGroupRow2Height { get { return BatchNumberId.HasValue ? 0 : IsGroup ? 20 : 0; } }
             public int ListStuffRowHeight { get { return BatchNumberId.HasValue ? 0 : IsGroup ? 0 : 45; } }
@@ -1360,7 +1360,7 @@ namespace Kara.Assets
                     OnPropertyChanged("QuantityLabel");
                 }
             }
-            public string QuantityLabel { get { return Quantity.ToString().ReplaceLatinDigits().Replace(".", "/") + (PointJustEntered ? "/" : "") + (_QuantityFocused ? "|" : ""); } }
+            public string QuantityLabel { get { return Quantity.ToString().ToPersianDigits().Replace(".", "/") + (PointJustEntered ? "/" : "") + (_QuantityFocused ? "|" : ""); } }
             public decimal? _UnitPrice { get; set; }
             public decimal? _ConsumerUnitPrice { get; set; }
             private Package _SelectedPackage { get; set; }
@@ -1382,9 +1382,49 @@ namespace Kara.Assets
                     }
                 }
             }
-            public string UnitName { get { return SelectedPackage == null ? "" : (SelectedPackage.Name + (SelectedPackage.Coefficient != 1 ? ("(" + SelectedPackage.Coefficient + ")") : "")).ReplaceLatinDigits(); } }
-            public string Fee { get { return !_UnitPrice.HasValue ? "---" : (_UnitPrice.Value * (SelectedPackage == null ? 1 : SelectedPackage.Coefficient)).ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits(); } }
-            public string ConsumerFee { get { return "ق م: " + (!_ConsumerUnitPrice.HasValue ? "---" : (_ConsumerUnitPrice.Value * (SelectedPackage == null ? 1 : SelectedPackage.Coefficient)).ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits()); } }
+            public string UnitName { get { return SelectedPackage == null ? "" : (SelectedPackage.Name + (SelectedPackage.Coefficient != 1 ? ("(" + SelectedPackage.Coefficient + ")") : "")).ToPersianDigits(); } }
+            
+            public string Fee 
+            { 
+                get { return !_UnitPrice.HasValue ? "" : (_UnitPrice.Value * (SelectedPackage == null ? 1 : SelectedPackage.Coefficient)).ToString("###,###,###,###,###,###,##0.").ToPersianDigits(); }
+            }
+
+            public string _reversionFee;
+            public string ReversionFee
+            {
+                get { return _reversionFee.ToPersianDigits(); }
+                set { _reversionFee = value.ToLatinDigits(); }
+            }
+
+            public string _reversionVATPercent;
+            public string ReversionVATPercent
+            {
+                get { return _reversionVATPercent.ToPersianDigits(); }
+                set { _reversionVATPercent = value.ToLatinDigits(); }
+            }
+
+            public string _reversionVATAmount;
+            public string ReversionVATAmount
+            {
+                get { return _reversionVATAmount.ToPersianDigits(); }
+                set { _reversionVATAmount = value.ToLatinDigits(); }
+            }
+
+            public string _reversionDiscountPercent;
+            public string ReversionDiscountPercent
+            {
+                get { return _reversionDiscountPercent.ToPersianDigits(); }
+                set { _reversionDiscountPercent = value.ToLatinDigits(); }
+            }
+
+            public bool _reversionIsFreeProduct;
+            public bool ReversionIsFreeProduct
+            {
+                get { return _reversionIsFreeProduct; }
+                set { _reversionIsFreeProduct = value; }
+            }
+
+            public string ConsumerFee { get { return "ق م: " + (!_ConsumerUnitPrice.HasValue ? "---" : (_ConsumerUnitPrice.Value * (SelectedPackage == null ? 1 : SelectedPackage.Coefficient)).ToString("###,###,###,###,###,###,##0.").ToPersianDigits()); } }
             public bool Selected { get { return _Selected; } set { _Selected = value; OnPropertyChanged("Selected"); OnPropertyChanged("RowColor"); } }
             public string RowColor { get { return IsGroup ? "#B4E8F5" : Selected ? "#A4DEF5" : OddRow ? "#DCE6FA" : _QRScannedThisBatchNumber ? "#94CEE5" : "#CCD6EA"; } }
             public ImageSource ImageSource { get; set; }
@@ -1398,9 +1438,9 @@ namespace Kara.Assets
                 set { if (!HasBatchNumbers) __UnitStock = value; }
             }
             public decimal? _Price { get { return TotalStuffQuantity * _UnitPrice; } }
-            public string Price { get { return _Price.HasValue ? _Price.Value.ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits() : "---"; } }
+            public string Price { get { return _Price.HasValue ? _Price.Value.ToString("###,###,###,###,###,###,##0.").ToPersianDigits() : "---"; } }
             private decimal RemainedStock { get { return HasBatchNumbers ? StuffRow_BatchNumberRows.Sum(a => a.RemainedStock) : (_UnitStock - (PackagesData == null ? 0 : PackagesData.Sum(a => a.Quantity * a.Package.Coefficient))); } }
-            public string Stock { get { return (Math.Floor(RemainedStock / (SelectedPackage == null ? 1 : SelectedPackage.Coefficient)).ToString("###,###,###,##0.")).ReplaceLatinDigits(); } }
+            public string Stock { get { return (Math.Floor(RemainedStock / (SelectedPackage == null ? 1 : SelectedPackage.Coefficient)).ToString("###,###,###,##0.")).ToPersianDigits(); } }
             public bool HasBatchNumbers { get { return StuffRow_BatchNumberRows != null && StuffRow_BatchNumberRows.Any(); } }
             private bool _OddRow;
             public bool OddRow { get { return _OddRow; } set { _OddRow = value; OnPropertyChanged("RowColor"); } }
@@ -1737,7 +1777,7 @@ namespace Kara.Assets
         {
             try
             {
-                if (stuff.Code == "52030001".ReplaceLatinDigits())
+                if (stuff.Code == "52030001".ToPersianDigits())
                 {
                     var wfweethrhrth = 0;
                 }
@@ -1772,7 +1812,7 @@ namespace Kara.Assets
                                 TemplateWithActualValues
                             }).Select(a => a.Split(new string[] { "<*>" }, StringSplitOptions.RemoveEmptyEntries)).ToList();
 
-                            if (AllDateFormationTemplates.Any(b => b.All(a => Code.Contains(a.ReplaceLatinDigits()))))
+                            if (AllDateFormationTemplates.Any(b => b.All(a => Code.Contains(a.ToPersianDigits()))))
                             {
                                 stuff.StuffRow_BatchNumberRows[j].QRScannedThisBatchNumber = true;
                                 return true;
@@ -1786,7 +1826,7 @@ namespace Kara.Assets
                             .Replace("<BarCode>", stuff.BarCode)
                             .Split(new string[] { "<*>" }, StringSplitOptions.RemoveEmptyEntries).ToList();
 
-                        if (TemplateWithActualValues.All(a => Code.Contains(a.ReplaceLatinDigits())))
+                        if (TemplateWithActualValues.All(a => Code.Contains(a.ToPersianDigits())))
                             return true;
                     }
                 }
@@ -1800,7 +1840,7 @@ namespace Kara.Assets
 
         public async Task<List<StuffListModel>> FilterStuffsAsync(List<StuffListModel> AllStuffs, string Filter)
         {
-            Filter = Filter.ReplaceLatinDigits();
+            Filter = Filter.ToPersianDigits();
             return await Task.Run(() =>
             {
                 if (!string.IsNullOrWhiteSpace(Filter))

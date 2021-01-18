@@ -17,12 +17,12 @@ namespace Kara
     {
         public SaleOrderStuff ArtcileData { get; set; }
         public Guid Id { get { return ArtcileData.Id; } }
-        public string StuffCode { get { return ArtcileData.Package.Stuff.Code.ReplaceLatinDigits(); } }
-        public string StuffName { get { return ArtcileData.Package.Stuff.Name.ReplaceLatinDigits(); } }
-        public string Quantity { get { return (ArtcileData.Quantity.ToString() + " " + ArtcileData.Package.Name).ReplaceLatinDigits(); } }
-        public string UnitPrice { get { return ArtcileData.SalePrice.ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits(); } }
-        public string SalePrice { get { return ArtcileData.SalePriceQuantity.ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits(); } }
-        public string CurrentDiscountPercent { get { return " + " + (ArtcileData.DiscountPercent - ArtcileData.AddedDiscountPercent).ToString("##0.##").ReplaceLatinDigits(); } }
+        public string StuffCode { get { return ArtcileData.Package.Stuff.Code.ToPersianDigits(); } }
+        public string StuffName { get { return ArtcileData.Package.Stuff.Name.ToPersianDigits(); } }
+        public string Quantity { get { return (ArtcileData.Quantity.ToString() + " " + ArtcileData.Package.Name).ToPersianDigits(); } }
+        public string UnitPrice { get { return ArtcileData.SalePrice.ToString("###,###,###,###,###,###,##0.").ToPersianDigits(); } }
+        public string SalePrice { get { return ArtcileData.SalePriceQuantity.ToString("###,###,###,###,###,###,##0.").ToPersianDigits(); } }
+        public string CurrentDiscountPercent { get { return " + " + (ArtcileData.DiscountPercent - ArtcileData.AddedDiscountPercent).ToString("##0.##").ToPersianDigits(); } }
         bool PointJustEntered;
         public decimal AddedDiscountPercent
         {
@@ -64,9 +64,9 @@ namespace Kara
                 OnPropertyChanged("AddedDiscountPercentLabel");
             }
         }
-        public string AddedDiscountPercentLabel { get { return AddedDiscountPercent.ToString().ReplaceLatinDigits().Replace(".", "/") + (PointJustEntered ? "/" : "") + (_AddedDiscountPercentFocused ? "|" : ""); } }
-        public string DiscountAmount { get { return ArtcileData.DiscountAmount.ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits(); } }
-        public string AfterDiscountReduction { get { return (ArtcileData.SalePriceQuantity - ArtcileData.DiscountAmount).ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits(); } }
+        public string AddedDiscountPercentLabel { get { return AddedDiscountPercent.ToString().ToPersianDigits().Replace(".", "/") + (PointJustEntered ? "/" : "") + (_AddedDiscountPercentFocused ? "|" : ""); } }
+        public string DiscountAmount { get { return ArtcileData.DiscountAmount.ToString("###,###,###,###,###,###,##0.").ToPersianDigits(); } }
+        public string AfterDiscountReduction { get { return (ArtcileData.SalePriceQuantity - ArtcileData.DiscountAmount).ToString("###,###,###,###,###,###,##0.").ToPersianDigits(); } }
         
         public event PropertyChangedEventHandler PropertyChanged;
         public void OnPropertyChanged(string propertyName)
@@ -257,7 +257,7 @@ namespace Kara
                     OnPropertyChanged("AddedDiscountPercentLabel");
                 }
             }
-            public string AddedDiscountPercentLabel { get { return SaleOrder.AddedDiscountPercent.ToString().ReplaceLatinDigits().Replace(".", "/") + (PointJustEntered ? "/" : "") + (_AddedDiscountPercentFocused ? "|" : ""); } }
+            public string AddedDiscountPercentLabel { get { return SaleOrder.AddedDiscountPercent.ToString().ToPersianDigits().Replace(".", "/") + (PointJustEntered ? "/" : "") + (_AddedDiscountPercentFocused ? "|" : ""); } }
 
             public event PropertyChangedEventHandler PropertyChanged;
             public void OnPropertyChanged(string propertyName)
@@ -503,20 +503,20 @@ namespace Kara
         {
             App.DB.CalculateProporatedDiscount(SaleOrder.SaleOrder);
 
-            RowsDiscountAmountSum_Current.Text = (SaleOrder.SaleOrder.SaleOrderStuffs.Any() ? SaleOrder.SaleOrder.SaleOrderStuffs.Sum(a => a.DiscountAmount - a.AddedDiscountAmount) : 0).ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits();
-            RowsDiscountAmountSum_Added.Text = (SaleOrder.SaleOrder.SaleOrderStuffs.Any() ? SaleOrder.SaleOrder.SaleOrderStuffs.Sum(a => a.AddedDiscountAmount) : 0).ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits();
-            RowsDiscountAmountSum_Total.Text = (SaleOrder.SaleOrder.SaleOrderStuffs.Any() ? SaleOrder.SaleOrder.SaleOrderStuffs.Sum(a => a.DiscountAmount) : 0).ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits();
+            RowsDiscountAmountSum_Current.Text = (SaleOrder.SaleOrder.SaleOrderStuffs.Any() ? SaleOrder.SaleOrder.SaleOrderStuffs.Sum(a => a.DiscountAmount - a.AddedDiscountAmount) : 0).ToString("###,###,###,###,###,###,##0.").ToPersianDigits();
+            RowsDiscountAmountSum_Added.Text = (SaleOrder.SaleOrder.SaleOrderStuffs.Any() ? SaleOrder.SaleOrder.SaleOrderStuffs.Sum(a => a.AddedDiscountAmount) : 0).ToString("###,###,###,###,###,###,##0.").ToPersianDigits();
+            RowsDiscountAmountSum_Total.Text = (SaleOrder.SaleOrder.SaleOrderStuffs.Any() ? SaleOrder.SaleOrder.SaleOrderStuffs.Sum(a => a.DiscountAmount) : 0).ToString("###,###,###,###,###,###,##0.").ToPersianDigits();
 
-            CurrentOrderDiscountPercent.Text = (SaleOrder.SaleOrder.DiscountPercent - SaleOrder.AddedDiscountPercent).ToString("##0.##").ReplaceLatinDigits() + " %";
+            CurrentOrderDiscountPercent.Text = (SaleOrder.SaleOrder.DiscountPercent - SaleOrder.AddedDiscountPercent).ToString("##0.##").ToPersianDigits() + " %";
             //OrderAddedDiscountPercent.Text = SaleOrder.SaleOrder.AddedDiscountPercent.ToString("##0.##").ReplaceLatinDigits();
 
-            OrderDiscountAmountSum_Current.Text = (SaleOrder.SaleOrder.DiscountAmount - SaleOrder.SaleOrder.AddedDiscountAmount).ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits();
-            OrderDiscountAmountSum_Added.Text = SaleOrder.SaleOrder.AddedDiscountAmount.ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits();
-            OrderDiscountAmountSum_Total.Text = SaleOrder.SaleOrder.DiscountAmount.ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits();
+            OrderDiscountAmountSum_Current.Text = (SaleOrder.SaleOrder.DiscountAmount - SaleOrder.SaleOrder.AddedDiscountAmount).ToString("###,###,###,###,###,###,##0.").ToPersianDigits();
+            OrderDiscountAmountSum_Added.Text = SaleOrder.SaleOrder.AddedDiscountAmount.ToString("###,###,###,###,###,###,##0.").ToPersianDigits();
+            OrderDiscountAmountSum_Total.Text = SaleOrder.SaleOrder.DiscountAmount.ToString("###,###,###,###,###,###,##0.").ToPersianDigits();
 
-            TotalDiscountAmountSum_Current.Text = (SaleOrder.SaleOrder.DiscountAmount - SaleOrder.SaleOrder.AddedDiscountAmount + (SaleOrder.SaleOrder.SaleOrderStuffs.Any() ? SaleOrder.SaleOrder.SaleOrderStuffs.Sum(a => a.DiscountAmount - a.AddedDiscountAmount) : 0)).ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits();
-            TotalDiscountAmountSum_Added.Text = (SaleOrder.SaleOrder.AddedDiscountAmount + (SaleOrder.SaleOrder.SaleOrderStuffs.Any() ? SaleOrder.SaleOrder.SaleOrderStuffs.Sum(a => a.AddedDiscountAmount) : 0)).ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits();
-            TotalDiscountAmountSum_Total.Text = (SaleOrder.SaleOrder.DiscountAmount + (SaleOrder.SaleOrder.SaleOrderStuffs.Any() ? SaleOrder.SaleOrder.SaleOrderStuffs.Sum(a => a.DiscountAmount) : 0)).ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits();
+            TotalDiscountAmountSum_Current.Text = (SaleOrder.SaleOrder.DiscountAmount - SaleOrder.SaleOrder.AddedDiscountAmount + (SaleOrder.SaleOrder.SaleOrderStuffs.Any() ? SaleOrder.SaleOrder.SaleOrderStuffs.Sum(a => a.DiscountAmount - a.AddedDiscountAmount) : 0)).ToString("###,###,###,###,###,###,##0.").ToPersianDigits();
+            TotalDiscountAmountSum_Added.Text = (SaleOrder.SaleOrder.AddedDiscountAmount + (SaleOrder.SaleOrder.SaleOrderStuffs.Any() ? SaleOrder.SaleOrder.SaleOrderStuffs.Sum(a => a.AddedDiscountAmount) : 0)).ToString("###,###,###,###,###,###,##0.").ToPersianDigits();
+            TotalDiscountAmountSum_Total.Text = (SaleOrder.SaleOrder.DiscountAmount + (SaleOrder.SaleOrder.SaleOrderStuffs.Any() ? SaleOrder.SaleOrder.SaleOrderStuffs.Sum(a => a.DiscountAmount) : 0)).ToString("###,###,###,###,###,###,##0.").ToPersianDigits();
             
             if (ShowingOrder)
             {

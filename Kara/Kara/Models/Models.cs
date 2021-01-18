@@ -64,7 +64,9 @@ namespace Kara.Models
             new KeyValuePair<Type, string>(typeof(FinancialTransactionDocument), "FinancialTransactionDocument"),
             new KeyValuePair<Type, string>(typeof(Cash), "Cash"),
             new KeyValuePair<Type, string>(typeof(Bank), "Bank"),
-            new KeyValuePair<Type, string>(typeof(BankAccount), "BankAccount")
+            new KeyValuePair<Type, string>(typeof(BankAccount), "BankAccount"),
+            new KeyValuePair<Type, string>(typeof(Reversion), "Reversion"),
+            new KeyValuePair<Type, string>(typeof(ReversionStuff), "ReversionStuff")
         };
 
         private static Dictionary<Type, List<PropertyInfo>> _PrimaryKeys;
@@ -267,6 +269,42 @@ namespace Kara.Models
         [Ignore]
         private DynamicGroup[] _Groups { get; set; }
         
+    }
+
+    [Table("Reversion")]
+    public class Reversion
+    {
+        [PrimaryKey]
+        public Guid Id { get; set; }
+        public Guid? OrderId { get; set; }
+        public Guid PartnerId { get; set; }
+        public Guid PersonelId { get; set; }
+        public Guid ReasonId { get; set; }
+        public string Description { get; set; }
+        public DateTime ReversionDate { get; set; }
+        public decimal ReversionDiscountAmount { get; set; }
+        public decimal ReversionDiscountPercent { get; set; }
+        
+        [Ignore]
+        public ReversionStuff[] Stuffs { get; set; }
+    }
+
+    [Table("ReversionStuff")]
+    public class ReversionStuff
+    {
+        [PrimaryKey]
+        public Guid Id { get; set; }
+        public Guid ReversionId { get; set; }
+        public Guid StuffId { get; set; }
+        public Guid PackageId { get; set; }
+        public Guid? BatchNumber { get; set; }
+        public decimal Quantity { get; set; }
+        public decimal MinorPackagePrice { get; set; }
+        public decimal ReversionFee { get; set; }
+        public decimal DiscountPercent { get; set; }
+        public decimal VATPercent { get; set; }
+        public decimal VATAmount { get; set; }
+        public bool IsFreeProduct { get; set; }
     }
 
     [Table("DynamicGroupPartner")]

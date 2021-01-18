@@ -30,12 +30,12 @@ namespace Kara.Assets
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         
         {
-            return value.ToString().ReplaceLatinDigits();
+            return value.ToString().ToPersianDigits();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return System.Convert.ToDecimal(((string)value).ReplacePersianDigits());
+            return System.Convert.ToDecimal(((string)value).ToLatinDigits());
         }
     }
 
@@ -47,6 +47,17 @@ namespace Kara.Assets
                 return "";
 
             return input.ToString();
+        }
+
+        public static decimal ToSafeDecimal(this object input)
+        {
+            if (input == null)
+                return 0;
+
+            if (decimal.TryParse(input.ToSafeString(), out decimal d))
+                return d;
+            else
+                return 0;
         }
     }
 
@@ -119,7 +130,7 @@ namespace Kara.Assets
                 }
 
             if (entry.Text != text)
-                entry.Text = text.ReplaceLatinDigits();
+                entry.Text = text.ToPersianDigits();
         }
     }
 

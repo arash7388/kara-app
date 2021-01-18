@@ -118,8 +118,8 @@ namespace Kara
                 _Column1 = "جمع:",
                 _Column2 = "",
                 _Column3 = "",
-                _Column4 = result.Data.Sum(a => Convert.ToDecimal(a._Column4.Replace(",", ""))).ToString("###,###,###,###,###,###,##0.###").ReplaceLatinDigits(),
-                _Column5 = result.Data.Sum(a => Convert.ToDecimal(a._Column5.Replace(",", ""))).ToString("###,###,###,###,###,###,##0.###").ReplaceLatinDigits()
+                _Column4 = result.Data.Sum(a => Convert.ToDecimal(a._Column4.Replace(",", ""))).ToString("###,###,###,###,###,###,##0.###").ToPersianDigits(),
+                _Column5 = result.Data.Sum(a => Convert.ToDecimal(a._Column5.Replace(",", ""))).ToString("###,###,###,###,###,###,##0.###").ToPersianDigits()
             };
             App.UniversalLineInApp = 16431006;
 

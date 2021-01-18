@@ -31,8 +31,8 @@ namespace Kara
             Price = price;
             PartnerId = partnerId;
 
-            txtPrice.Text = Price.ToString().ReplaceLatinDigits();
-            txtDate.Text = DateTime.Now.ToShortStringForDate().ReplaceLatinDigits();
+            txtPrice.Text = Price.ToString().ToPersianDigits();
+            txtDate.Text = DateTime.Now.ToShortStringForDate().ToPersianDigits();
             
             ToolbarItem_LocalSave = new ToolbarItem();
             ToolbarItem_LocalSave.Text = "ذخیره محلی";
@@ -177,24 +177,24 @@ namespace Kara
                         YearId = Guid.Parse("00000000-0000-0000-0000-000000000000"),
                         TransactionType = (int)TransactionType.ChequeDocumentIn,
                         PartnerId = PartnerId,
-                        InputPrice = decimal.Parse(txtPrice.Text.Replace(",", "").ReplacePersianDigits()),
+                        InputPrice = decimal.Parse(txtPrice.Text.Replace(",", "").ToLatinDigits()),
                         OutputPrice = 0,
                         DocumentState = 0,
-                        PersianDocumentDate = txtDate.Text.ReplacePersianDigits(),
+                        PersianDocumentDate = txtDate.Text.ToLatinDigits(),
                         DocumentDate = txtDate.Text.PersianDateStringToDate(),
                         DocumentUserId = App.UserId.Value,
                         DocumentDescription = txtDesc.Text,
                         //BankTransferCode = txtHavalehNo.Text.ReplacePersianDigits(),
-                        ChequeCode = txtChequeCode.Text.ReplacePersianDigits(),
+                        ChequeCode = txtChequeCode.Text.ToLatinDigits(),
                         BranchName = txtBranchName.Text,
                         BranchCode = txtBranchCode.Text,
                         Delivery = "-",
                         Issuance = txtCity.Text,
-                        PersianMaturityDate = txtDueDate.Text.ReplacePersianDigits(),
+                        PersianMaturityDate = txtDueDate.Text.ToLatinDigits(),
                         CollectorId = App.UserEntityId.Value,
                         ChequeBankId = Banks[BankPicker.SelectedIndex].Id,
                         CashAccountId = Cashes[CashPicker.SelectedIndex].EntityId,
-                        BankAccountNumber = txtAccountNo.Text.ReplacePersianDigits()
+                        BankAccountNumber = txtAccountNo.Text.ToLatinDigits()
                 };
 
                     var result = await App.DB.InsertOrUpdateRecordAsync<FinancialTransactionDocument>(EditingFDT);

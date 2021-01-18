@@ -363,7 +363,7 @@ namespace Kara.Assets
             public Guid TotalId { get; set; }
 
             private string _totalCode;
-            public string TotalCode { get { return _totalCode.ReplaceLatinDigits(); } set { _totalCode = value; } }
+            public string TotalCode { get { return _totalCode.ToPersianDigits(); } set { _totalCode = value; } }
 
             private DateTime _totalDate;
             public DateTime TotalDate
@@ -372,7 +372,7 @@ namespace Kara.Assets
                 set
                 {
                     _totalDate = value;
-                    PersianTotalDate = TotalDate.ToShortStringForDate().ReplaceLatinDigits();
+                    PersianTotalDate = TotalDate.ToShortStringForDate().ToPersianDigits();
                 }
             }
 
@@ -384,14 +384,14 @@ namespace Kara.Assets
             private string _payeeCode;
             public string PayeeCode
             {
-                get { return _payeeCode.ReplaceLatinDigits(); }
+                get { return _payeeCode.ToPersianDigits(); }
                 set { _payeeCode = value; }
             }
 
             private string _driverCode;
             public string DriverCode
             {
-                get { return _driverCode.ReplaceLatinDigits(); }
+                get { return _driverCode.ToPersianDigits(); }
                 set { _driverCode = value; }
             }
 
@@ -403,7 +403,7 @@ namespace Kara.Assets
             private string _totalPrice;
             public string TotalPrice
             {
-                get { return _totalPrice.ReplaceLatinDigits(); }
+                get { return _totalPrice.ToPersianDigits(); }
                 set { _totalPrice = value; }
             }
 
@@ -415,7 +415,7 @@ namespace Kara.Assets
             //public decimal MachineWeightCapacity { get; set; }
 
             private string _ordersCount;
-            public string OrdersCount { get { return _ordersCount.ReplaceLatinDigits(); } set { _ordersCount = value; } }
+            public string OrdersCount { get { return _ordersCount.ToPersianDigits(); } set { _ordersCount = value; } }
 
             //public decimal VolumeSum { get; set; }
             //public decimal VolumeSumPercent { get; set; }
@@ -490,6 +490,89 @@ namespace Kara.Assets
             }
         }
 
+        public class DtoReversionReason
+        {
+            public Guid Id { get; set; }
+            public string Code { get; set; }
+            public string Name { get; set; }
+        }
+
+        public static async Task<ResultSuccess<List<DtoReversionReason>>> GetReversionReasons()
+        {
+            try
+            {
+                var resultTask = HttpClient.GetStringAsyncForUnicode(ServerRoot + $"GetReversionReasonList");
+                var result = await resultTask;
+
+                if (resultTask.Exception != null)
+                {
+                    return new ResultSuccess<List<DtoReversionReason>>(false, resultTask.Exception.ProperMessage());
+                }
+
+                if (!result.Success)
+                    throw new Exception(result.Message);
+
+                var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<List<DtoReversionReason>>>(result.Data);
+
+                if (!resultDeserialized.Success)
+                {
+                    return new ResultSuccess<List<DtoReversionReason>>(false, resultDeserialized.Message);
+                }
+
+                return new ResultSuccess<List<DtoReversionReason>>(true, "", resultDeserialized.Data);
+            }
+            catch (Exception ex)
+            {
+                return new ResultSuccess<List<DtoReversionReason>>(false, ex.ProperMessage());
+            }
+        }
+
+
+        public class DtoPersonnelForSaleOrder
+        {
+            public Guid Id { get; set; }
+            public string Code { get; set; }
+            public string Name { get; set; }
+            public string[] personnelZoneCodes { get; set; }
+            public string PersonnelTypeCode { get; set; }
+            public IEnumerable<string> VisitorDynamicGroupIds { get; set; }
+            public bool PersonnelTerritories_PartnerGroupCheck { get; set; }
+            public bool PersonnelTerritories_ZoneAndRouteCheck { get; set; }
+            public bool PersonnelTerritories_OrCondition { get; set; }
+            public DtoPersonnelHistoryInformation personnelHistoryInformation { get; set; }
+        }
+
+        public static async Task<ResultSuccess<List<DtoPersonnelForSaleOrder>>> GetReversionVisitors()
+        {
+            try
+            {
+                var url = ServerRoot + $"GetPersonnelListForSaleOrder?commonUserId={App.UserId.Value}";
+                var resultTask = HttpClient.GetStringAsyncForUnicode(url);
+                var result = await resultTask;
+
+                if (resultTask.Exception != null)
+                {
+                    return new ResultSuccess<List<DtoPersonnelForSaleOrder>>(false, resultTask.Exception.ProperMessage());
+                }
+
+                if (!result.Success)
+                    throw new Exception(result.Message);
+
+                var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<List<DtoPersonnelForSaleOrder>>>(result.Data);
+
+                if (!resultDeserialized.Success)
+                {
+                    return new ResultSuccess<List<DtoPersonnelForSaleOrder>>(false, resultDeserialized.Message);
+                }
+
+                return new ResultSuccess<List<DtoPersonnelForSaleOrder>>(true, "", resultDeserialized.Data);
+            }
+            catch (Exception ex)
+            {
+                return new ResultSuccess<List<DtoPersonnelForSaleOrder>>(false, ex.ProperMessage());
+            }
+        }
+
         public class TotalDetailModel
         {
             public Guid OrderId { get; set; }
@@ -539,6 +622,65 @@ namespace Kara.Assets
         }
 
 
+        public class DtoReversion
+        {
+            public Guid? OrderId { get; set; }
+            public Guid PartnerId { get; set; }
+            public Guid PersonelId { get; set; }
+            public Guid ReasonId { get; set; }
+            public string Description { get; set; }
+            public DateTime ReversionDate { get; set; }
+            public decimal ReversionDiscountAmount { get; set; }
+            public decimal ReversionDiscountPercent { get; set; }
+            public List<DtoReversionStuff> Stuffs { get; set; }
+        }
+
+        public class DtoReversionStuff
+        {
+            public Guid StuffId { get; set; }
+            public Guid PackageId { get; set; }
+            public Guid? BatchNumber { get; set; }
+            public decimal Quantity { get; set; }
+            public decimal MinorPackagePrice { get; set; }
+            public decimal DiscountPercent { get; set; }
+            public decimal VATPercent { get; set; }
+            public decimal VATAmount { get; set; }
+            public bool IsFreeProduct { get; set; }
+        }
+
+        public static async Task<ResultSuccess> SubmitReversion(Reversion reversion)
+        {
+            try
+            {
+                //var Data = new[]
+                //{
+                //    new KeyValuePair<string, string>("commonUserId", App.UserId.Value.ToString()),
+                //    new KeyValuePair<string, string>("reversion",JsonConvert.SerializeObject(reversion )),
+                //};
+
+                HttpContent Content = new StringContent(JsonConvert.SerializeObject(reversion),Encoding.UTF8,"application/json");
+
+                var resultTask = HttpClient.PostAsyncForUnicode(ServerRoot + $"InsertReversion?commonUserId={App.UserId.Value}", Content);
+                var result = await resultTask;
+
+                if (resultTask.Exception != null)
+                    throw new Exception(resultTask.Exception.ProperMessage());
+
+                if (!result.Success)
+                    throw new Exception(result.Message);
+
+                var updateResult = await App.DB.InsertOrUpdateRecordAsync<Reversion>(reversion);
+
+                return new ResultSuccess(true, "");
+            }
+            catch (Exception err)
+            {
+                //var Message = (documents.Count() == 1 ? "" : SentCount == 0 ? "هیچ سندی به سرور ارسال نشد." : "تعداد " + SentCount + " سند به سرور ارسال شد، اما در ادامه مشکلی رخ داد.") + err.ProperMessage();
+                //return new ResultSuccess<int>(false, Message, SentCount);
+                return new ResultSuccess(false, err.Message);
+            }
+        }
+
         public class DtoSaleOrderFinalizedState
         {
             public Guid OrderId { get; set; }
@@ -561,7 +703,7 @@ namespace Kara.Assets
                 var Data = new[]
                     {
                         new KeyValuePair<string, string>("orderId", orderId.ToString()),
-                        new KeyValuePair<string, string>("commonUserId", App.UserId.ToString()),
+                        new KeyValuePair<string, string>("commonUserId", App.UserId.Value.ToString()),
                         new KeyValuePair<string, string>("signitureImage", imageBase64),
                     };
 
@@ -596,17 +738,17 @@ namespace Kara.Assets
         public class UncashedChequeListModel : INotifyPropertyChanged
         {
             string _BackNumber;
-            public string BackNumber { get { return _BackNumber.ReplaceLatinDigits(); } set { _BackNumber = value; } }
+            public string BackNumber { get { return _BackNumber.ToPersianDigits(); } set { _BackNumber = value; } }
             string _Serial;
-            public string Serial { get { return _Serial.ReplaceLatinDigits(); } set { _Serial = value; } }
+            public string Serial { get { return _Serial.ToPersianDigits(); } set { _Serial = value; } }
             public DateTime _MaturityDate { private get; set; }
-            public string MaturityDate { get { return _MaturityDate.ToShortStringForDate().Substring(2).ReplaceLatinDigits(); } }
+            public string MaturityDate { get { return _MaturityDate.ToShortStringForDate().Substring(2).ToPersianDigits(); } }
             public decimal _Price { private get; set; }
-            public string Price { get { return _Price.ToString("###,###,###,###,###,##0.").ReplaceLatinDigits(); } }
+            public string Price { get { return _Price.ToString("###,###,###,###,###,##0.").ToPersianDigits(); } }
             string _State;
-            public string State { get { return _State.ReplaceLatinDigits(); } set { _State = value; } }
+            public string State { get { return _State.ToPersianDigits(); } set { _State = value; } }
             string _Description;
-            public string Description { get { return _Description.ReplaceLatinDigits(); } set { _Description = value; } }
+            public string Description { get { return _Description.ToPersianDigits(); } set { _Description = value; } }
             public event PropertyChangedEventHandler PropertyChanged;
             public void OnPropertyChanged(string propertyName)
             {
@@ -646,15 +788,15 @@ namespace Kara.Assets
         public class ReturnedChequeListModel : INotifyPropertyChanged
         {
             string _BackNumber;
-            public string BackNumber { get { return _BackNumber.ReplaceLatinDigits(); } set { _BackNumber = value; } }
+            public string BackNumber { get { return _BackNumber.ToPersianDigits(); } set { _BackNumber = value; } }
             string _Serial;
-            public string Serial { get { return _Serial.ReplaceLatinDigits(); } set { _Serial = value; } }
+            public string Serial { get { return _Serial.ToPersianDigits(); } set { _Serial = value; } }
             public DateTime _MaturityDate { private get; set; }
-            public string MaturityDate { get { return _MaturityDate.ToShortStringForDate().Substring(2).ReplaceLatinDigits(); } }
+            public string MaturityDate { get { return _MaturityDate.ToShortStringForDate().Substring(2).ToPersianDigits(); } }
             public decimal _Price { private get; set; }
-            public string Price { get { return _Price.ToString("###,###,###,###,###,##0.").ReplaceLatinDigits(); } }
+            public string Price { get { return _Price.ToString("###,###,###,###,###,##0.").ToPersianDigits(); } }
             string _Description;
-            public string Description { get { return _Description.ReplaceLatinDigits(); } set { _Description = value; } }
+            public string Description { get { return _Description.ToPersianDigits(); } set { _Description = value; } }
             public event PropertyChangedEventHandler PropertyChanged;
             public void OnPropertyChanged(string propertyName)
             {
@@ -693,15 +835,15 @@ namespace Kara.Assets
         public class CycleDataListModel : INotifyPropertyChanged
         {
             public DateTime _Date { private get; set; }
-            public string Date { get { return _Date.ToShortStringForDate().Substring(2).ReplaceLatinDigits(); } }
+            public string Date { get { return _Date.ToShortStringForDate().Substring(2).ToPersianDigits(); } }
             string _Description;
-            public string Description { get { return _Description.ReplaceLatinDigits(); } set { _Description = value; } }
+            public string Description { get { return _Description.ToPersianDigits(); } set { _Description = value; } }
             public decimal _Debtor { private get; set; }
-            public string Debtor { get { return _Debtor.ToString("###,###,###,###,###,##0.").ReplaceLatinDigits(); } }
+            public string Debtor { get { return _Debtor.ToString("###,###,###,###,###,##0.").ToPersianDigits(); } }
             public decimal _Creditor { private get; set; }
-            public string Creditor { get { return _Creditor.ToString("###,###,###,###,###,##0.").ReplaceLatinDigits(); } }
+            public string Creditor { get { return _Creditor.ToString("###,###,###,###,###,##0.").ToPersianDigits(); } }
             public decimal _Remainder { get; set; }
-            public string Remainder { get { return (_Remainder < 0 ? "(" : "") + Math.Abs(_Remainder).ToString("###,###,###,###,###,##0.").ReplaceLatinDigits() + (_Remainder < 0 ? ")" : ""); } }
+            public string Remainder { get { return (_Remainder < 0 ? "(" : "") + Math.Abs(_Remainder).ToString("###,###,###,###,###,##0.").ToPersianDigits() + (_Remainder < 0 ? ")" : ""); } }
 
             public event PropertyChangedEventHandler PropertyChanged;
             public void OnPropertyChanged(string propertyName)
@@ -741,15 +883,15 @@ namespace Kara.Assets
         public class ReportGeneralModel
         {
             public string _Column1 { get; set; }
-            public string Column1 { get { return (_Column1 != null ? _Column1 : "").ReplaceLatinDigits(); } }
+            public string Column1 { get { return (_Column1 != null ? _Column1 : "").ToPersianDigits(); } }
             public string _Column2 { get; set; }
-            public string Column2 { get { return (_Column2 != null ? _Column2 : "").ReplaceLatinDigits(); } }
+            public string Column2 { get { return (_Column2 != null ? _Column2 : "").ToPersianDigits(); } }
             public string _Column3 { get; set; }
-            public string Column3 { get { return (_Column3 != null ? _Column3 : "").ReplaceLatinDigits(); } }
+            public string Column3 { get { return (_Column3 != null ? _Column3 : "").ToPersianDigits(); } }
             public string _Column4 { get; set; }
-            public string Column4 { get { return (_Column4 != null ? _Column4 : "").ReplaceLatinDigits(); } }
+            public string Column4 { get { return (_Column4 != null ? _Column4 : "").ToPersianDigits(); } }
             public string _Column5 { get; set; }
-            public string Column5 { get { return (_Column5 != null ? _Column5 : "").ReplaceLatinDigits(); } }
+            public string Column5 { get { return (_Column5 != null ? _Column5 : "").ToPersianDigits(); } }
         }
         public static async Task<ResultSuccess<ReportGeneralModel[]>> GetReportDataAsync(string ReportType, DateTime BDate, DateTime EDate)
         {
@@ -870,16 +1012,16 @@ namespace Kara.Assets
                 {
                     var Data = new[]
                     {
-                        new KeyValuePair<string, string>("Id", Partner.Id.ToString().ReplacePersianDigits()),
-                        new KeyValuePair<string, string>("FirstName", Partner.FirstName.ReplacePersianDigits()),
-                        new KeyValuePair<string, string>("LastName", Partner.LastName.ReplacePersianDigits()),
-                        new KeyValuePair<string, string>("LegalName", Partner.LegalName.ReplacePersianDigits()),
+                        new KeyValuePair<string, string>("Id", Partner.Id.ToString().ToLatinDigits()),
+                        new KeyValuePair<string, string>("FirstName", Partner.FirstName.ToLatinDigits()),
+                        new KeyValuePair<string, string>("LastName", Partner.LastName.ToLatinDigits()),
+                        new KeyValuePair<string, string>("LegalName", Partner.LegalName.ToLatinDigits()),
                         new KeyValuePair<string, string>("ZoneId", Partner.ZoneId.ToString()),
-                        new KeyValuePair<string, string>("Phone1", Partner.Phone1.ReplacePersianDigits()),
-                        new KeyValuePair<string, string>("Phone2", Partner.Phone2.ReplacePersianDigits()),
-                        new KeyValuePair<string, string>("Mobile", Partner.Mobile.ReplacePersianDigits()),
-                        new KeyValuePair<string, string>("Fax", Partner.Fax.ReplacePersianDigits()),
-                        new KeyValuePair<string, string>("Address", Partner.Address.ReplacePersianDigits()),
+                        new KeyValuePair<string, string>("Phone1", Partner.Phone1.ToLatinDigits()),
+                        new KeyValuePair<string, string>("Phone2", Partner.Phone2.ToLatinDigits()),
+                        new KeyValuePair<string, string>("Mobile", Partner.Mobile.ToLatinDigits()),
+                        new KeyValuePair<string, string>("Fax", Partner.Fax.ToLatinDigits()),
+                        new KeyValuePair<string, string>("Address", Partner.Address.ToLatinDigits()),
                         new KeyValuePair<string, string>("IsLegal", Partner.IsLegal.ToString()),
                         new KeyValuePair<string, string>("CalculateVATForThisPerson", Partner.CalculateVATForThisPerson.ToString()),
                         new KeyValuePair<string, string>("CreditId", Partner.CreditId.ToString()),
@@ -1101,7 +1243,7 @@ namespace Kara.Assets
 
                     var Data = new[]
                     {
-                        new KeyValuePair<string, string>("Description", FailedVisit.Description.ReplacePersianDigits()),
+                        new KeyValuePair<string, string>("Description", FailedVisit.Description.ToLatinDigits()),
                         new KeyValuePair<string, string>("GeoLocationAccuracy", FailedVisit.GeoLocationAccuracy.HasValue ? FailedVisit.GeoLocationAccuracy.Value.ToString() : ""),
                         new KeyValuePair<string, string>("GeoLocationLat", FailedVisit.GeoLocationLat.HasValue ? FailedVisit.GeoLocationLat.Value.ToString() : "" ),
                         new KeyValuePair<string, string>("GeoLocationLong", FailedVisit.GeoLocationLong.HasValue ? FailedVisit.GeoLocationLong.Value.ToString() : ""),
@@ -1462,7 +1604,7 @@ namespace Kara.Assets
         }
         public string ProgressPercent
         {
-            get { return " " + ((int)Math.Round(progress * 100)).ToString().ReplaceLatinDigits() + " %"; }
+            get { return " " + ((int)Math.Round(progress * 100)).ToString().ToPersianDigits() + " %"; }
         }
 
         public void OnPropertyChanged(string propertyName)

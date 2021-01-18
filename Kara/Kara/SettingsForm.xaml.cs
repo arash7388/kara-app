@@ -357,7 +357,7 @@ namespace Kara
             };
             ServerAddressLabel1.GestureRecognizers.Add(ServerAddressTapGestureRecognizer);
             ServerAddressLabel2.GestureRecognizers.Add(ServerAddressTapGestureRecognizer);
-            ServerAddressLabel2.Text = App.ServerAddress.ReplaceLatinDigits();
+            ServerAddressLabel2.Text = App.ServerAddress.ToPersianDigits();
 
             var GallaryStuffCountTapGestureRecognizer = new TapGestureRecognizer();
             GallaryStuffCountTapGestureRecognizer.Tapped += async (sender, e) =>
@@ -385,18 +385,18 @@ namespace Kara
             };
             PrintersLabel1.GestureRecognizers.Add(PrinterTapGestureRecognizer);
             PrintersLabel2.GestureRecognizers.Add(PrinterTapGestureRecognizer);
-            PrintersLabel2.Text = App.SelectedPrinter != null ? App.SelectedPrinter.Title.ReplaceLatinDigits() : "تعریف نشده";
+            PrintersLabel2.Text = App.SelectedPrinter != null ? App.SelectedPrinter.Title.ToPersianDigits() : "تعریف نشده";
         }
         
         public void RefreshGallryStuffCount()
         {
-            GallaryStuffCountLabel2.Text = App._GallaryStuffCount.Value.ReplaceLatinDigits();
+            GallaryStuffCountLabel2.Text = App._GallaryStuffCount.Value.ToPersianDigits();
         }
 
         public async void FillPriceListVersionsAsync(Guid? VersionId)
         {
             PriceListVersions = new PriceListVersion[] { null }.Union((await App.DB.GetPriceListVersionsAsync()).Data.ToArray()).ToArray()
-                .Select(a => new KeyValuePair<PriceListVersion, string>(a, (a == null ? "ـ ـ ـ" : (a.PriceListName + " (از " + a.BeginDate.ToShortStringForDate() + " تا " + a.EndDate.ToShortStringForDate() + ")")).ReplaceLatinDigits())).ToArray();
+                .Select(a => new KeyValuePair<PriceListVersion, string>(a, (a == null ? "ـ ـ ـ" : (a.PriceListName + " (از " + a.BeginDate.ToShortStringForDate() + " تا " + a.EndDate.ToShortStringForDate() + ")")).ToPersianDigits())).ToArray();
             
             DefaultPriceListPicker.Items.Clear();
             foreach (var PriceListVersion in PriceListVersions)
@@ -424,7 +424,7 @@ namespace Kara
             if (_Warehouses.Length > 1)
                 _Warehouses = new Warehouse[] { null }.Union(_Warehouses).ToArray();
             
-            Warehouses = _Warehouses.Select(a => new KeyValuePair<Warehouse, string>(a, a == null ? "انتخاب در زمان سفارش" : a.WarehouseName.ReplaceLatinDigits())).ToArray();
+            Warehouses = _Warehouses.Select(a => new KeyValuePair<Warehouse, string>(a, a == null ? "انتخاب در زمان سفارش" : a.WarehouseName.ToPersianDigits())).ToArray();
 
             DefaultWarehousePicker.Items.Clear();
             foreach (var Warehouse in Warehouses)

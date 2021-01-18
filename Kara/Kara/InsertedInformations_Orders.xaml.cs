@@ -367,7 +367,7 @@ namespace Kara
             OrderItems.IsRefreshing = true;
             await Task.Delay(100);
 
-            var OrdersResult = await App.DB.GetOrdersListAsync(justToday, justLocal, Filter.ReplacePersianDigits());
+            var OrdersResult = await App.DB.GetOrdersListAsync(justToday, justLocal, Filter.ToLatinDigits());
             if (!OrdersResult.Success)
             {
                 App.ShowError("خطا", "در نمایش لیست سفارشات خطایی رخ داد.\n" + OrdersResult.Message, "خوب");

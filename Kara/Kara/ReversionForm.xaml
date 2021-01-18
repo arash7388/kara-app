@@ -2,41 +2,138 @@
 <local:GradientContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:Kara.CustomRenderer"
-             x:Class="Kara.ReversionForm">
-  <Grid Padding="0" RowSpacing="0" ColumnSpacing="0" VerticalOptions="FillAndExpand">
-    <Grid.RowDefinitions>
-      <RowDefinition Height="1*" />
-      <RowDefinition Height="Auto" />
-    </Grid.RowDefinitions>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition />
-    </Grid.ColumnDefinitions>
-
-    <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" >
-      <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
-        <Grid x:Name="PartnerSection" Padding="5, 5, 5, 0" RowSpacing="5" ColumnSpacing="0" BackgroundColor="#e7e7e7" >
-        </Grid>
-        <SearchBar x:Name="StuffsSearchBar" IsVisible="false" Placeholder="جستجو" HorizontalTextAlignment="End" Text="" HeightRequest="50">
-        </SearchBar>
-        <ListView x:Name="StuffItems" IsVisible="False">
-        </ListView>
-        <StackLayout x:Name="GallaryContainer" IsVisible="False" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
-        </StackLayout>
-        <Picker x:Name="WarehousePicker" IsVisible="False" >
-        </Picker>
-      </StackLayout>
-    </StackLayout>
-
-    <StackLayout x:Name="GallaryStuffBatchNumbersListContainer" Orientation="Vertical" Spacing="0" Padding="0" Grid.Row="0" Grid.Column="0" IsVisible="False" VerticalOptions="FillAndExpand">
-      <StackLayout Orientation="Vertical" Spacing="10" Padding="10" BackgroundColor="#DCE6FA" VerticalOptions="FillAndExpand" >
-        <ListView x:Name="GallaryStuffBatchNumbersList" >
-        </ListView>
-        <local:FullRoundedLabel x:Name="CloseButton" VerticalOptions="End" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" FontSize="18" Text="بازگشت">
-        </local:FullRoundedLabel>
-      </StackLayout>
-    </StackLayout>
+            xmlns:conv="clr-namespace:Kara.Assets"
+            x:Class="Kara.ReversionForm"
+            Title="ثبت برگشتی">
     
-    <Grid x:Name="QuantityKeyboardHolder" IsVisible="false" BackgroundColor="#eee" Grid.Row="1" Grid.Column="0"  >
+    <Grid Padding="0" RowSpacing="0" ColumnSpacing="0" VerticalOptions="FillAndExpand">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" >
+            <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+                <Grid Padding="1" VerticalOptions="Fill" ColumnSpacing="2" RowSpacing="1" Margin="1" >
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="5*"></ColumnDefinition>
+                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="تاریخ:" VerticalTextAlignment="Center" FontSize="Medium"/>
+                    <local:DateEntry x:Name="txtDate" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End"  FontSize="Medium">
+                        <Entry.Behaviors>
+                            <conv:MaskedBehavior Mask="XXXX/XX/XX" />
+                        </Entry.Behaviors>
+                    </local:DateEntry>
+                    <Label Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="دلیل برگشتی:" VerticalTextAlignment="Center" FontSize="Medium"/>
+                    <Picker Grid.Row="1" x:Name="ReversionReasonPicker" Grid.Column="0" HorizontalOptions="FillAndExpand" />
+                    <Label Grid.Row="2" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="بازاریاب:" VerticalTextAlignment="Center" FontSize="Medium"/>
+                    <Picker Grid.Row="2" x:Name="VisitorPicker" Grid.Column="0" HorizontalOptions="FillAndExpand" />
+                </Grid>
+
+                <Grid x:Name="PartnerSection" Padding="5, 5, 5, 0" RowSpacing="5" ColumnSpacing="0" BackgroundColor="#e7e7e7" >
+                </Grid>
+
+                <SearchBar x:Name="StuffsSearchBar" IsVisible="false" Placeholder="جستجو" HorizontalTextAlignment="End" Text="" HeightRequest="50">
+                </SearchBar>
+
+                <ListView x:Name="StuffItems" IsVisible="False">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid x:Name="GridWrapper" Padding="2" VerticalOptions="FillAndExpand" ColumnSpacing="1" RowSpacing="3" Margin="1" >
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"></RowDefinition>
+                                        <RowDefinition Height="Auto"></RowDefinition>
+                                        <RowDefinition Height="Auto"></RowDefinition>
+                                    </Grid.RowDefinitions>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                        <ColumnDefinition Width="2*"></ColumnDefinition>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+
+                                    <local:FullRoundedLabel x:Name="UnitNameLabel" Grid.Row="0" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" Text="{Binding UnitName} " FontSize="Medium" LineBreakMode="TailTruncation">
+                                        <local:FullRoundedLabel.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="UnitNameTapEventHandler" CommandParameter="{Binding Id}">
+                                            </TapGestureRecognizer>
+                                        </local:FullRoundedLabel.GestureRecognizers>
+                                    </local:FullRoundedLabel>
+
+                                    <Label x:Name="NameLabel" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" HorizontalOptions="End" HorizontalTextAlignment="End" LineBreakMode="TailTruncation"  Text="{Binding Name} " FontSize="Medium" />
+                                    <Label x:Name="CodeLabel" Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" HorizontalOptions="End" HorizontalTextAlignment="End" LineBreakMode="HeadTruncation"  Text="{Binding Code} " FontSize="Medium" />
+
+                                    <Label x:Name="PriceLabel" Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" HorizontalTextAlignment="Start" Text="{Binding Price}" FontSize="Medium" IsVisible="False"/>
+                                    <local:MyEntry x:Name="FeeText" Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding ReversionFee,Mode=TwoWay}" FontSize="Medium" />
+                                    <Label x:Name="FeeLabel" Grid.Row="1" Grid.Column="2" HorizontalOptions="Start" HorizontalTextAlignment="Start" Text="فی:" FontSize="Medium" />
+
+                                    <local:MyCheckBox x:Name="chkIsFreeProduct" Grid.Row="2" Grid.Column="0" Text="اشانتیون" Checked="{Binding ReversionIsFreeProduct,Mode=TwoWay}"  FontSize="Medium"></local:MyCheckBox>
+                                    <local:MyEntry x:Name="txtReversionDiscountPercent" Grid.Row="2" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding ReversionDiscountPercent,Mode=TwoWay}" FontSize="Medium" />
+                                    <Label x:Name="lblReversionDiscountPercent" Grid.Row="2" Grid.Column="2" HorizontalOptions="Start" HorizontalTextAlignment="Start" Text="ت%" FontSize="Medium" />
+                                    <local:MyEntry x:Name="txtReversionVATPercent" Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding ReversionDiscountPercent,Mode=TwoWay}" FontSize="Medium" />
+                                    <Label x:Name="lblReversionVATPercent" Grid.Row="2" Grid.Column="5" HorizontalOptions="Start" HorizontalTextAlignment="Start" Text="م%" FontSize="Medium" />
+
+                                    <local:LeftEntryCompanionLabel x:Name="QuantityMinusLabel" Grid.Row="1" Grid.Column="3" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalOptions="Center" VerticalTextAlignment="Center"  FontSize="Large" Text="-" LineBreakMode = "TailTruncation">
+                                        <local:LeftEntryCompanionLabel.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="QuantityMinusTapEventHandler" CommandParameter="{Binding Id}"></TapGestureRecognizer>
+                                        </local:LeftEntryCompanionLabel.GestureRecognizers>
+                                    </local:LeftEntryCompanionLabel>
+
+                                    <local:MyLabel x:Name="QuantityEntry" Grid.Row="1" Grid.Column="4" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalOptions="Center" VerticalTextAlignment="Center" BackgroundColor="White" Text="{Binding QuantityLabel,Mode=TwoWay}" FontSize="Medium">
+                                        <local:MyLabel.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="QuantityTextBoxTapEventHandler" CommandParameter="{Binding Id}"></TapGestureRecognizer>
+                                        </local:MyLabel.GestureRecognizers>
+                                    </local:MyLabel>
+
+                                    <local:RightEntryCompanionLabel x:Name="QuantityPlusLabel" Grid.Row="1" Grid.Column="5" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalOptions="Center" VerticalTextAlignment="Center" Text="+" FontSize="Large" LineBreakMode = "TailTruncation">
+                                        <local:RightEntryCompanionLabel.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="QuantityPlusTapEventHandler" CommandParameter="{Binding Id}"></TapGestureRecognizer>
+                                        </local:RightEntryCompanionLabel.GestureRecognizers>
+                                    </local:RightEntryCompanionLabel>
+
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <StackLayout x:Name="GallaryContainer" IsVisible="False" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+                </StackLayout>
+                <Picker x:Name="WarehousePicker" IsVisible="False" >
+                </Picker>
+            </StackLayout>
+        </StackLayout>
+
+        <StackLayout x:Name="GallaryStuffBatchNumbersListContainer" Orientation="Vertical" Spacing="0" Padding="0" Grid.Row="0" Grid.Column="0" IsVisible="False" VerticalOptions="FillAndExpand">
+            <StackLayout Orientation="Vertical" Spacing="10" Padding="10" BackgroundColor="#DCE6FA" VerticalOptions="FillAndExpand" >
+                <ListView x:Name="GallaryStuffBatchNumbersList" >
+                </ListView>
+                <local:FullRoundedLabel x:Name="CloseButton" VerticalOptions="End" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" Text="بازگشت">
+                </local:FullRoundedLabel>
+            </StackLayout>
+        </StackLayout>
+
+        <Grid x:Name="QuantityKeyboardHolder" IsVisible="false" BackgroundColor="#eee" Grid.Row="1" Grid.Column="0"  >
+        </Grid>
+
+        <!--<StackLayout x:Name="BusyIndicatorContainder" Orientation="Vertical" Spacing="0" Padding="0" Grid.Row="0" Grid.Column="0" IsVisible="False">
+            <ActivityIndicator x:Name="BusyIndicator" IsRunning="True" Grid.Row="0" Grid.Column="0" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+            </ActivityIndicator>
+        </StackLayout>-->
+
     </Grid>
-  </Grid>
 </local:GradientContentPage>

@@ -105,7 +105,7 @@ namespace Kara
                 LinearAxis yaxis = new LinearAxis();
                 yaxis.Position = AxisPosition.Left;
                 yaxis.MajorGridlineStyle = LineStyle.Dot;
-                yaxis.Unit = "1,000,000 ریال".ReplaceLatinDigits();
+                yaxis.Unit = "1,000,000 ریال".ToPersianDigits();
                 xaxis.MinorGridlineStyle = LineStyle.Dot;
 
                 yaxis.IsZoomEnabled = false;

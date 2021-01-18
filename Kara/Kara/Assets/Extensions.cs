@@ -38,7 +38,7 @@ namespace Kara.Assets
             }
         }
 
-        public static string ReplacePersianDigits(this string str)
+        public static string ToLatinDigits(this string str)
         {
             try
             {
@@ -84,7 +84,7 @@ namespace Kara.Assets
             }
         }
 
-        public static string ReplaceLatinDigits(this string str)
+        public static string ToPersianDigits(this string str)
         {
             try
             {
@@ -122,7 +122,7 @@ namespace Kara.Assets
         {
             try
             {
-                var result = App.PersianDateConverter.JoulianDate(persianDateString);
+                var result = App.PersianDateConverter.JoulianDate(persianDateString.ToLatinDigits());
                 return result.Date;
             }
             catch (Exception)
@@ -222,7 +222,7 @@ namespace Kara.Assets
             string ret = "";
             try
             {
-                ret = await client.GetStringAsync(RequestString.ReplacePersianDigits());
+                ret = await client.GetStringAsync(RequestString.ToLatinDigits());
             }
             catch (Exception err)
             {
@@ -236,7 +236,7 @@ namespace Kara.Assets
         {
             try
             {
-                var postTask = client.PostAsync(RequestUrl.ReplacePersianDigits(), Content);
+                var postTask = client.PostAsync(RequestUrl.ToLatinDigits(), Content);
                 HttpResponseMessage response = await postTask;
                 if (postTask.Exception != null)
                     return new ResultSuccess<string>(false, postTask.Exception.Message);

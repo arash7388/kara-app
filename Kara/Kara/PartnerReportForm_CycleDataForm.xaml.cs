@@ -123,7 +123,7 @@ namespace Kara
             CycleDatasItems.ItemsSource = CycleDatasList;
 
             var Remainder = CycleDatasResult.Data.Any() ? CycleDatasResult.Data.Last()._Remainder : 0;
-            Title = ("گردش حساب (مانده:" + (Math.Abs(Remainder).ToString("###,###,###,###,###,###,##0.") + (Remainder > 0 ? " بدهکار" : Remainder < 0 ? " بستانکار" : "")) + ")").ReplaceLatinDigits();
+            Title = ("گردش حساب (مانده:" + (Math.Abs(Remainder).ToString("###,###,###,###,###,###,##0.") + (Remainder > 0 ? " بدهکار" : Remainder < 0 ? " بستانکار" : "")) + ")").ToPersianDigits();
             
             CycleDatasItems.IsRefreshing = false;
         }

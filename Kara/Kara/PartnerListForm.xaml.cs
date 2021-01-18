@@ -47,8 +47,8 @@ namespace Kara
                 if (_NearbyCustomers_Distance.HasValue)
                 {
                     _NearbyCustomers_Distance = _NearbyCustomers_Distance < 1000 ? _NearbyCustomers_Distance : (int)(Math.Round((double)_NearbyCustomers_Distance / 100) * 100);
-                    ListView.NearbyCustomers_DistanceDisplay.Text = (_NearbyCustomers_Distance < 1000 ? (_NearbyCustomers_Distance + " متر") : ((_NearbyCustomers_Distance / 1000.0).Value.ToString("##0.#") + " کیلومتر")).ReplaceLatinDigits();
-                    MapView.NearbyCustomers_DistanceDisplay.Text = (_NearbyCustomers_Distance < 1000 ? (_NearbyCustomers_Distance + " متر") : ((_NearbyCustomers_Distance / 1000.0).Value.ToString("##0.#") + " کیلومتر")).ReplaceLatinDigits();
+                    ListView.NearbyCustomers_DistanceDisplay.Text = (_NearbyCustomers_Distance < 1000 ? (_NearbyCustomers_Distance + " متر") : ((_NearbyCustomers_Distance / 1000.0).Value.ToString("##0.#") + " کیلومتر")).ToPersianDigits();
+                    MapView.NearbyCustomers_DistanceDisplay.Text = (_NearbyCustomers_Distance < 1000 ? (_NearbyCustomers_Distance + " متر") : ((_NearbyCustomers_Distance / 1000.0).Value.ToString("##0.#") + " کیلومتر")).ToPersianDigits();
                 }
 
                 FillPartners();
@@ -390,11 +390,11 @@ namespace Kara
                 dayOffset == 0 ? "امروز" :
                 dayOffset == 1 ? "فردا" :
                 dayOffset == -1 ? "دیروز" :
-                dayOffset > 1 ? dayOffset + " روز بعد" : -dayOffset + " روز قبل").ReplaceLatinDigits());
+                dayOffset > 1 ? dayOffset + " روز بعد" : -dayOffset + " روز قبل").ToPersianDigits());
             
             var PartnersResult = App.UseVisitProgram.Value ?
-                await App.DB.GetDayPartnersListAsync(dayOffset, includeVisiteds, _NearbyCustomers_Distance, searchCustomers ? Filter.ReplacePersianDigits() : "") :
-                await App.DB.GetAllPartnersListAsync(false, null, null, _NearbyCustomers_Distance, searchCustomers ? Filter.ReplacePersianDigits() : "");
+                await App.DB.GetDayPartnersListAsync(dayOffset, includeVisiteds, _NearbyCustomers_Distance, searchCustomers ? Filter.ToLatinDigits() : "") :
+                await App.DB.GetAllPartnersListAsync(false, null, null, _NearbyCustomers_Distance, searchCustomers ? Filter.ToLatinDigits() : "");
             if (!PartnersResult.Success)
             {
                 App.ShowError("خطا", "در نمایش لیست مشتریان خطایی رخ داد.\n" + PartnersResult.Message, "خوب");
@@ -404,12 +404,12 @@ namespace Kara
             Partners = new ObservableCollection<DBRepository.PartnerListModel>(PartnersResult.Data.Select(a => new DBRepository.PartnerListModel()
             {
                 Id = a.Id,
-                Code = a.Code.StartsWith("-") ? "---" : a.Code.ReplaceLatinDigits(),
-                Name = (a.Name + (App.ShowPartnerLegalNameInList.Value ? (" (" + a.LegalName + ")") : "")).ReplaceLatinDigits(),
-                Group = !string.IsNullOrWhiteSpace(a.Group) ? a.Group.ReplaceLatinDigits() : "---",
-                Zone = a.Zone.ReplaceLatinDigits(),
-                Address = (a.Zone + " - " + a.Address).ReplaceLatinDigits(),
-                Phone = a.Phone.ReplaceLatinDigits(),
+                Code = a.Code.StartsWith("-") ? "---" : a.Code.ToPersianDigits(),
+                Name = (a.Name + (App.ShowPartnerLegalNameInList.Value ? (" (" + a.LegalName + ")") : "")).ToPersianDigits(),
+                Group = !string.IsNullOrWhiteSpace(a.Group) ? a.Group.ToPersianDigits() : "---",
+                Zone = a.Zone.ToPersianDigits(),
+                Address = (a.Zone + " - " + a.Address).ToPersianDigits(),
+                Phone = a.Phone.ToPersianDigits(),
                 HasOrder = a.HasOrder,
                 HasFailedVisit = a.HasFailedVisit,
                 Sent = a.Sent,

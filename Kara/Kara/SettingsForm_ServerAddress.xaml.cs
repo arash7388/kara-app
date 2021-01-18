@@ -54,7 +54,7 @@ namespace Kara
 
         private string __Address;
         public string _Address { get { return __Address; } set { __Address = value; OnPropertyChanged("Address"); } }
-        public string Address { get { return _Address.ReplaceLatinDigits(); } }
+        public string Address { get { return _Address.ToPersianDigits(); } }
         private bool _Selected;
         public bool Selected { get { return _Selected; } set { _Selected = value; OnPropertyChanged("RowColor"); } }
         public string RowColor { get { return _Selected ? "#A4DEF5" : "#DCE6FA"; } }
@@ -252,7 +252,7 @@ namespace Kara
             await Task.Delay(100);
             ServerAddressList.IsRefreshing = false;
 
-            SettingsForm.ServerAddressLabel2.Text = App.ServerAddress.ReplaceLatinDigits();
+            SettingsForm.ServerAddressLabel2.Text = App.ServerAddress.ToPersianDigits();
         }
     }
 }

@@ -31,10 +31,10 @@ namespace Kara
         public bool ProgressBarNotVisible { get { return _ProgressPercent == -1; } }
         public long DateTimeMiliseconds { get; set; }
         public DateTime DateTime { get { return new DateTime(1970, 1, 1).AddMilliseconds(Convert.ToDouble(DateTimeMiliseconds)); } }
-        public string Date { get { return _ProgressPercent != -1 ? "---" : DateTime.ToShortStringForDate().ReplaceLatinDigits(); } }
-        public string Time { get { return _ProgressPercent != -1 ? "---" : DateTime.ToShortStringForTime().ReplaceLatinDigits(); } }
+        public string Date { get { return _ProgressPercent != -1 ? "---" : DateTime.ToShortStringForDate().ToPersianDigits(); } }
+        public string Time { get { return _ProgressPercent != -1 ? "---" : DateTime.ToShortStringForTime().ToPersianDigits(); } }
         public long _Size { get; set; }
-        public string Size { get { return _ProgressPercent != -1 ? "---" : (_Size < 1024 ? (_Size.ToString() + " B") : _Size < Math.Pow(1024, 2) ? ((_Size / 1024.0).ToString("###,##0.##") + " KB") : _Size < Math.Pow(1024, 3) ? ((_Size / Math.Pow(1024.0, 2)).ToString("###,##0.##") + " MB") : ((_Size / Math.Pow(1024.0, 3)).ToString("###,###,###,##0.##") + " GB")).ReplaceLatinDigits(); } }
+        public string Size { get { return _ProgressPercent != -1 ? "---" : (_Size < 1024 ? (_Size.ToString() + " B") : _Size < Math.Pow(1024, 2) ? ((_Size / 1024.0).ToString("###,##0.##") + " KB") : _Size < Math.Pow(1024, 3) ? ((_Size / Math.Pow(1024.0, 2)).ToString("###,##0.##") + " MB") : ((_Size / Math.Pow(1024.0, 3)).ToString("###,###,###,##0.##") + " GB")).ToPersianDigits(); } }
         public string FileName { get; set; }
         private bool _Selected;
         public bool Selected {

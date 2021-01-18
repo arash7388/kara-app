@@ -39,8 +39,8 @@ namespace Kara
             Price = price;
             PartnerId = partnerId;
 
-            txtPrice.Text = Price.ToString().ReplaceLatinDigits();
-            txtDate.Text = DateTime.Now.ToShortStringForDate().ReplaceLatinDigits();
+            txtPrice.Text = Price.ToString().ToPersianDigits();
+            txtDate.Text = DateTime.Now.ToShortStringForDate().ToPersianDigits();
             //txtDate.TextChanged += TxtDate_TextChanged;
 
             //txtDate.Focused += TxtDate_Focused;
@@ -162,11 +162,11 @@ namespace Kara
                         TransactionType = 1,
                         PartnerId = PartnerId,
                         CashAccountId = Cashes[CashPicker.SelectedIndex].EntityId, 
-                        InputPrice = decimal.Parse(txtPrice.Text.Replace(",", "").ReplacePersianDigits()),
+                        InputPrice = decimal.Parse(txtPrice.Text.Replace(",", "").ToLatinDigits()),
                         OutputPrice = 0,
                         DocumentCode = "",
                         DocumentState = 0,
-                        PersianDocumentDate = txtDate.Text.ReplacePersianDigits(),
+                        PersianDocumentDate = txtDate.Text.ToLatinDigits(),
                         DocumentDate = txtDate.Text.PersianDateStringToDate(),
                         DocumentUserId = App.UserId.Value,
                         DocumentDescription = txtDesc.Text,

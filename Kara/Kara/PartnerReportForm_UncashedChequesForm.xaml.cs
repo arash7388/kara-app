@@ -127,7 +127,7 @@ namespace Kara
             UncashedChequesItems.ItemsSource = null;
             UncashedChequesItems.ItemsSource = UncashedChequesList;
 
-            Title = ("چک های وصول نشده (" + UncashedChequesList.Count + " فقره)").ReplaceLatinDigits();
+            Title = ("چک های وصول نشده (" + UncashedChequesList.Count + " فقره)").ToPersianDigits();
             
             UncashedChequesItems.IsRefreshing = false;
         }

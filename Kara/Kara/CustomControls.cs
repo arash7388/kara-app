@@ -225,18 +225,18 @@ namespace Kara.CustomRenderer
 
         private void TxtDate_Unfocused(object sender, FocusEventArgs e)
         {
-            ((Entry)sender).Text = ((Entry)sender).Text.ReplaceLatinDigits();
+            ((Entry)sender).Text = ((Entry)sender).Text.ToPersianDigits();
         }
 
         private void TxtDate_Focused(object sender, FocusEventArgs e)
         {
-            ((Entry)sender).Text = DateTime.Now.ToShortStringForDate().ReplaceLatinDigits().Substring(0, 4) + "/";
+            ((Entry)sender).Text = DateTime.Now.ToShortStringForDate().ToPersianDigits().Substring(0, 4) + "/";
         }
 
         private void TxtDate_TextChanged(object sender, TextChangedEventArgs e)
         {
             this.TextChanged -= TxtDate_TextChanged;
-            ((Entry)sender).Text = ((Entry)sender).Text.ReplaceLatinDigits();
+            ((Entry)sender).Text = ((Entry)sender).Text.ToPersianDigits();
             this.TextChanged += TxtDate_TextChanged;
         }
     }

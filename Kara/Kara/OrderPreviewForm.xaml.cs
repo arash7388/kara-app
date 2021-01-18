@@ -382,7 +382,7 @@ namespace Kara
                     {
                         Padding = new Thickness(10, 0),
                         TextColor = BLACK,
-                        Text = "شماره:" + (SaleOrder.PreCode.HasValue ? SaleOrder.PreCode.Value.ToString().ReplaceLatinDigits() : "---"),
+                        Text = "شماره:" + (SaleOrder.PreCode.HasValue ? SaleOrder.PreCode.Value.ToString().ToPersianDigits() : "---"),
                         HorizontalTextAlignment = TextAlignment.End,
                         VerticalTextAlignment = TextAlignment.Center,
                         VerticalOptions = LayoutOptions.FillAndExpand,
@@ -396,7 +396,7 @@ namespace Kara
                     {
                         Padding = new Thickness(10, 0),
                         TextColor = BLACK,
-                        Text = "تاریخ:" + SaleOrder.InsertDateTime.ToShortStringForDate().ReplaceLatinDigits(),
+                        Text = "تاریخ:" + SaleOrder.InsertDateTime.ToShortStringForDate().ToPersianDigits(),
                         HorizontalTextAlignment = TextAlignment.Start,
                         VerticalTextAlignment = TextAlignment.Center,
                         VerticalOptions = LayoutOptions.FillAndExpand,
@@ -432,7 +432,7 @@ namespace Kara
                     {
                         Padding = new Thickness(10, 0),
                         TextColor = BLACK,
-                        Text = (SaleOrder.SettlementType.Name + " " + SaleOrder.SettlementDay.ToString() + " روزه").ReplaceLatinDigits(),
+                        Text = (SaleOrder.SettlementType.Name + " " + SaleOrder.SettlementDay.ToString() + " روزه").ToPersianDigits(),
                         HorizontalTextAlignment = TextAlignment.End,
                         VerticalTextAlignment = TextAlignment.Center,
                         LineBreakMode = LineBreakMode.NoWrap
@@ -457,7 +457,7 @@ namespace Kara
                     {
                         Padding = new Thickness(10, 0),
                         TextColor = BLACK,
-                        Text = (!string.IsNullOrWhiteSpace(SaleOrder.Partner.LegalName) ? (SaleOrder.Partner.LegalName + (!string.IsNullOrWhiteSpace(SaleOrder.Partner.Name) ? ("(" + SaleOrder.Partner.Name + ")") : "")) : SaleOrder.Partner.Name).ReplaceLatinDigits(),
+                        Text = (!string.IsNullOrWhiteSpace(SaleOrder.Partner.LegalName) ? (SaleOrder.Partner.LegalName + (!string.IsNullOrWhiteSpace(SaleOrder.Partner.Name) ? ("(" + SaleOrder.Partner.Name + ")") : "")) : SaleOrder.Partner.Name).ToPersianDigits(),
                         HorizontalTextAlignment = TextAlignment.End,
                         VerticalTextAlignment = TextAlignment.Center,
                         LineBreakMode = LineBreakMode.NoWrap
@@ -482,7 +482,7 @@ namespace Kara
                     {
                         Padding = new Thickness(10, 0),
                         TextColor = BLACK,
-                        Text = SaleOrder.Partner.Address.ReplaceLatinDigits(),
+                        Text = SaleOrder.Partner.Address.ToPersianDigits(),
                         HorizontalTextAlignment = TextAlignment.End,
                         VerticalTextAlignment = TextAlignment.Center,
                         LineBreakMode = LineBreakMode.WordWrap
@@ -508,7 +508,7 @@ namespace Kara
                     {
                         Padding = new Thickness(10, 0),
                         TextColor = BLACK,
-                        Text = PartnerPhones.ReplaceLatinDigits(),
+                        Text = PartnerPhones.ToPersianDigits(),
                         HorizontalTextAlignment = TextAlignment.End,
                         VerticalTextAlignment = TextAlignment.Center,
                         LineBreakMode = LineBreakMode.NoWrap
@@ -691,7 +691,7 @@ namespace Kara
                             HorizontalTextAlignment = TextAlignment.Center,
                             VerticalTextAlignment = TextAlignment.Center,
                             LineBreakMode = LineBreakMode.NoWrap,
-                            Text = (i + 1).ToString().ReplaceLatinDigits()
+                            Text = (i + 1).ToString().ToPersianDigits()
                         };
                         LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesBody_RowNumber, 1));
                         ArticlesGrid.Children.Add(ArticlesBody_RowNumber, col, row);
@@ -713,7 +713,7 @@ namespace Kara
                                 _SaleOrderStuffs[i].Package.Stuff.Name +
                                 (_SaleOrderStuffs[i].BatchNumberId.HasValue ? ("\nسری ساخت: " + _SaleOrderStuffs[i].BatchNumber.BatchNumber + "، تاریخ انقضاء: " + (_SaleOrderStuffs[i].BatchNumber.ExpirationDatePresentation == (int)DatePresentation.Shamsi ? _SaleOrderStuffs[i].BatchNumber.ExpirationDate.ToShortStringForDate() : _SaleOrderStuffs[i].BatchNumber.ExpirationDate.ToString("yyyy/MM/dd"))) : "") +
                                 (_SaleOrderStuffs[i].StuffSettlementDay.HasValue ? (" (" + _SaleOrderStuffs[i].StuffSettlementDay.Value.ToString() + " روزه)") : "")
-                            ).ReplaceLatinDigits()
+                            ).ToPersianDigits()
                         };
                         LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesBody_Stuff, 1));
                         ArticlesGrid.Children.Add(ArticlesBody_Stuff, 0, row);
@@ -729,7 +729,7 @@ namespace Kara
                             HorizontalTextAlignment = TextAlignment.End,
                             VerticalTextAlignment = TextAlignment.Center,
                             LineBreakMode = LineBreakMode.NoWrap,
-                            Text = (_SaleOrderStuffs[i].Quantity.ToString("###,###,###,##0.###").Replace(".", "/") + (AllPackageNames.Count() == 1 ? "" : (" " + _SaleOrderStuffs[i].Package.Name))).ReplaceLatinDigits()
+                            Text = (_SaleOrderStuffs[i].Quantity.ToString("###,###,###,##0.###").Replace(".", "/") + (AllPackageNames.Count() == 1 ? "" : (" " + _SaleOrderStuffs[i].Package.Name))).ToPersianDigits()
                         };
                         LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesBody_Quantity, 1));
                         ArticlesGrid.Children.Add(ArticlesBody_Quantity, col, row + 1);
@@ -748,7 +748,7 @@ namespace Kara
                                 HorizontalTextAlignment = TextAlignment.End,
                                 VerticalTextAlignment = TextAlignment.Center,
                                 LineBreakMode = LineBreakMode.NoWrap,
-                                Text = (_SaleOrderStuffs[i].StuffQuantity.ToString("###,###,###,##0.###").Replace(".", "/") + (AllEquivalnetPackageNames.Count() == 1 ? "" : (" " + _SaleOrderStuffs[i].Package.Stuff.Packages.Single(a => a.Coefficient == 1).Name))).ReplaceLatinDigits()
+                                Text = (_SaleOrderStuffs[i].StuffQuantity.ToString("###,###,###,##0.###").Replace(".", "/") + (AllEquivalnetPackageNames.Count() == 1 ? "" : (" " + _SaleOrderStuffs[i].Package.Stuff.Packages.Single(a => a.Coefficient == 1).Name))).ToPersianDigits()
                             };
                             LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesBody_Equivalent, 1));
                             ArticlesGrid.Children.Add(ArticlesBody_Equivalent, col, row + 1);
@@ -766,7 +766,7 @@ namespace Kara
                             HorizontalTextAlignment = TextAlignment.End,
                             VerticalTextAlignment = TextAlignment.Center,
                             LineBreakMode = LineBreakMode.NoWrap,
-                            Text = _SaleOrderStuffs[i].FreeProduct ? "اشانتیون" : _SaleOrderStuffs[i].SalePrice.ToString("###,###,###,###,###,##0.").ReplaceLatinDigits()
+                            Text = _SaleOrderStuffs[i].FreeProduct ? "اشانتیون" : _SaleOrderStuffs[i].SalePrice.ToString("###,###,###,###,###,##0.").ToPersianDigits()
                         };
                         LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesBody_Fee, 1));
                         ArticlesGrid.Children.Add(ArticlesBody_Fee, col, row + 1);
@@ -783,7 +783,7 @@ namespace Kara
                             HorizontalTextAlignment = TextAlignment.End,
                             VerticalTextAlignment = TextAlignment.Center,
                             LineBreakMode = LineBreakMode.NoWrap,
-                            Text = _SaleOrderStuffs[i].FreeProduct ? "---" : _SaleOrderStuffs[i].SalePriceQuantity.ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits()
+                            Text = _SaleOrderStuffs[i].FreeProduct ? "---" : _SaleOrderStuffs[i].SalePriceQuantity.ToString("###,###,###,###,###,###,##0.").ToPersianDigits()
                         };
                         LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesBody_Price, 1));
                         ArticlesGrid.Children.Add(ArticlesBody_Price, col, row + 1);
@@ -802,7 +802,7 @@ namespace Kara
                                 HorizontalTextAlignment = TextAlignment.End,
                                 VerticalTextAlignment = TextAlignment.Center,
                                 LineBreakMode = LineBreakMode.WordWrap,
-                                Text = _SaleOrderStuffs[i].FreeProduct ? "---" : (_SaleOrderStuffs[i].DiscountAmount + _SaleOrderStuffs[i].CashDiscountAmount != 0 ? (_SaleOrderStuffs[i].DiscountAmount + _SaleOrderStuffs[i].CashDiscountAmount).ToString("###,###,###,###,###,###,##0.") + "\n" + (_SaleOrderStuffs[i].DiscountPercent != 0 && _SaleOrderStuffs[i].CashDiscountPercent != 0 ? "(" : "") + (new decimal[] { _SaleOrderStuffs[i].DiscountPercent , _SaleOrderStuffs[i].CashDiscountPercent }.Where(a => a != 0).Select(a => a.ToString("##0.##").Replace(".", "/")).Aggregate((sum, x) => sum + " + " + x)) + (_SaleOrderStuffs[i].DiscountPercent != 0 && _SaleOrderStuffs[i].CashDiscountPercent != 0 ? ")" : "") + " %" : "0").ReplaceLatinDigits()
+                                Text = _SaleOrderStuffs[i].FreeProduct ? "---" : (_SaleOrderStuffs[i].DiscountAmount + _SaleOrderStuffs[i].CashDiscountAmount != 0 ? (_SaleOrderStuffs[i].DiscountAmount + _SaleOrderStuffs[i].CashDiscountAmount).ToString("###,###,###,###,###,###,##0.") + "\n" + (_SaleOrderStuffs[i].DiscountPercent != 0 && _SaleOrderStuffs[i].CashDiscountPercent != 0 ? "(" : "") + (new decimal[] { _SaleOrderStuffs[i].DiscountPercent , _SaleOrderStuffs[i].CashDiscountPercent }.Where(a => a != 0).Select(a => a.ToString("##0.##").Replace(".", "/")).Aggregate((sum, x) => sum + " + " + x)) + (_SaleOrderStuffs[i].DiscountPercent != 0 && _SaleOrderStuffs[i].CashDiscountPercent != 0 ? ")" : "") + " %" : "0").ToPersianDigits()
                             };
                             LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesBody_Discount, 1));
                             ArticlesGrid.Children.Add(ArticlesBody_Discount, col, row + 1);
@@ -819,7 +819,7 @@ namespace Kara
                                 HorizontalTextAlignment = TextAlignment.End,
                                 VerticalTextAlignment = TextAlignment.Center,
                                 LineBreakMode = LineBreakMode.NoWrap,
-                                Text = _SaleOrderStuffs[i].FreeProduct ? "---" : _SaleOrderStuffs[i].FinalPrice.ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits()
+                                Text = _SaleOrderStuffs[i].FreeProduct ? "---" : _SaleOrderStuffs[i].FinalPrice.ToString("###,###,###,###,###,###,##0.").ToPersianDigits()
                             };
                             LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesBody_FinalPrice, 1));
                             ArticlesGrid.Children.Add(ArticlesBody_FinalPrice, col, row + 1);
@@ -858,7 +858,7 @@ namespace Kara
                         TextColor = ThisIsFinalPrice ? WHITE : BLACK,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         LineBreakMode = LineBreakMode.TailTruncation,
-                        Text = SaleOrder.StuffsPriceSum.ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits(),
+                        Text = SaleOrder.StuffsPriceSum.ToString("###,###,###,###,###,###,##0.").ToPersianDigits(),
                         HorizontalTextAlignment = TextAlignment.End,
                         VerticalTextAlignment = TextAlignment.Center,
                         FontAttributes = FontAttributes.Bold
@@ -876,7 +876,7 @@ namespace Kara
                             TextColor = BLACK,
                             HorizontalOptions = LayoutOptions.FillAndExpand,
                             LineBreakMode = LineBreakMode.TailTruncation,
-                            Text = SaleOrder.StuffsRowDiscountSum.ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits(),
+                            Text = SaleOrder.StuffsRowDiscountSum.ToString("###,###,###,###,###,###,##0.").ToPersianDigits(),
                             HorizontalTextAlignment = TextAlignment.End,
                             VerticalTextAlignment = TextAlignment.Center,
                             FontAttributes = FontAttributes.Bold
@@ -893,7 +893,7 @@ namespace Kara
                             TextColor = ThisIsFinalPrice ? WHITE : BLACK,
                             HorizontalOptions = LayoutOptions.FillAndExpand,
                             LineBreakMode = LineBreakMode.TailTruncation,
-                            Text = SaleOrder.OrderFinalPrice.ToString("###,###,###,###,###,###,##0.").ReplaceLatinDigits(),
+                            Text = SaleOrder.OrderFinalPrice.ToString("###,###,###,###,###,###,##0.").ToPersianDigits(),
                             HorizontalTextAlignment = TextAlignment.End,
                             VerticalTextAlignment = TextAlignment.Center,
                             FontAttributes = FontAttributes.Bold
@@ -913,7 +913,7 @@ namespace Kara
                             TextColor = BLACK,
                             HorizontalOptions = LayoutOptions.FillAndExpand,
                             LineBreakMode = LineBreakMode.WordWrap,
-                            Text = SaleOrder.DiscountAmount.ToString("###,###,###,###,###,###,###,##0.").ReplaceLatinDigits(),
+                            Text = SaleOrder.DiscountAmount.ToString("###,###,###,###,###,###,###,##0.").ToPersianDigits(),
                             HorizontalTextAlignment = TextAlignment.End,
                             VerticalTextAlignment = TextAlignment.Center,
                             FontAttributes = FontAttributes.Bold
@@ -928,7 +928,7 @@ namespace Kara
                             TextColor = BLACK,
                             HorizontalOptions = LayoutOptions.FillAndExpand,
                             LineBreakMode = LineBreakMode.WordWrap,
-                            Text = "تخفیف حجمی(" + SaleOrder.DiscountPercent.ToString("##0.##").Replace(".", "/").ReplaceLatinDigits() + "%):",
+                            Text = "تخفیف حجمی(" + SaleOrder.DiscountPercent.ToString("##0.##").Replace(".", "/").ToPersianDigits() + "%):",
                             HorizontalTextAlignment = TextAlignment.Start,
                             VerticalTextAlignment = TextAlignment.Center,
                             FontAttributes = FontAttributes.Bold
@@ -946,7 +946,7 @@ namespace Kara
                             TextColor = ThisIsFinalPrice ? WHITE : BLACK,
                             HorizontalOptions = LayoutOptions.FillAndExpand,
                             LineBreakMode = LineBreakMode.WordWrap,
-                            Text = (SaleOrder.StuffsPriceSum - SaleOrder.StuffsRowDiscountSum - SaleOrder.DiscountAmount).ToString("###,###,###,###,###,###,###,##0.").ReplaceLatinDigits(),
+                            Text = (SaleOrder.StuffsPriceSum - SaleOrder.StuffsRowDiscountSum - SaleOrder.DiscountAmount).ToString("###,###,###,###,###,###,###,##0.").ToPersianDigits(),
                             HorizontalTextAlignment = TextAlignment.End,
                             VerticalTextAlignment = TextAlignment.Center,
                             FontAttributes = FontAttributes.Bold
@@ -981,7 +981,7 @@ namespace Kara
                             TextColor = BLACK,
                             HorizontalOptions = LayoutOptions.FillAndExpand,
                             LineBreakMode = LineBreakMode.WordWrap,
-                            Text = SaleOrder.StuffsVATSum.ToString("###,###,###,###,###,###,###,##0.").ReplaceLatinDigits(),
+                            Text = SaleOrder.StuffsVATSum.ToString("###,###,###,###,###,###,###,##0.").ToPersianDigits(),
                             HorizontalTextAlignment = TextAlignment.End,
                             VerticalTextAlignment = TextAlignment.Center,
                             FontAttributes = FontAttributes.Bold
@@ -996,7 +996,7 @@ namespace Kara
                             TextColor = BLACK,
                             HorizontalOptions = LayoutOptions.FillAndExpand,
                             LineBreakMode = LineBreakMode.WordWrap,
-                            Text = "مالیات ا.ا.(" + App.VATPercent.Value.ToString("##0.##").Replace(".", "/").ReplaceLatinDigits() + "%)" + (VATExceptions.Any() ? "*" : "") + ":",
+                            Text = "مالیات ا.ا.(" + App.VATPercent.Value.ToString("##0.##").Replace(".", "/").ToPersianDigits() + "%)" + (VATExceptions.Any() ? "*" : "") + ":",
                             HorizontalTextAlignment = TextAlignment.Start,
                             VerticalTextAlignment = TextAlignment.Center,
                             FontAttributes = FontAttributes.Bold
@@ -1013,7 +1013,7 @@ namespace Kara
                             TextColor = WHITE,
                             HorizontalOptions = LayoutOptions.FillAndExpand,
                             LineBreakMode = LineBreakMode.WordWrap,
-                            Text = SaleOrder.OrderFinalPrice.ToString("###,###,###,###,###,###,###,##0.").ReplaceLatinDigits(),
+                            Text = SaleOrder.OrderFinalPrice.ToString("###,###,###,###,###,###,###,##0.").ToPersianDigits(),
                             HorizontalTextAlignment = TextAlignment.End,
                             VerticalTextAlignment = TextAlignment.Center,
                             FontAttributes = FontAttributes.Bold
@@ -1046,7 +1046,7 @@ namespace Kara
                         TextColor = BLACK,
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         LineBreakMode = LineBreakMode.WordWrap,
-                        Text = SaleOrder.OrderFinalPrice.ToLitteralText().ReplaceLatinDigits(),
+                        Text = SaleOrder.OrderFinalPrice.ToLitteralText().ToPersianDigits(),
                         HorizontalTextAlignment = TextAlignment.End,
                         VerticalTextAlignment = TextAlignment.Center,
                         FontAttributes = FontAttributes.Bold
@@ -1059,7 +1059,7 @@ namespace Kara
                     {
                         row++;
                         var Step = SaleOrder.CashDiscounts[i];
-                        var StepStr = ("در صورت تسویه " + Step.Day + " روزه، این سفارش مشمول تخفیف نقدی " + Step.Percent.ToString("##0.##").Replace(".", "/") + "% معادل " + Step.DiscountAmount.ToString("###,###,###,###,###,###,###,##0.") + " ریال شده و مبلغ قابل پرداخت " + Step.OrderFinalPrice.ToString("###,###,###,###,###,###,###,##0.") + " ریال خواهد بود.").ReplaceLatinDigits();
+                        var StepStr = ("در صورت تسویه " + Step.Day + " روزه، این سفارش مشمول تخفیف نقدی " + Step.Percent.ToString("##0.##").Replace(".", "/") + "% معادل " + Step.DiscountAmount.ToString("###,###,###,###,###,###,###,##0.") + " ریال شده و مبلغ قابل پرداخت " + Step.OrderFinalPrice.ToString("###,###,###,###,###,###,###,##0.") + " ریال خواهد بود.").ToPersianDigits();
                         var FooterCashDiscountStep = new MyLabel()
                         {
                             Padding = new Thickness(10, 0),
@@ -1102,8 +1102,8 @@ namespace Kara
                         Padding = new Thickness(10, 0),
                         BackgroundColor = WHITE,
                         TextColor = BLACK,
-                        Text = (VATExceptions.Any() ? ("*سطر" + (VATExceptions.Count == 1 ? "" : "های") + " " + VATExceptions.Select((a, index) => (index == VATExceptions.Count - 1 ? "|||" : "") + a.ToString()).Aggregate((sum, x) => sum + "، " + x).Replace("، |||", " و ").Replace("|||", "").ReplaceLatinDigits() + " مشمول مالیات نمی شود.") : "") +
-                            "\nتوضیحات: " + (!string.IsNullOrWhiteSpace(SaleOrder.Description) ? SaleOrder.Description.ReplaceLatinDigits() : "---"),
+                        Text = (VATExceptions.Any() ? ("*سطر" + (VATExceptions.Count == 1 ? "" : "های") + " " + VATExceptions.Select((a, index) => (index == VATExceptions.Count - 1 ? "|||" : "") + a.ToString()).Aggregate((sum, x) => sum + "، " + x).Replace("، |||", " و ").Replace("|||", "").ToPersianDigits() + " مشمول مالیات نمی شود.") : "") +
+                            "\nتوضیحات: " + (!string.IsNullOrWhiteSpace(SaleOrder.Description) ? SaleOrder.Description.ToPersianDigits() : "---"),
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         HorizontalTextAlignment = TextAlignment.End,
                         VerticalTextAlignment = TextAlignment.Start

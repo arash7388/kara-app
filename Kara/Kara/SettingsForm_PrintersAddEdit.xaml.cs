@@ -151,9 +151,9 @@ namespace Kara
                 {
                     TitleLabel.Text = EditingPrinter.Title;
                     MacID = EditingPrinter.MACID;
-                    WidthLabel.Text = EditingPrinter.Width.ToString().ReplaceLatinDigits();
-                    DensityLabel.Text = EditingPrinter.Density.ToString().ReplaceLatinDigits();
-                    FontSizeLabel.Text = EditingPrinter.FontSize.ToString().ReplaceLatinDigits();
+                    WidthLabel.Text = EditingPrinter.Width.ToString().ToPersianDigits();
+                    DensityLabel.Text = EditingPrinter.Density.ToString().ToPersianDigits();
+                    FontSizeLabel.Text = EditingPrinter.FontSize.ToString().ToPersianDigits();
                     var Device = DevicesList.SingleOrDefault(a => a.MACID == MacID);
                     BluetoothPrinterLabel.Text = Device == null ? "دستگاه شناسایی نشد!" : Device.Name;
                     if (Device.Name != null)
@@ -188,7 +188,7 @@ namespace Kara
             }
             try
             {
-                Convert.ToInt32(WidthLabel.Text.ReplacePersianDigits());
+                Convert.ToInt32(WidthLabel.Text.ToLatinDigits());
             }
             catch (Exception)
             {
@@ -197,7 +197,7 @@ namespace Kara
             }
             try
             {
-                Convert.ToInt32(DensityLabel.Text.ReplacePersianDigits());
+                Convert.ToInt32(DensityLabel.Text.ToLatinDigits());
             }
             catch (Exception)
             {
@@ -206,7 +206,7 @@ namespace Kara
             }
             try
             {
-                Convert.ToInt32(FontSizeLabel.Text.ReplacePersianDigits());
+                Convert.ToInt32(FontSizeLabel.Text.ToLatinDigits());
             }
             catch (Exception)
             {
@@ -216,16 +216,16 @@ namespace Kara
             
             if (EditingPrinter == null)//Insert
             {
-                var newPrinter = new PrinterSettingModel(TitleLabel.Text.ReplacePersianDigits() + "|" + MacID.ReplacePersianDigits() + "|" + WidthLabel.Text.ReplacePersianDigits() + "|" + DensityLabel.Text.ReplacePersianDigits() + "|" + FontSizeLabel.Text.ReplacePersianDigits() + "|" + !App.AllPrinters.Any());
+                var newPrinter = new PrinterSettingModel(TitleLabel.Text.ToLatinDigits() + "|" + MacID.ToLatinDigits() + "|" + WidthLabel.Text.ToLatinDigits() + "|" + DensityLabel.Text.ToLatinDigits() + "|" + FontSizeLabel.Text.ToLatinDigits() + "|" + !App.AllPrinters.Any());
                 newPrinter.Add();
             }
             else//Update
             {
-                EditingPrinter.Title = TitleLabel.Text.ReplacePersianDigits();
-                EditingPrinter.MACID = MacID.ReplacePersianDigits();
-                EditingPrinter.Width = Convert.ToInt32(WidthLabel.Text.ReplacePersianDigits());
-                EditingPrinter.Density = Convert.ToInt32(DensityLabel.Text.ReplacePersianDigits());
-                EditingPrinter.FontSize = Convert.ToInt32(FontSizeLabel.Text.ReplacePersianDigits());
+                EditingPrinter.Title = TitleLabel.Text.ToLatinDigits();
+                EditingPrinter.MACID = MacID.ToLatinDigits();
+                EditingPrinter.Width = Convert.ToInt32(WidthLabel.Text.ToLatinDigits());
+                EditingPrinter.Density = Convert.ToInt32(DensityLabel.Text.ToLatinDigits());
+                EditingPrinter.FontSize = Convert.ToInt32(FontSizeLabel.Text.ToLatinDigits());
             }
             
             SettingsForm_Printers.RefreshPrintersList();

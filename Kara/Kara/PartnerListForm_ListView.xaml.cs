@@ -208,6 +208,11 @@ namespace Kara
                     PartnerListForm.TahsildarForm.SelectedPartner = TappedItem.PartnerData;
                     try { await Navigation.PopAsync(); } catch (Exception) { }
                 }
+                else if (PartnerListForm.ReversionForm != null)
+                {
+                    PartnerListForm.ReversionForm.SelectedPartner = TappedItem.PartnerData;
+                    try { await Navigation.PopAsync(); } catch (Exception) { }
+                }
                 else
                 {
                     ToolbarItem_FailedOrderInsert_Visible = true;

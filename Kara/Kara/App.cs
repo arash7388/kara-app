@@ -459,7 +459,7 @@ namespace Kara
 
         public static void ShowError(string title, string message, string cancel)
         {
-            StaticMainPage.DisplayAlert(title.ReplaceLatinDigits(), message.ReplaceLatinDigits(), cancel.ReplaceLatinDigits());
+            StaticMainPage.DisplayAlert(title.ToPersianDigits(), message.ToPersianDigits(), cancel.ToPersianDigits());
         }
 
         private static Page StaticMainPage;
