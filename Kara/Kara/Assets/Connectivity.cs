@@ -652,12 +652,6 @@ namespace Kara.Assets
         {
             try
             {
-                //var Data = new[]
-                //{
-                //    new KeyValuePair<string, string>("commonUserId", App.UserId.Value.ToString()),
-                //    new KeyValuePair<string, string>("reversion",JsonConvert.SerializeObject(reversion )),
-                //};
-
                 HttpContent Content = new StringContent(JsonConvert.SerializeObject(reversion),Encoding.UTF8,"application/json");
 
                 var resultTask = HttpClient.PostAsyncForUnicode(ServerRoot + $"InsertReversion?commonUserId={App.UserId.Value}", Content);
@@ -669,7 +663,75 @@ namespace Kara.Assets
                 if (!result.Success)
                     throw new Exception(result.Message);
 
+                var deserilizedResult = JsonConvert.DeserializeObject<ResultSuccess>(result.Data);
+                if (!deserilizedResult.Success)
+                    throw new Exception(deserilizedResult.Message);
+
                 var updateResult = await App.DB.InsertOrUpdateRecordAsync<Reversion>(reversion);
+
+                return new ResultSuccess(true, "");
+            }
+            catch (Exception err)
+            {
+                //var Message = (documents.Count() == 1 ? "" : SentCount == 0 ? "هیچ سندی به سرور ارسال نشد." : "تعداد " + SentCount + " سند به سرور ارسال شد، اما در ادامه مشکلی رخ داد.") + err.ProperMessage();
+                //return new ResultSuccess<int>(false, Message, SentCount);
+                return new ResultSuccess(false, err.Message);
+            }
+        }
+
+
+
+        public class DtoEditSaleOrderMobile
+        {
+            public Guid UserId { get; set; }
+            public Guid OrderId { get; set; }
+            public Guid DistributionReversionReasonId { get; set; }
+            public string Description { get; set; }
+            public string AdditionalDescription { get; set; }
+            public List<DtoEditStuffMobile> Stuffs { get; set; }
+
+        }
+
+        public class DtoEditStuffMobile
+        {
+            public Guid? ArticleId { get; set; }
+            public Guid StuffId { get; set; }
+            public Guid PackageId { get; set; }
+            public Guid? BatchNumberId { get; set; }
+            public string StuffDescription { get; set; }
+            public decimal Quantity { get; set; }
+            public decimal StuffQuantity { get; set; }
+            public decimal SalePrice { get; set; }
+            public bool MeasurementDone { get; set; }
+            public decimal? FeeChange { get; set; }
+            public decimal DiscountAmount { get; set; }
+            public decimal DiscountPercent { get; set; }
+            public decimal CashDiscountPercentValue { get; set; }
+            public decimal ProporatedDiscount { get; set; }
+            public decimal VATPercent { get; set; }
+            public int StuffSettlementDay { get; set; }
+        }
+
+        public static async Task<ResultSuccess> EditSaleOrder(DtoEditSaleOrderMobile order)
+        {
+            try
+            {
+                HttpContent Content = new StringContent(JsonConvert.SerializeObject(order), Encoding.UTF8, "application/json");
+
+                var resultTask = HttpClient.PostAsyncForUnicode(ServerRoot + $"EditSaleOrder", Content);
+                var result = await resultTask;
+
+                if (resultTask.Exception != null)
+                    throw new Exception(resultTask.Exception.ProperMessage());
+
+                if (!result.Success)
+                    throw new Exception(result.Message);
+
+                var deserilizedResult = JsonConvert.DeserializeObject<ResultSuccess>(result.Data);
+                if(!deserilizedResult.Success)
+                    throw new Exception(deserilizedResult.Message);
+
+                //var updateResult = await App.DB.InsertOrUpdateRecordAsync<Reversion>(reversion);
 
                 return new ResultSuccess(true, "");
             }

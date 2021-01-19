@@ -84,8 +84,10 @@ namespace Kara
         {
             var selectedPartnerId = TotalDetailsObservableCollection.Where(a => a.Selected).Select(a => a.PartnerEntityId).FirstOrDefault();
             var partner = await App.DB.GetPartnerAsync(selectedPartnerId,null);
-            Models.Partner p = new Models.Partner()
+            
+            Models.Partner selectedPartner = new Models.Partner()
             {
+                Id = partner.Data.Id,
                 Code = partner.Data.Code,
                 LegalName = partner.Data.LegalName,
                 Name = partner.Data.Name,
@@ -97,8 +99,18 @@ namespace Kara
             var selectedOrderId = TotalDetailsObservableCollection.FirstOrDefault(a => a.Selected).OrderId;
             var orderData = await Connectivity.GetEditData(selectedOrderId, true, true, false, false);
 
-            DtoEditSaleOrder selectedOrder = null;
-            
+            if(!orderData.Success)
+            {
+                App.ShowError("خطا", "خطا در دریافت اطلاعات فاکتور" + "/n" + orderData.Message, "خوب");
+                return;
+            }
+
+            if(orderData.Data.SaleOrder==null)
+            {
+                App.ShowError("خطا", "خطا در دریافت اطلاعات فاکتور", "خوب");
+                return;
+            }
+
             Models.SaleOrder order = null;
 
             if (orderData.Success)
@@ -126,7 +138,7 @@ namespace Kara
             }
 
 
-            var orderInsertForm = new OrderInsertForm(p, order, null, null, null,true);
+            var orderInsertForm = new OrderInsertForm(selectedPartner, order, null, null, null,true);
             
             await Navigation.PushAsync(orderInsertForm);
 
@@ -294,20 +306,26 @@ namespace Kara
                 BusyIndicatorContainder.IsVisible = true;
 
                 //temp
-                //var details = await Connectivity.GetTotalDetails(App.Username.Value, App.Password.Value, App.CurrentVersionNumber, totalId);
+                var details = await Connectivity.GetTotalDetails(App.Username.Value, App.Password.Value, App.CurrentVersionNumber, totalId);
 
-                var details = new ResultSuccess<List<TotalDetailModel>>() { Success = true };
+                //var details = new ResultSuccess<List<TotalDetailModel>>() { Success = true };
 
-                details.Data = new List<TotalDetailModel>
-                {
-                                                                                                                    //35.77819690121176, 51.33577083417429 sare ashrafi 3
-                                                                                                                    //35.77058910303877, 51.33699392144137 taghato ashrafi niyayesh 2
-                                                                                                                    //35.77047516927987, 51.31835622724807 taghato  satari niyayesh 1
+                //details.Data = new List<TotalDetailModel>
+                //{
+                //                                                                                                    //35.77819690121176, 51.33577083417429 sare ashrafi 3
+                //                                                                                                    //35.77058910303877, 51.33699392144137 taghato ashrafi niyayesh 2
+                //                                                                                                    //35.77047516927987, 51.31835622724807 taghato  satari niyayesh 1
 
-                    new TotalDetailModel{EntityCode="1",EntityName="ی لیبل",Address="آدرس", GeoLocation_Lat=(decimal)35.77047516927987,GeoLocation_Long=(decimal)51.31835622724807,OrderId=new Guid("9A304202-3916-425E-B5A9-000070C10E82"),PartnerEntityId=new Guid("778C408B-1C09-4CD3-BB5D-122E7D8EE4FD")},
-                    new TotalDetailModel{EntityCode="2",EntityName="شسی",Address="آدرس", GeoLocation_Lat=(decimal)35.77058910303877,GeoLocation_Long=(decimal)51.33699392144137,OrderId=new Guid("406A46C5-7A38-4BEC-B62D-0000D77B4258"),PartnerEntityId=new Guid("87013AA3-51CC-4913-B89C-75149D4C6C7F")},
-                    new TotalDetailModel{EntityCode="3",EntityName="سیبس",Address="آدرس", GeoLocation_Lat=(decimal)35.77819690121176,GeoLocation_Long=(decimal)51.33577083417429,OrderId=new Guid("F216BEE8-C22C-4595-8F65-00017C1EF608"),PartnerEntityId=new Guid("279FC028-FB45-4F10-841C-118FE99268D0")},
-                };
+                //    new TotalDetailModel{EntityCode="1",EntityName="درست",Address="آدرس", GeoLocation_Lat=(decimal)35.77047516927987,GeoLocation_Long=(decimal)51.31835622724807,OrderId=new Guid("406A46C5-7A38-4BEC-B62D-0000D77B4258"),PartnerEntityId=new Guid("87013AA3-51CC-4913-B89C-75149D4C6C7F")},
+                //    new TotalDetailModel{EntityCode="2",EntityName="شسی",Address="آدرس", GeoLocation_Lat=(decimal)35.77058910303877,GeoLocation_Long=(decimal)51.33699392144137,OrderId=new Guid("406A46C5-7A38-4BEC-B62D-0000D77B4258"),PartnerEntityId=new Guid("87013AA3-51CC-4913-B89C-75149D4C6C7F")},
+                //    new TotalDetailModel{EntityCode="3",EntityName="سیبس",Address="آدرس", GeoLocation_Lat=(decimal)35.77819690121176,GeoLocation_Long=(decimal)51.33577083417429,OrderId=new Guid("F216BEE8-C22C-4595-8F65-00017C1EF608"),PartnerEntityId=new Guid("279FC028-FB45-4F10-841C-118FE99268D0")},
+                //};
+
+                if (!details.Success)
+                    throw new Exception(details.Message);
+
+                if (details.Data.Count == 0)
+                    throw new Exception("فاکتوری یافت نشد");
 
                 var currentLocation = await Geolocation.GetLastKnownLocationAsync();
 

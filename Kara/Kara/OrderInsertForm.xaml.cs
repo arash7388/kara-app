@@ -648,14 +648,12 @@ namespace Kara
                 PartnerChangeButton.IsEnabled = true;
                 App.UniversalLineInApp = 875234038;
                 PartnerRemainderDetailButton.IsEnabled = true;
-                //App.UniversalLineInApp = 875234039;
             }
             else
             {
                 PartnerChangeButton.IsEnabled = false;
                 App.UniversalLineInApp = 875234040;
                 PartnerRemainderDetailButton.IsEnabled = false;
-                //App.UniversalLineInApp = 875234041;
             }
 
             var PartnerChangeButtonTapGestureRecognizer = new TapGestureRecognizer();
@@ -775,21 +773,17 @@ namespace Kara
             //App.UniversalLineInApp = 875234083;
 
             ToolbarItem_GallaryMode = new ToolbarItem();
-            //App.UniversalLineInApp = 875234084;
             ToolbarItem_GallaryMode.Text = "گالری تصاویر";
-            //App.UniversalLineInApp = 875234085;
             ToolbarItem_GallaryMode.Icon = "ImageGallary.png";
-            //App.UniversalLineInApp = 875234086;
             ToolbarItem_GallaryMode.Activated += ToolbarItem_GallaryMode_Activated;
-            //App.UniversalLineInApp = 875234087;
             ToolbarItem_GallaryMode.Order = ToolbarItemOrder.Primary;
-            //App.UniversalLineInApp = 875234088;
 
             ToolbarItem_GallaryMode.Priority = 11;
-            //App.UniversalLineInApp = 875234089;
-            if (!InsertOrderForm_ShowGallaryMode.Value && !this.ToolbarItems.Contains(ToolbarItem_GallaryMode))
-                this.ToolbarItems.Add(ToolbarItem_GallaryMode);
-            //App.UniversalLineInApp = 875234090;
+            
+            if(!fromTour)
+                if (!InsertOrderForm_ShowGallaryMode.Value && !this.ToolbarItems.Contains(ToolbarItem_GallaryMode))
+                    this.ToolbarItems.Add(ToolbarItem_GallaryMode);
+            
 
             ToolbarItem_StuffListMode = new ToolbarItem();
             ToolbarItem_StuffListMode.Text = "لیست کالاها";
@@ -861,10 +855,10 @@ namespace Kara
             );
             App.UniversalLineInApp = 875234118;
 
-            if (FromTour)
-            {
-                PartnerChangeButton.IsEnabled = false;
-            }
+            //if (FromTour)
+            //{
+            //    PartnerSelected();
+            //}
         }
 
         public async void PrepareWarehousePicker()
@@ -1660,13 +1654,13 @@ namespace Kara
             PartnerSection.ColumnDefinitions = new ColumnDefinitionCollection();
             PartnerSection.Children.Clear();
 
-            var ShowAccountingCycleOfPartner =
+            var ShowAccountingCycleOfPartner = 
                 App.Accesses.AccessToViewPartnerRemainder &&
                 (
                     App.ShowAccountingCycleOfPartner_Remainder.Value ||
                     App.ShowAccountingCycleOfPartner_UncashedCheques.Value ||
                     App.ShowAccountingCycleOfPartner_ReturnedCheques.Value
-                );
+                ) && !FromTour;
 
             if (Horizental)
             {
@@ -1744,8 +1738,11 @@ namespace Kara
             if (!WarehouseId.HasValue && App.DefineWarehouseForSaleAndBuy.Value)
                 return;
 
-            if (WithRefreshingAnimation) StuffItems.IsRefreshing = true;
+            if (WithRefreshingAnimation)
+                StuffItems.IsRefreshing = true;
+
             await Task.Delay(100);
+
             if (AllStuffsData == null || RefreshStuffsData)
             {
                 var StuffsResult = await App.DB.GetAllStuffsListAsync(SelectedPartner != null ? SelectedPartner.Id : new Nullable<Guid>(), EditingOrder != null ? EditingOrder.Id : new Nullable<Guid>(), false, WarehouseId);

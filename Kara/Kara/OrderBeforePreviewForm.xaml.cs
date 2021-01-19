@@ -8,12 +8,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Kara.CustomRenderer;
+using static Kara.Assets.Connectivity;
 
 namespace Kara
 {
     public partial class OrderBeforePreviewForm : GradientContentPage
     {
-        //ObservableCollection<DBRepository.StuffListModel> StuffsList;
+        ObservableCollection<DBRepository.StuffListModel> _StuffsList = null;
         private Partner _SelectedPartner;
         public Partner SelectedPartner
         {
@@ -24,7 +25,7 @@ namespace Kara
                 PartnerSelected();
             }
         }
-        private ToolbarItem ToolbarItem_OrderPreviewForm;
+        private ToolbarItem ToolbarItem_OrderPreviewForm, ToolbarItem_SaveOrder;
         private SettlementType[] SettlementTypes;
         private PartnerListForm PartnerListForm;
         private InsertedInformations_Orders OrdersForm;
@@ -126,6 +127,16 @@ namespace Kara
             if (!this.ToolbarItems.Contains(ToolbarItem_OrderPreviewForm))
                 this.ToolbarItems.Add(ToolbarItem_OrderPreviewForm);
 
+            ToolbarItem_SaveOrder = new ToolbarItem();
+            ToolbarItem_SaveOrder.Text = "ذخیره";
+            ToolbarItem_SaveOrder.Icon = "Upload.png";
+            ToolbarItem_SaveOrder.Activated += ToolbarItem_SaveOrder_Activated;
+            ToolbarItem_SaveOrder.Order = ToolbarItemOrder.Primary;
+            ToolbarItem_SaveOrder.Priority = 3;
+
+            if (!this.ToolbarItems.Contains(ToolbarItem_SaveOrder))
+                this.ToolbarItems.Add(ToolbarItem_SaveOrder);
+
             SettlementTypes = App.SettlementTypes.Where(a => a.Enabled).ToArray();
             foreach (var SettlementType in SettlementTypes)
                 SettlementTypePicker.Items.Add(SettlementType.Name);
@@ -186,6 +197,40 @@ namespace Kara
                 //    CheckToBackToOrderInsertFormIfStuffsEmpty();
                 //})
             );
+        }
+
+        private async void ToolbarItem_SaveOrder_Activated(object sender, EventArgs e)
+        {
+            //WaitToggle(false);
+            await Task.Delay(100);
+
+            var data = new DtoEditSaleOrderMobile()
+            {
+                OrderId = (Guid)EditingSaleOrderId,
+                UserId = App.UserId.Value,
+                Description="***",
+                Stuffs = _StuffsList.Where(a=>a.Quantity>0).Select(a => new DtoEditStuffMobile
+                {
+                   StuffId=a.StuffId,
+                   PackageId=a.SelectedPackage.Id,
+                   Quantity=a.Quantity,
+                   SalePrice= a.Price.ToLatinDigits().ToSafeDecimal(),
+                }).ToList()
+            };
+
+            var submitResult = await Connectivity.EditSaleOrder(data);
+
+            if (!submitResult.Success)
+            {
+                App.ShowError("خطا", "خطا در ارسال اطلاعات" +"\n" + submitResult.Message, "خوب");
+            }
+            else
+            {
+                Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 1]);
+
+                App.ToastMessageHandler.ShowMessage("فاکتور با موفقیت به روزرسانی شد", Helpers.ToastMessageDuration.Long);
+                try { await Navigation.PopAsync(); } catch (Exception) { }
+            }
         }
 
         private void DescriptionEditor_TextChanged(object sender, TextChangedEventArgs e)
@@ -563,7 +608,7 @@ namespace Kara
             
             FilteredStuffs = FilteredStuffs.Where(a => a.TotalStuffQuantity > 0).ToList();
 
-            ObservableCollection<DBRepository.StuffListModel> _StuffsList = null;
+            
             try
             {
                 var StuffsListTemp = FilteredStuffs.ToList();

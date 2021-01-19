@@ -131,17 +131,18 @@ namespace Kara
                 BusyIndicatorContainder.IsVisible = true;
 
                 //temp
-                //var totals = await Connectivity.GetPayeeSaleTotals(App.Username.Value, App.Password.Value, App.CurrentVersionNumber, App.UserId.Value, App.EntityCode.Value);
+                var totals = await Connectivity.GetPayeeSaleTotals(App.Username.Value, App.Password.Value, App.CurrentVersionNumber, App.UserId.Value, App.EntityCode.Value);
 
-                var totals = new ResultSuccess<List<SaleTotalsModel>>() { Success = true };
-                totals.Data = new List<SaleTotalsModel>()
-                {
-                    new SaleTotalsModel(){DriverCode="123",DriverName="d1 name",TotalCode="123",OrdersCount=3,PayeeCode="10213",PayeeName="asdsadasd",TotalId=new Guid("D7DA45EA-BB3F-430D-AB22-0015A97D90E0"),TotalPrice=200000,TotalDate= DateTime.Now},
-                    new SaleTotalsModel(){DriverCode="456",DriverName="d2 name",TotalCode="456",OrdersCount=15,PayeeCode="3465213",PayeeName="relktj dfg",TotalId=new Guid("D7DA45EA-BB3F-430D-AB22-0015A97D90E0"),TotalPrice=14500000,TotalDate=DateTime.Now.AddDays(5)},
-                };
+                //var totals = new ResultSuccess<List<SaleTotalsModel>>() { Success = true };
+                //totals.Data = new List<SaleTotalsModel>()
+                //{
+                //    new SaleTotalsModel(){DriverCode="123",DriverName="d1 name",TotalCode="123",OrdersCount=3,PayeeCode="10213",PayeeName="asdsadasd",TotalId=new Guid("D7DA45EA-BB3F-430D-AB22-0015A97D90E0"),TotalPrice=200000,TotalDate= DateTime.Now},
+                //    new SaleTotalsModel(){DriverCode="456",DriverName="d2 name",TotalCode="456",OrdersCount=15,PayeeCode="3465213",PayeeName="relktj dfg",TotalId=new Guid("D7DA45EA-BB3F-430D-AB22-0015A97D90E0"),TotalPrice=14500000,TotalDate=DateTime.Now.AddDays(5)},
+                //};
 
                 if (!totals.Success)
                     App.ShowError("خطا", totals.Message, "انصراف");
+
                 else if (totals.Success)
                 {
                     var totalVMs = totals.Data.Select(t => new SaleTotalsViewModel
@@ -167,41 +168,6 @@ namespace Kara
                 BusyIndicatorContainder.IsVisible = false;
                 TotalsView.IsVisible = true;
             }
-           
-            //var testResult = new List<UnSettledOrderModel>
-            //            {
-            //                new UnSettledOrderModel
-            //                {
-            //                    DriverName = "رضا محمودی",
-            //                    OrderCode = "1001",
-            //                    OrderDate = DateTime.Now.ToShortStringForDate().ReplaceLatinDigits(),
-            //                    OrderId = new Guid(),
-            //                    Remainder = 10000.ToString(),
-            //                    Price = 14000.ToString()
-            //                },
-            //                 new UnSettledOrderModel
-            //                {
-            //                    DriverName = "علی محمودی",
-            //                    OrderCode = "1002",
-            //                    OrderDate = DateTime.Now.AddDays(4). ToShortStringForDate().ReplaceLatinDigits(),
-            //                    OrderId = new Guid(),
-            //                    Remainder = 20000.ToString(),
-            //                    Price = 24000.ToString()
-            //                },
-            //                  new UnSettledOrderModel
-            //                {
-            //                    DriverName = "آرش سیبسی",
-            //                    OrderCode = "1003",
-            //                    OrderDate = DateTime.Now.AddDays(8).ToShortStringForDate().ReplaceLatinDigits(),
-            //                    OrderId = new Guid(),
-            //                    Remainder = 30000.ToString(),
-            //                    Price = 34000.ToString()
-            //                }
-            //            };
-
-            //    TotalsView.IsVisible = true;
-            //    FactorsObservableCollection = new ObservableCollection<UnSettledOrderModel>(testResult);
-            //    TotalsView.ItemsSource = FactorsObservableCollection;
         }
 
        
