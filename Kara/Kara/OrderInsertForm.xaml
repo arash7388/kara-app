@@ -3,40 +3,40 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:Kara.CustomRenderer"
              x:Class="Kara.OrderInsertForm">
-  <Grid Padding="0" RowSpacing="0" ColumnSpacing="0" VerticalOptions="FillAndExpand">
-    <Grid.RowDefinitions>
-      <RowDefinition Height="1*" />
-      <RowDefinition Height="Auto" />
-    </Grid.RowDefinitions>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition />
-    </Grid.ColumnDefinitions>
+    <Grid Padding="0" RowSpacing="0" ColumnSpacing="0" VerticalOptions="FillAndExpand">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
 
-    <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" >
-      <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
-        <Grid x:Name="PartnerSection" Padding="5, 5, 5, 0" RowSpacing="5" ColumnSpacing="0" BackgroundColor="#e7e7e7" >
-        </Grid>
-        <SearchBar x:Name="StuffsSearchBar" IsVisible="false" Placeholder="جستجو" HorizontalTextAlignment="End" Text="" HeightRequest="50">
-        </SearchBar>
-        <ListView x:Name="StuffItems" IsVisible="False">
-        </ListView>
-        <StackLayout x:Name="GallaryContainer" IsVisible="False" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+        <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" >
+            <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+                <Grid x:Name="PartnerSection" Padding="5, 5, 5, 0" RowSpacing="5" ColumnSpacing="0" BackgroundColor="#e7e7e7" >
+                </Grid>
+                <SearchBar x:Name="StuffsSearchBar" IsVisible="false" Placeholder="جستجو" HorizontalTextAlignment="End" Text="" HeightRequest="50">
+                </SearchBar>
+                <ListView x:Name="StuffItems" IsVisible="False">
+                </ListView>
+                <StackLayout x:Name="GallaryContainer" IsVisible="False" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
+                </StackLayout>
+                <Picker x:Name="WarehousePicker" IsVisible="False" >
+                </Picker>
+            </StackLayout>
         </StackLayout>
-        <Picker x:Name="WarehousePicker" IsVisible="False" >
-        </Picker>
-      </StackLayout>
-    </StackLayout>
 
-    <StackLayout x:Name="GallaryStuffBatchNumbersListContainer" Orientation="Vertical" Spacing="0" Padding="0" Grid.Row="0" Grid.Column="0" IsVisible="False" VerticalOptions="FillAndExpand">
-      <StackLayout Orientation="Vertical" Spacing="10" Padding="10" BackgroundColor="#DCE6FA" VerticalOptions="FillAndExpand" >
-        <ListView x:Name="GallaryStuffBatchNumbersList" >
-        </ListView>
-        <local:FullRoundedLabel x:Name="CloseButton" VerticalOptions="End" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" FontSize="18" Text="بازگشت">
-        </local:FullRoundedLabel>
-      </StackLayout>
-    </StackLayout>
-    
-    <Grid x:Name="QuantityKeyboardHolder" IsVisible="false" BackgroundColor="#eee" Grid.Row="1" Grid.Column="0"  >
+        <StackLayout x:Name="GallaryStuffBatchNumbersListContainer" Orientation="Vertical" Spacing="0" Padding="0" Grid.Row="0" Grid.Column="0" IsVisible="False" VerticalOptions="FillAndExpand">
+            <StackLayout Orientation="Vertical" Spacing="10" Padding="10" BackgroundColor="#DCE6FA" VerticalOptions="FillAndExpand" >
+                <ListView x:Name="GallaryStuffBatchNumbersList" >
+                </ListView>
+                <local:FullRoundedLabel x:Name="CloseButton" VerticalOptions="End" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" FontSize="18" Text="بازگشت">
+                </local:FullRoundedLabel>
+            </StackLayout>
+        </StackLayout>
+
+        <Grid x:Name="QuantityKeyboardHolder" IsVisible="false" BackgroundColor="#eee" Grid.Row="1" Grid.Column="0"  >
+        </Grid>
     </Grid>
-  </Grid>
 </local:GradientContentPage>

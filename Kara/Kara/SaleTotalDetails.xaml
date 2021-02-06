@@ -14,49 +14,61 @@
                             <RowDefinition Height="35"></RowDefinition>
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
                             <ColumnDefinition Width="*"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         
-                        <Label Text="شماره پ ف" BackgroundColor="Navy" TextColor="White" Grid.Column="5" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
-                        <Label Text="کد طرف حساب" BackgroundColor="Navy" TextColor="White" Grid.Column="4" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
-                        <Label Text="نام طرف حساب" BackgroundColor="Navy" TextColor="White" Grid.Column="3" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium" />
-                        <Label Text="آدرس" BackgroundColor="Navy" TextColor="White" Grid.Column="2" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
-                        <Label Text="تلفن" BackgroundColor="Navy" TextColor="White" Grid.Column="1" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
-                        <Label Text="ویزیتور" BackgroundColor="Navy" TextColor="White" Grid.Column="0" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Medium"/>
+                        <Label Text="" BackgroundColor="Navy" TextColor="White" Grid.Column="7" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
+                        <Label Text="ش پ ف" BackgroundColor="Navy" TextColor="White" Grid.Column="7" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
+                        <Label Text="ش ف" BackgroundColor="Navy" TextColor="White" Grid.Column="6" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
+                        <Label Text="کد ط ح" BackgroundColor="Navy" TextColor="White" Grid.Column="5" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
+                        <Label Text="نام ط ح" BackgroundColor="Navy" TextColor="White" Grid.Column="4" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small" />
+                        <Label Text="آدرس" BackgroundColor="Navy" TextColor="White" Grid.Column="3" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
+                        <Label Text="تلفن" BackgroundColor="Navy" TextColor="White" Grid.Column="2" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
+                        <Label Text="ویزیتور" BackgroundColor="Navy" TextColor="White" Grid.Column="1" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
+                        <Label Text="تایید شده" BackgroundColor="Navy" TextColor="White" Grid.Column="0" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
+                        
                     </Grid>
                 </ListView.Header>
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <Grid Padding="1" VerticalOptions="FillAndExpand" ColumnSpacing="1" RowSpacing="1" BackgroundColor="{Binding RowColor}">
+                            <Grid Padding="1" VerticalOptions="FillAndExpand" ColumnSpacing="0" RowSpacing="1" BackgroundColor="{Binding RowColor}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"></RowDefinition>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                                    <ColumnDefinition Width="2*"></ColumnDefinition>
+                                    <ColumnDefinition Width="2*"></ColumnDefinition>
                                     <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="{Binding CheckBoxColumnWidth}"></ColumnDefinition>
+                                    <!--<ColumnDefinition Width="{Binding CheckBoxColumnWidth}"></ColumnDefinition>-->
                                 </Grid.ColumnDefinitions>
 
-                                <local:MyCheckBox x:Name="selectedCheckBox" Grid.Column="6" HorizontalOptions="Center" VerticalOptions="Center" Checked="{Binding Selected, Mode=TwoWay}" IsVisible="{Binding MultiSelectionMode}" ></local:MyCheckBox>
-                                <Label Grid.Column="5" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding OrderPreCode} "/>
-                                <Label Grid.Column="4" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding EntityCode}"/>
-                                <Label Grid.Column="3" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding EntityName}"/>
-                                <Label Grid.Column="2" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Address}"/>
-                                <Label Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Tels}"/>
-                                <Label Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Visitor}"/>
+                                <local:MyCheckBox x:Name="selectedCheckBox" Grid.Column="8" HorizontalOptions="Center" VerticalOptions="Center" Checked="{Binding Selected, Mode=TwoWay}" ></local:MyCheckBox>
+                                <Label Grid.Column="7" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" Text="{Binding OrderPreCode} "/>
+                                <Label Grid.Column="6" HorizontalOptions="FillAndExpand" VerticalOptions="Center" Text="{Binding OrderCode}"/>
+                                <Label Grid.Column="5" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding EntityCode}"/>
+                                <Label Grid.Column="4" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding EntityName}"/>
+                                <Label Grid.Column="3" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Address}"/>
+                                <Label Grid.Column="2" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Tels}"/>
+                                <Label Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Visitor}"/>
+                                <local:MyCheckBox Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center" Checked="{Binding Confirmed}" IsEnabled="False"/>
                                 
-
+                                
                             </Grid>
                         </ViewCell>
                     </DataTemplate>

@@ -78,13 +78,30 @@ namespace Kara
 
             BusyIndicatorContainder.BackgroundColor = Color.FromRgba(255, 255, 255, 70);
             BusyIndicator.Color = Color.FromRgba(80, 100, 150, 255);
+            RefreshToolbarItems(true, true, true, true);
         }
 
         private async void ToolbarItem_EditOrder_Activated(object sender, EventArgs e)
         {
+            var selectedOrderIds = TotalDetailsObservableCollection.Where(a => a.Selected).ToList();
+
+            if (!selectedOrderIds.Any())
+            {
+                App.ShowError("خطا", "یک پیش فاکتور را انتخاب نمایید", "خوب");
+                return;
+            }
+
             var selectedPartnerId = TotalDetailsObservableCollection.Where(a => a.Selected).Select(a => a.PartnerEntityId).FirstOrDefault();
-            var partner = await App.DB.GetPartnerAsync(selectedPartnerId,null);
+
+            var partner = await App.DB.GetPartnerAsync(selectedPartnerId);
             
+            if(!partner.Success)
+            {
+                App.ShowError("خطا", partner.Message, "خوب");
+                BusyIndicatorContainder.IsVisible = false;
+                return;
+            }
+
             Models.Partner selectedPartner = new Models.Partner()
             {
                 Id = partner.Data.Id,
@@ -96,18 +113,23 @@ namespace Kara
                 IsLegal = partner.Data.IsLegal
             };
 
-            var selectedOrderId = TotalDetailsObservableCollection.FirstOrDefault(a => a.Selected).OrderId;
-            var orderData = await Connectivity.GetEditData(selectedOrderId, true, true, false, false);
+            if (selectedOrderIds.Count>1)
+            {
+                App.ShowError("خطا", "فقط یک پیش فاکتور را انتخاب نمایید", "خوب");
+                return;
+            }
+
+            var orderData = await Connectivity.GetEditData(selectedOrderIds.FirstOrDefault().OrderId, true, true, false, false);
 
             if(!orderData.Success)
             {
-                App.ShowError("خطا", "خطا در دریافت اطلاعات فاکتور" + "/n" + orderData.Message, "خوب");
+                App.ShowError("خطا در دریافت اطلاعات فاکتور", orderData.Message, "خوب");
                 return;
             }
 
             if(orderData.Data.SaleOrder==null)
             {
-                App.ShowError("خطا", "خطا در دریافت اطلاعات فاکتور", "خوب");
+                App.ShowError("خطا در دریافت اطلاعات فاکتور", "orderData.Data.SaleOrder is null", "خوب");
                 return;
             }
 
@@ -131,14 +153,19 @@ namespace Kara
                         PackageId = s.PackageId,
                         Quantity=s.Quantity,
                         SalePrice=s.SalePrice,
-                        VATPercent=s.VATPercent
+                        VATPercent=s.VATPercent,
+                        //BatchNumber = s.BatchNumber,
+                        BatchNumberId = s.BatchNumberId.ToSafeString() != "" ? Guid.Parse(s.BatchNumberId) : (Guid?)null,
+                        Id=s.Id,
+                        OrderId=sr.OrderId,
                     }
                     ).ToArray()
                 };
             }
 
-
-            var orderInsertForm = new OrderInsertForm(selectedPartner, order, null, null, null,true);
+            //Guid.TryParse(orderData.Data.SaleOrder.DefaultWarehouseId, out Guid wid);
+            order.WarehouseId = orderData.Data.WarehouseId.ToSafeGuid();
+            var orderInsertForm = new OrderInsertForm(selectedPartner, order, null, null, null, true);
             
             await Navigation.PushAsync(orderInsertForm);
 
@@ -166,18 +193,32 @@ namespace Kara
         {
             var selectedOrderIds = TotalDetailsObservableCollection.Where(a => a.Selected).Select(a => a.OrderId).ToList();
 
-            SignPad signPad = new SignPad(selectedOrderIds);
+            if(!selectedOrderIds.Any())
+            {
+                App.ShowError("خطا", "یک پیش فاکتور را انتخاب نمایید", "خوب");
+                return;
+            }
+
+            SignPad signPad = new SignPad(selectedOrderIds,this);
 
             Navigation.PushModalAsync(signPad, true);
         }
 
         protected override async void OnAppearing()
         {
-            var source = await CalcOrderedDetails(SelectedTotalId);
+            if (TotalDetailsObservableCollection == null)
+            {
+                var source = await CalcOrderedDetails(SelectedTotalId);
 
-            TotalDetailsView.IsVisible = true;
-            TotalDetailsObservableCollection = new ObservableCollection<TotalDetailViewModel>(source);
-            TotalDetailsView.ItemsSource = TotalDetailsObservableCollection;
+                TotalDetailsView.IsVisible = true;
+                TotalDetailsObservableCollection = new ObservableCollection<TotalDetailViewModel>(source);
+                TotalDetailsView.ItemsSource = TotalDetailsObservableCollection;
+            }
+            else
+            {
+                TotalDetailsView.ItemsSource = null;
+                TotalDetailsView.ItemsSource = TotalDetailsObservableCollection;
+            }
 
             base.OnAppearing();
         }
@@ -225,45 +266,45 @@ namespace Kara
 
         public void RefreshToolbarItems()
         {
-            ToolbarItem_Confirm_Visible = false;
-            ToolbarItem_EditOrder_Visible = false;
+            //ToolbarItem_Confirm_Visible = false;
+            //ToolbarItem_EditOrder_Visible = false;
 
 
-            if (MultiSelectionMode)
-            {
-                //ToolbarItem_SelectAll_Visible = true;//? temp
-                var AllOrdersSelected = TotalDetailsObservableCollection.All(a => a.Selected);
-                ToolbarItem_SelectAll.Icon = AllOrdersSelected ? "SelectAll_Full.png" : "SelectAll_Empty.png";
-            }
-            else
-            {
-                BackButton_Visible = true;
-            }
+            //if (MultiSelectionMode)
+            //{
+            //    //ToolbarItem_SelectAll_Visible = true;//? temp
+            //    var AllOrdersSelected = TotalDetailsObservableCollection.All(a => a.Selected);
+            //    ToolbarItem_SelectAll.Icon = AllOrdersSelected ? "SelectAll_Full.png" : "SelectAll_Empty.png";
+            //}
+            //else
+            //{
+            //    BackButton_Visible = true;
+            //}
 
-            var SelectedCount = TotalDetailsObservableCollection != null ? TotalDetailsObservableCollection.Count(a => a.Selected) : 0;
-            if (SelectedCount == 0)
-            {
-                //if (!MultiSelectionMode)
-                //    ToolbarItem_SearchBar_Visible = true;
-                ToolbarItem_Confirm_Visible = false;
-                ToolbarItem_EditOrder_Visible = false;
-            }
-            else if (MultiSelectionMode)
-            {
-                ToolbarItem_Confirm_Visible = true;
-                ToolbarItem_EditOrder_Visible = true;
-            }
-            else
-            {
-                MultiSelectionMode = false;
-                TotalDetailViewModel.Multiselection = false;
-                ToolbarItem_Confirm_Visible = false;
-                ToolbarItem_EditOrder_Visible = false;
-                ToolbarItem_SelectAll_Visible = false;
-                TotalDetailsObservableCollection.ForEach(item => item.Selected = false);
-            }
+            //var SelectedCount = TotalDetailsObservableCollection != null ? TotalDetailsObservableCollection.Count(a => a.Selected) : 0;
+            //if (SelectedCount == 0)
+            //{
+            //    //if (!MultiSelectionMode)
+            //    //    ToolbarItem_SearchBar_Visible = true;
+            //    ToolbarItem_Confirm_Visible = false;
+            //    ToolbarItem_EditOrder_Visible = false;
+            //}
+            //else if (MultiSelectionMode)
+            //{
+            //    ToolbarItem_Confirm_Visible = true;
+            //    ToolbarItem_EditOrder_Visible = true;
+            //}
+            //else
+            //{
+            //    MultiSelectionMode = false;
+            //    TotalDetailViewModel.Multiselection = false;
+            //    ToolbarItem_Confirm_Visible = false;
+            //    ToolbarItem_EditOrder_Visible = false;
+            //    ToolbarItem_SelectAll_Visible = false;
+            //    TotalDetailsObservableCollection.ForEach(item => item.Selected = false);
+            //}
 
-            RefreshToolbarItems(BackButton_Visible, ToolbarItem_Confirm_Visible, ToolbarItem_EditOrder_Visible,ToolbarItem_SelectAll_Visible);
+            //RefreshToolbarItems(BackButton_Visible, ToolbarItem_Confirm_Visible, ToolbarItem_EditOrder_Visible,ToolbarItem_SelectAll_Visible);
         }
 
         public void RefreshToolbarItems
@@ -396,38 +437,40 @@ namespace Kara
             {
                 AccountingZone = a.AccountingZone,
                 Address = a.Address,
-                EntityCode = a.EntityCode,
+                EntityCode = a.EntityCode.ToPersianDigits(),
                 EntityName = a.EntityName,
                 GeoLocation_Lat = a.GeoLocation_Lat,
                 GeoLocation_Long = a.GeoLocation_Long,
                 OrderId = a.OrderId,
-                OrderPreCode = a.OrderPreCode,
+                OrderPreCode = a.OrderPreCode.ToString().ToPersianDigits(),
                 PersonLegalName = a.PersonLegalName,
-                Price = a.Price,
+                Price = a.Price.ToSafeString().ToPersianDigits(),
                 Selected = false,
                 SettlementName = a.SettlementName,
-                Tels = a.Tels,
+                Tels = a.Tels.ToPersianDigits(),
                 Visitor = a.Visitor,
-                PartnerEntityId=a.PartnerEntityId
+                PartnerEntityId=a.PartnerEntityId,
+                Confirmed = a.OrderCode.ToSafeString()!="",
+                OrderCode = a.OrderCode
             }).ToList();
         }
 
         private async void TotalDetailsView_OnLongClick(object sender, EventArgs e)
         {
-            var Position = ((ListViewLongClickEventArgs)e).Position;
-            var OrderedItem = TotalDetailsObservableCollection[Position - 1];
+            //var Position = ((ListViewLongClickEventArgs)e).Position;
+            //var OrderedItem = TotalDetailsObservableCollection[Position - 1];
 
-            if (!MultiSelectionMode)
-            {
-                MultiSelectionMode = true;
-                TotalDetailViewModel.Multiselection = true;
+            //if (!MultiSelectionMode)
+            //{
+            //    MultiSelectionMode = true;
+            //    TotalDetailViewModel.Multiselection = true;
 
-                TotalDetailsView.ItemsSource = null;
-                TotalDetailsView.ItemsSource = TotalDetailsObservableCollection;
+            //    TotalDetailsView.ItemsSource = null;
+            //    TotalDetailsView.ItemsSource = TotalDetailsObservableCollection;
 
-                await Task.Delay(100);
-                TotalDetailsView_ItemTapped(OrderedItem);
-            }
+            //    await Task.Delay(100);
+            //    TotalDetailsView_ItemTapped(OrderedItem);
+            //}
         }
 
         private void TotalDetailsView_ItemTapped(TotalDetailViewModel TappedItem)
@@ -550,18 +593,20 @@ namespace Kara
 
 
         public Guid OrderId { get; internal set; }
-        public int OrderPreCode { get; internal set; }
+        public string OrderPreCode { get; internal set; }
+        public string OrderCode { get; internal set; }
         public string EntityCode { get; internal set; }
         public string EntityName { get; internal set; }
         public string PersonLegalName { get; internal set; }
         public string AccountingZone { get; internal set; }
         public string Address { get; internal set; }
         public string Tels { get; internal set; }
-        public decimal Price { get; internal set; }
+        public string Price { get; internal set; }
         public string Visitor { get; internal set; }
         public string SettlementName { get; internal set; }
         public decimal GeoLocation_Lat { get; internal set; }
         public decimal GeoLocation_Long { get; internal set; }
         public Guid PartnerEntityId { get; set; }
+        public bool Confirmed { get; set; }
     }
 }

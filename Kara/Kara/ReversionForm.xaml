@@ -35,7 +35,7 @@
                             <conv:MaskedBehavior Mask="XXXX/XX/XX" />
                         </Entry.Behaviors>
                     </local:DateEntry>
-                    <Label Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="دلیل برگشتی:" VerticalTextAlignment="Center" FontSize="Medium"/>
+                    <Label Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="دلیل ویرایش:" VerticalTextAlignment="Center" FontSize="Medium"/>
                     <Picker Grid.Row="1" x:Name="ReversionReasonPicker" Grid.Column="0" HorizontalOptions="FillAndExpand" />
                     <Label Grid.Row="2" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="بازاریاب:" VerticalTextAlignment="Center" FontSize="Medium"/>
                     <Picker Grid.Row="2" x:Name="VisitorPicker" Grid.Column="0" HorizontalOptions="FillAndExpand" />

@@ -430,7 +430,7 @@ namespace Kara.Assets
         {
             try
             {
-                var url = ServerRoot + $"GetEditData?orderId={orderId}&NotForEdit={NotForEdit}&ForReInsertTheOrder={ForReInsertTheOrder}&FromDistributionReversionForm={FromDistributionReversionForm}&AllowEditInTransportationState={AllowEditInTransportationState}";
+                var url = ServerRoot + $"GetEditData?orderId={orderId}";
                 var resultTask = HttpClient.GetStringAsyncForUnicode(url);
                 //var resultTask = HttpClient.GetStringAsyncForUnicode(ServerRoot + $"GetEditData?id={id}");
 
@@ -577,6 +577,7 @@ namespace Kara.Assets
         {
             public Guid OrderId { get; set; }
             public int OrderPreCode { get; set; }
+            public string OrderCode { get; internal set; }
             public string EntityCode { get; set; }
             public string EntityName { get; set; }
             public string PersonLegalName { get; set; }
@@ -589,6 +590,7 @@ namespace Kara.Assets
             public decimal GeoLocation_Lat { get; set; }
             public decimal GeoLocation_Long { get; set; }
             public Guid PartnerEntityId { get; set; }
+            public bool Confirmed { get; set; }
         }
 
         public static async Task<ResultSuccess<List<TotalDetailModel>>> GetTotalDetails(string UserName, string Password, string CurrentVersionNumber, Guid totalId)

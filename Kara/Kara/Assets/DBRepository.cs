@@ -254,7 +254,27 @@ namespace Kara.Assets
                 }
             });
         }
-        
+
+        public async Task<ResultSuccess<Partner>> GetPartnerAsync(Guid? Id)
+        {
+            return await Task.Run(() =>
+            {
+                try
+                {
+                    var Partner = conn.Table<Partner>().SingleOrDefault(a => a.Id == Id);
+
+                    if (Partner == null)
+                        return new ResultSuccess<Partner>(false, "طرف حساب مورد نظر یافت نشد.");
+
+                    return new ResultSuccess<Partner>(true, "", Partner);
+                }
+                catch (Exception err)
+                {
+                    return new ResultSuccess<Partner>(false, err.ProperMessage());
+                }
+            });
+        }
+
         public async Task<ResultSuccess<List<Partner>>> GetPartnersAsync()
         {
             return await Task.Run(() =>

@@ -265,7 +265,8 @@ namespace Kara
             UnSettledOrderModel.Multiselection = false;
             FactorsView.ItemsSource = null;
             FactorsView.ItemsSource = FactorsObservableCollection;
-            RefreshToolbarItems();
+
+            RefreshToolbarItems(false,true,true,true,false,true);
         }
 
         private void FactorsView_ItemTapped(UnSettledOrderModel TappedItem)
@@ -287,6 +288,7 @@ namespace Kara
                 {
                     if (LastSelectedOrder != null)
                         LastSelectedOrder.Selected = false;
+
                     LastSelectedOrder = TappedItem;
                     LastSelectedOrder.Selected = true;
 
@@ -294,7 +296,7 @@ namespace Kara
                 }
             }
 
-            RefreshToolbarItems();
+            RefreshToolbarItems(true,true,true,true,true,true);
         }
 
         private async void FactorsView_OnLongClick(object sender, EventArgs e)
@@ -388,6 +390,7 @@ namespace Kara
             {
                 BusyIndicatorContainder.IsVisible = true;
                 await FillFactors(SelectedPartner.Code);
+                RefreshToolbarItems(false, true, true, true,false,true);
                 BusyIndicatorContainder.IsVisible = false;
             }
         }
@@ -444,11 +447,11 @@ namespace Kara
 
         public void RefreshToolbarItems()
         {
-            ToolbarItem_Naghd_Visible = false;
-            ToolbarItem_Cheque_Visible = false;
-            ToolbarItem_Bank_Visible = false;
+            //ToolbarItem_Naghd_Visible = false;
+            //ToolbarItem_Cheque_Visible = false;
+            //ToolbarItem_Bank_Visible = false;
             ToolbarItem_SelectAll_Visible = false;
-            ToolbarItem_PartnerReport_Visible = false;
+            //ToolbarItem_PartnerReport_Visible = false;
             BackButton_Visible = false;
 
             if (MultiSelectionMode)
@@ -467,37 +470,30 @@ namespace Kara
             {
                 //if (!MultiSelectionMode)
                 //    ToolbarItem_SearchBar_Visible = true;
-                ToolbarItem_Naghd_Visible = false;
-                ToolbarItem_Cheque_Visible = false;
-                ToolbarItem_Bank_Visible = false;
-                ToolbarItem_PartnerReport_Visible = false;
+                //ToolbarItem_Naghd_Visible = false;
+                //ToolbarItem_Cheque_Visible = false;
+                //ToolbarItem_Bank_Visible = false;
+                //ToolbarItem_PartnerReport_Visible = false;
             }
             else if (MultiSelectionMode)
             {
-                ToolbarItem_Naghd_Visible = true;
-                ToolbarItem_Cheque_Visible = true;
-                ToolbarItem_Bank_Visible = true;
-                ToolbarItem_PartnerReport_Visible = true;
+                //ToolbarItem_Naghd_Visible = true;
+                //ToolbarItem_Cheque_Visible = true;
+                //ToolbarItem_Bank_Visible = true;
+                //ToolbarItem_PartnerReport_Visible = true;
             }
             else
             {
-                MultiSelectionMode = false;
                 UnSettledOrderModel.Multiselection = false;
-                ToolbarItem_Naghd_Visible = false;
-                ToolbarItem_Cheque_Visible = false;
-                ToolbarItem_PartnerReport_Visible = false;
-                ToolbarItem_Bank_Visible = false;
+                //ToolbarItem_Naghd_Visible = false;
+                //ToolbarItem_Cheque_Visible = false;
+                //ToolbarItem_PartnerReport_Visible = false;
+                //ToolbarItem_Bank_Visible = false;
                 ToolbarItem_SelectAll_Visible = false;
                 FactorsObservableCollection.ForEach(item => item.Selected = false);
-
-                //if (!FactorsObservableCollection.Single(a => a.Selected).Sent)
-                //{
-                //    ToolbarItem_Naghd_Visible = true;
-                //}
-                //ToolbarItem_Show_Visible = true;
             }
 
-            RefreshToolbarItems(BackButton_Visible, ToolbarItem_Naghd_Visible, ToolbarItem_Cheque_Visible, ToolbarItem_Bank_Visible, ToolbarItem_SelectAll_Visible, ToolbarItem_PartnerReport_Visible);
+            RefreshToolbarItems(BackButton_Visible, true, true, true, ToolbarItem_SelectAll_Visible, true);
         }
 
         public void RefreshToolbarItems
@@ -519,12 +515,7 @@ namespace Kara
             //    this.ToolbarItems.Add(ToolbarItem_SearchBar);
             //if (!ToolbarItem_SearchBar_Visible && this.ToolbarItems.Contains(ToolbarItem_SearchBar))
             //    this.ToolbarItems.Remove(ToolbarItem_SearchBar);
-
-            //if (ToolbarItem_Delete_Visible && !this.ToolbarItems.Contains(ToolbarItem_Delete))
-            //    this.ToolbarItems.Add(ToolbarItem_Delete);
-            //if (!ToolbarItem_Delete_Visible && this.ToolbarItems.Contains(ToolbarItem_Delete))
-            //    this.ToolbarItems.Remove(ToolbarItem_Delete);
-
+            
             if (ToolbarItem_Naghd_Visible && !this.ToolbarItems.Contains(ToolbarItem_Naghd))
                 this.ToolbarItems.Add(ToolbarItem_Naghd);
             if (!ToolbarItem_Naghd_Visible && this.ToolbarItems.Contains(ToolbarItem_Naghd))
@@ -539,11 +530,6 @@ namespace Kara
                 this.ToolbarItems.Add(ToolbarItem_Bank);
             if (!ToolbarItem_Bank_Visible && this.ToolbarItems.Contains(ToolbarItem_Bank))
                 this.ToolbarItems.Remove(ToolbarItem_Bank);
-
-            //if (ToolbarItem_Show_Visible && !this.ToolbarItems.Contains(ToolbarItem_Show))
-            //    this.ToolbarItems.Add(ToolbarItem_Show);
-            //if (!ToolbarItem_Show_Visible && this.ToolbarItems.Contains(ToolbarItem_Show))
-            //    this.ToolbarItems.Remove(ToolbarItem_Show);
 
             if (ToolbarItem_SelectAll_Visible && !this.ToolbarItems.Contains(ToolbarItem_SelectAll))
                 this.ToolbarItems.Add(ToolbarItem_SelectAll);

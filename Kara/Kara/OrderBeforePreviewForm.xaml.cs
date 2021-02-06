@@ -35,6 +35,7 @@ namespace Kara
         MyKeyboard<QuantityEditingStuffModel, decimal> QuantityKeyboard;
         Guid? WarehouseId;
         bool FromTour;
+        DtoReversionReason[] ReversionReasons = null;
         //Dictionary<Guid, decimal> PackagesQuantity;
 
         public OrderBeforePreviewForm
@@ -197,6 +198,37 @@ namespace Kara
                 //    CheckToBackToOrderInsertFormIfStuffsEmpty();
                 //})
             );
+
+            if(FromTour)
+            {
+                gridReasons.IsVisible = true;
+                FillReversionReasons();
+            }
+        }
+
+        private async Task FillReversionReasons()
+        {
+            try
+            {
+                var result = await Connectivity.GetReversionReasons();
+
+                if (result.Success && result.Data != null)
+                {
+                    ReversionReasons = result.Data.ToArray();
+
+                    if (ReversionReasons != null)
+                        foreach (var r in ReversionReasons)
+                            ReversionReasonPicker.Items.Add(r.Name);
+                }
+                else
+                {
+                    App.ShowError("خطا", "هیچ علتی در سیستم تعریف نشده است ", "خوب");
+                }
+            }
+            catch (Exception ex)
+            {
+                App.ShowError("خطا", ex.Message, "خوب");
+            }
         }
 
         private async void ToolbarItem_SaveOrder_Activated(object sender, EventArgs e)
@@ -204,8 +236,15 @@ namespace Kara
             //WaitToggle(false);
             await Task.Delay(100);
 
+            if (ReversionReasonPicker.SelectedIndex == -1)
+            {
+                App.ShowError("خطا", "دلیل انتخاب نشده است.","خوب");
+                return;
+            }
+
             var data = new DtoEditSaleOrderMobile()
             {
+                DistributionReversionReasonId = ReversionReasons[ReversionReasonPicker.SelectedIndex].Id,
                 OrderId = (Guid)EditingSaleOrderId,
                 UserId = App.UserId.Value,
                 Description="***",
@@ -215,6 +254,7 @@ namespace Kara
                    PackageId=a.SelectedPackage.Id,
                    Quantity=a.Quantity,
                    SalePrice= a.Price.ToLatinDigits().ToSafeDecimal(),
+                   BatchNumberId=a.BatchNumberId
                 }).ToList()
             };
 

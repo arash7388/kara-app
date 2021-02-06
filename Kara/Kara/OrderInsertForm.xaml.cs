@@ -11,6 +11,7 @@ using Kara.Helpers;
 using CarouselView.FormsPlugin.Abstractions;
 using FFImageLoading.Forms;
 using XLabs.Forms.Controls;
+using static Kara.Assets.Connectivity;
 
 namespace Kara
 {
@@ -547,12 +548,13 @@ namespace Kara
         Guid? WarehouseId;
         bool TapEventHandlingInProgress = false;
         bool FromTour;
+        
 
         CarouselViewControl gallaryCarousel;
 
         Guid LastSearchWhenTypingId = Guid.NewGuid();
         
-        public OrderInsertForm(Partner Partner, SaleOrder SaleOrder, InsertedInformations_Orders OrdersForm, PartnerListForm PartnerListForm, Guid? __WarehouseId,bool fromTour=false)
+        public OrderInsertForm(Partner Partner,SaleOrder SaleOrder, InsertedInformations_Orders OrdersForm, PartnerListForm PartnerListForm, Guid? __WarehouseId,bool fromTour=false)
         {
             App.UniversalLineInApp = 875234001;
 
@@ -857,29 +859,32 @@ namespace Kara
 
             //if (FromTour)
             //{
-            //    PartnerSelected();
+            //    FillReversionReasons();
             //}
         }
 
+        
+
         public async void PrepareWarehousePicker()
         {
-            var _Warehouses = (await App.DB.GetWarehousesAsync()).Data.ToArray()
+            var warehouses = (await App.DB.GetWarehousesAsync()).Data.ToArray()
                 .Select(a => new KeyValuePair<Warehouse, string>(a, a.WarehouseName.ToPersianDigits())).ToArray();
-            if (_Warehouses.Length == 1)
+            
+            if (warehouses.Length == 1)
             {
-                WarehouseId = _Warehouses.Single().Key.WarehouseId;
+                WarehouseId = warehouses.Single().Key.WarehouseId;
                 return;
             }
             
             WarehousePicker.Items.Clear();
-            foreach (var Warehouse in _Warehouses)
+            foreach (var Warehouse in warehouses)
                 WarehousePicker.Items.Add(Warehouse.Value);
 
             WarehousePicker.SelectedIndex = -1;
             
             WarehousePicker.SelectedIndexChanged += (sender, e) =>
             {
-                WarehouseId = _Warehouses[WarehousePicker.SelectedIndex].Key.WarehouseId;
+                WarehouseId = warehouses[WarehousePicker.SelectedIndex].Key.WarehouseId;
                 WarehousePicker.IsEnabled = false;
                 FillStuffs();
             };
@@ -1512,7 +1517,7 @@ namespace Kara
                 GallaryStuffBatchNumbersListContainer.IsVisible = false;
             else
             {
-                Task<bool> action = DisplayAlert("انصراف از ثبت سفارش", "با خروج از این قسمت اطلاعات وارد شده از دست خواهد رفت. آیا مطمئنید؟", "بله", "خیر");
+                Task<bool> action = DisplayAlert("انصراف", "با خروج از این قسمت اطلاعات وارد شده از دست خواهد رفت. آیا مطمئنید؟", "بله", "خیر");
                 action.ContinueWith(task =>
                 {
                     if (task.Result)

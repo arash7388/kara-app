@@ -22,11 +22,13 @@ namespace Kara
     public partial class SignPad : ContentPage
     {
         private List<Guid> SelectedOrderIds;
+        private SaleTotalDetails SaleTotalDetailsForm;
 
-        public SignPad(List<Guid> selectedOrderIds)
+        public SignPad(List<Guid> selectedOrderIds, SaleTotalDetails saleTotalDetailsForm)
         {
             InitializeComponent();
             SelectedOrderIds = selectedOrderIds;
+            SaleTotalDetailsForm = saleTotalDetailsForm;
         }
 
         private async void btnOk_Clicked(object sender, EventArgs e)
@@ -39,7 +41,22 @@ namespace Kara
                     var result = await Connectivity.AddSigniture(orderId, stream.ConvertToBase64());
 
                     if (!result.Success)
-                        App.ShowError("خطا", "خطا در تایید فاکتورها" + "\n" + result.Message, "باشه");
+                    {
+                        App.ShowError("خطا در تایید فاکتورها", "" + "\n" + result.Message, "خوب");
+                        await Navigation.PopModalAsync();
+                        return;
+                    }
+
+                    if (result!=null && result.Data!=null)
+                    {
+                        var relatedOrder = SaleTotalDetailsForm.TotalDetailsObservableCollection.FirstOrDefault(a => a.OrderId == result.Data.OrderId);
+
+                        if(relatedOrder!=null)
+                        {
+                            relatedOrder.Confirmed = true;
+                            relatedOrder.OrderCode = result.Data.OrderCode.ToSafeString().ToPersianDigits();
+                        }
+                    }
                 }
 
                 App.ToastMessageHandler.ShowMessage("فاکتورها تایید شدند", Helpers.ToastMessageDuration.Short);

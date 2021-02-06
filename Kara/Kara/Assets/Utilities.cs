@@ -59,6 +59,14 @@ namespace Kara.Assets
             else
                 return 0;
         }
+
+        public static Guid ToSafeGuid(this object input)
+        {
+            if (input.ToSafeString() == null)
+                return Guid.Empty;
+
+            return Guid.Parse(input.ToString());
+        }
     }
 
 

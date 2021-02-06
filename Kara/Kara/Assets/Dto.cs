@@ -199,5 +199,6 @@ namespace Kara.Assets
         public DtoSaleOrder SaleOrder { get; set; }
         public int SaleOrderStuffsCount { get; set; }
         public List<DtoSaleOrderStuff> SaleOrderStuffs { get; set; }
+        public Guid WarehouseId { get; set; }
     }
 }
