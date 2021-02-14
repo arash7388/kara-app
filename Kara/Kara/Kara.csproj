@@ -58,6 +58,9 @@
     <Compile Include="MessageForm.xaml.cs">
       <DependentUpon>MessageForm.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ReturnOrderComplete.xaml.cs">
+      <DependentUpon>ReturnOrderComplete.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ReversionForm.xaml.cs">
       <DependentUpon>ReversionForm.xaml</DependentUpon>
     </Compile>
@@ -75,6 +78,9 @@
     </Compile>
     <Compile Include="SaleTotal.xaml.cs">
       <DependentUpon>SaleTotal.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ReceiptTypeSelect.xaml.cs">
+      <DependentUpon>ReceiptTypeSelect.xaml</DependentUpon>
     </Compile>
     <Compile Include="SignPad.xaml.cs">
       <DependentUpon>SignPad.xaml</DependentUpon>
@@ -606,6 +612,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ReversionForm.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ReceiptTypeSelect.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ReturnOrderComplete.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

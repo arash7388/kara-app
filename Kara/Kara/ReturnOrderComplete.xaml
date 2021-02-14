@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:controls="clr-namespace:SignaturePad.Forms;assembly=SignaturePad.Forms"
+             x:Class="Kara.ReturnOrderComplete"
+             Title="بازگشت کامل">
+    <ContentPage.Content>
+        <StackLayout>
+            <Grid x:Name="gridReasons" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Row="0" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="دلیل برگشتی:" VerticalTextAlignment="Center" FontSize="Medium"/>
+                <Picker Grid.Row="0" Grid.Column="0" x:Name="ReversionReasonPicker" HorizontalOptions="FillAndExpand"/>
+                <Label Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="توضیحات:" VerticalTextAlignment="Center" FontSize="Medium"/>
+                <Entry Grid.Row="1" Grid.Column="0" x:Name="txtDesc" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End"/>
+                <Button Grid.Row="2" Grid.ColumnSpan="2" Text="تایید" x:Name="btnReturn" HorizontalOptions="CenterAndExpand" VerticalOptions="Center" Clicked="btnReturn_Clicked"></Button>
+            </Grid>
+            
+            
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

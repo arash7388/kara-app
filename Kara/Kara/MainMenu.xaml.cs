@@ -79,7 +79,7 @@ namespace Kara
             Label_Report = new Label() { Text = "گزارشات", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
             Label_Receipts = new Label() { Text = "ثبت دریافت", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
             Label_Tour = new Label() { Text = "تور توزیع", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
-            Label_Reversion = new Label() { Text = "برگشت کالا", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
+            Label_Reversion = new Label() { Text = "برگشت از فروش", HorizontalTextAlignment = TextAlignment.Center, FontAttributes = FontAttributes.Bold, FontSize = 15 };
 
             MenuImages = new List<ImageHelper>();
 

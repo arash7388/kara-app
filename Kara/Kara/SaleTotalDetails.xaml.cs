@@ -33,7 +33,7 @@ namespace Kara
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class SaleTotalDetails : GradientContentPage
     {
-        public ToolbarItem ToolbarItem_Confirm, ToolbarItem_SelectAll, ToolbarItem_EditOrder;
+        public ToolbarItem ToolbarItem_Confirm, ToolbarItem_SelectAll, ToolbarItem_EditOrder,ToolbarItem_Receipt, ToolbarItem_ReturnComplete;
         private bool ToolbarItem_Confirm_Visible, ToolbarItem_SelectAll_Visible, ToolbarItem_EditOrder_Visible, BackButton_Visible;
         private bool MultiSelectionMode = false;
 
@@ -62,6 +62,20 @@ namespace Kara
             ToolbarItem_SelectAll.Priority = 9;
             ToolbarItem_SelectAll.Activated += ToolbarItem_SelectAll_Activated;
 
+            ToolbarItem_ReturnComplete = new ToolbarItem();
+            ToolbarItem_ReturnComplete.Text = "بازگشت کامل";
+            ToolbarItem_ReturnComplete.Icon = "ReturnComplet.png";
+            ToolbarItem_ReturnComplete.Order = ToolbarItemOrder.Primary;
+            ToolbarItem_ReturnComplete.Priority = 1;
+            ToolbarItem_ReturnComplete.Activated += ToolbarItem_ReturnComplete_Activated;
+
+            ToolbarItem_Receipt = new ToolbarItem();
+            ToolbarItem_Receipt.Text = "دریافت";
+            ToolbarItem_Receipt.Icon = "PartnerTurnover.png";
+            ToolbarItem_Receipt.Order = ToolbarItemOrder.Primary;
+            ToolbarItem_Receipt.Priority = 1;
+            ToolbarItem_Receipt.Activated += ToolbarItem_Receipt_Activated;
+
             ToolbarItem_Confirm = new ToolbarItem();
             ToolbarItem_Confirm.Text = "تایید پ ف";
             ToolbarItem_Confirm.Icon = "Confirm.png";
@@ -75,10 +89,68 @@ namespace Kara
             ToolbarItem_EditOrder.Order = ToolbarItemOrder.Primary;
             ToolbarItem_EditOrder.Priority = 1;
             ToolbarItem_EditOrder.Activated += ToolbarItem_EditOrder_Activated;
+                       
 
             BusyIndicatorContainder.BackgroundColor = Color.FromRgba(255, 255, 255, 70);
             BusyIndicator.Color = Color.FromRgba(80, 100, 150, 255);
-            RefreshToolbarItems(true, true, true, true);
+            RefreshToolbarItems(true, true, true, true,true,true);
+        }
+
+        private async void ToolbarItem_ReturnComplete_Activated(object sender, EventArgs e)
+        {
+            var selectedOrderIds = TotalDetailsObservableCollection.Where(a => a.Selected).Select(a => a.OrderId).ToList();
+
+            if (!selectedOrderIds.Any())
+            {
+                App.ShowError("خطا", "یک پیش فاکتور را انتخاب نمایید", "خوب");
+                return;
+            }
+
+            if (selectedOrderIds.Count()!=1)
+            {
+                App.ShowError("خطا", "فقط یک پیش فاکتور را انتخاب نمایید", "خوب");
+                return;
+            }
+
+            if (TotalDetailsObservableCollection.Where(a => a.Selected).Any(a => a.Confirmed))
+            {
+                App.ShowError("خطا", "پیش فاکتور تایید شده قابل بازگشت کامل نیست", "خوب");
+                return;
+            }
+
+            var returnOrderForm = new ReturnOrderComplete(selectedOrderIds.FirstOrDefault(),this);
+
+            await Navigation.PushAsync(returnOrderForm);
+            
+        }
+
+        private void ToolbarItem_Receipt_Activated(object sender, EventArgs e)
+        {
+            var selectedOrderIdsPrices = TotalDetailsObservableCollection.Where(a => a.Selected).Select(a=>new KeyValuePair<Guid,decimal>(a.OrderId,a.Price)).ToList();
+                        
+            if (!selectedOrderIdsPrices.Any())
+            {
+                App.ShowError("خطا", "یک پیش فاکتور را انتخاب نمایید", "خوب");
+                return;
+            }
+
+            if(selectedOrderIdsPrices.Count>1)
+            {
+                //all partners should be the same
+
+                var partnerCount = TotalDetailsObservableCollection.GroupBy(a => a.PartnerEntityId).Select(a => a.Key).Count();
+
+                if(partnerCount!=1)
+                {
+                    App.ShowError("خطا", "فقط فاکتورهای یک مشتری قابل انتخاب هستند", "خوب");
+                    return;
+                }
+            }
+
+            var selectedPartner = TotalDetailsObservableCollection.Where(a => a.Selected).Select(a => a.PartnerEntityId).FirstOrDefault();
+
+            ReceiptTypeSelect receiptTypeSelectForm = new ReceiptTypeSelect(selectedOrderIdsPrices, selectedPartner, this);
+            Navigation.PushAsync(receiptTypeSelectForm);
         }
 
         private async void ToolbarItem_EditOrder_Activated(object sender, EventArgs e)
@@ -199,6 +271,12 @@ namespace Kara
                 return;
             }
 
+            if(TotalDetailsObservableCollection.Where(a => a.Selected).Any(a=>a.Confirmed))
+            {
+                App.ShowError("خطا", "پیش فاکتور تایید شده قابل انتخاب نیست", "خوب");
+                return;
+            }
+
             SignPad signPad = new SignPad(selectedOrderIds,this);
 
             Navigation.PushModalAsync(signPad, true);
@@ -222,6 +300,16 @@ namespace Kara
 
             base.OnAppearing();
         }
+
+        public async void RefreshDetails()
+        {
+            var source = await CalcOrderedDetails(SelectedTotalId);
+
+            TotalDetailsObservableCollection = new ObservableCollection<TotalDetailViewModel>(source);
+            TotalDetailsView.ItemsSource = null;
+            TotalDetailsView.ItemsSource = TotalDetailsObservableCollection;
+        }
+
 
         public async Task Navigate(Location location)
         {
@@ -312,7 +400,9 @@ namespace Kara
             bool BackButton_Visible,
             bool ToolbarItem_Confirm_Visible,
             bool ToolbarItem_EditOrder_Visible,
-            bool ToolbarItem_SelectAll_Visible
+            bool ToolbarItem_SelectAll_Visible,
+            bool ToolbarItem_Receipt_Visible,
+            bool ToolbarItem_ReturnComplete_Visible
         )
         {
             if (BackButton_Visible)
@@ -322,13 +412,27 @@ namespace Kara
 
             if (ToolbarItem_Confirm_Visible && !this.ToolbarItems.Contains(ToolbarItem_Confirm))
                 this.ToolbarItems.Add(ToolbarItem_Confirm);
+
             if (!ToolbarItem_Confirm_Visible && this.ToolbarItems.Contains(ToolbarItem_Confirm))
                 this.ToolbarItems.Remove(ToolbarItem_Confirm);
             
             if (ToolbarItem_EditOrder_Visible && !this.ToolbarItems.Contains(ToolbarItem_EditOrder))
                 this.ToolbarItems.Add(ToolbarItem_EditOrder);
+
             if (!ToolbarItem_EditOrder_Visible && this.ToolbarItems.Contains(ToolbarItem_EditOrder))
                 this.ToolbarItems.Remove(ToolbarItem_EditOrder);
+
+            if (ToolbarItem_Receipt_Visible && !this.ToolbarItems.Contains(ToolbarItem_Receipt))
+                this.ToolbarItems.Add(ToolbarItem_Receipt);
+
+            if (!ToolbarItem_Receipt_Visible && this.ToolbarItems.Contains(ToolbarItem_Receipt))
+                this.ToolbarItems.Remove(ToolbarItem_Receipt);
+
+            if (ToolbarItem_ReturnComplete_Visible && !this.ToolbarItems.Contains(ToolbarItem_ReturnComplete))
+                this.ToolbarItems.Add(ToolbarItem_ReturnComplete);
+
+            if (!ToolbarItem_ReturnComplete_Visible && this.ToolbarItems.Contains(ToolbarItem_ReturnComplete))
+                this.ToolbarItems.Remove(ToolbarItem_ReturnComplete);
 
             //temp comment
             //if (ToolbarItem_SelectAll_Visible && !this.ToolbarItems.Contains(ToolbarItem_SelectAll))
@@ -444,14 +548,14 @@ namespace Kara
                 OrderId = a.OrderId,
                 OrderPreCode = a.OrderPreCode.ToString().ToPersianDigits(),
                 PersonLegalName = a.PersonLegalName,
-                Price = a.Price.ToSafeString().ToPersianDigits(),
+                Price = a.Price,
                 Selected = false,
                 SettlementName = a.SettlementName,
                 Tels = a.Tels.ToPersianDigits(),
                 Visitor = a.Visitor,
                 PartnerEntityId=a.PartnerEntityId,
                 Confirmed = a.OrderCode.ToSafeString()!="",
-                OrderCode = a.OrderCode
+                OrderCode = a.OrderCode.ToPersianDigits()
             }).ToList();
         }
 
@@ -592,20 +696,33 @@ namespace Kara
         public GridLength CheckBoxColumnWidth { get { return Multiselection ? 60 : 0; } }
 
 
-        public Guid OrderId { get; internal set; }
-        public string OrderPreCode { get; internal set; }
-        public string OrderCode { get; internal set; }
-        public string EntityCode { get; internal set; }
-        public string EntityName { get; internal set; }
-        public string PersonLegalName { get; internal set; }
-        public string AccountingZone { get; internal set; }
-        public string Address { get; internal set; }
-        public string Tels { get; internal set; }
-        public string Price { get; internal set; }
-        public string Visitor { get; internal set; }
-        public string SettlementName { get; internal set; }
-        public decimal GeoLocation_Lat { get; internal set; }
-        public decimal GeoLocation_Long { get; internal set; }
+        public Guid OrderId { get; set; }
+        public string OrderPreCode { get; set; }
+        public string OrderCode { get; set; }
+        public string EntityCode { get; set; }
+        public string EntityName { get; set; }
+        public string PersonLegalName { get; set; }
+        public string AccountingZone { get; set; }
+        public string Address { get; set; }
+        public string Tels { get; set; }
+        public decimal Price { get; set; }
+        
+        public string PriceFa 
+        { 
+            get 
+            {
+                return Price.ToSafeString().ToPersianDigits();
+            }
+            set
+            {
+                PriceFa = value;
+            }
+        }
+
+        public string Visitor { get; set; }
+        public string SettlementName { get; set; }
+        public decimal GeoLocation_Lat { get; set; }
+        public decimal GeoLocation_Long { get; set; }
         public Guid PartnerEntityId { get; set; }
         public bool Confirmed { get; set; }
     }

@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:Kara.CustomRenderer"
              x:Class="Kara.SaleTotalDetails"
-             Title="لیست پیش فاکتور ها">
+             Title="پیش فاکتورها">
     <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" >
         <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
 
@@ -60,7 +60,7 @@
 
                                 <local:MyCheckBox x:Name="selectedCheckBox" Grid.Column="8" HorizontalOptions="Center" VerticalOptions="Center" Checked="{Binding Selected, Mode=TwoWay}" ></local:MyCheckBox>
                                 <Label Grid.Column="7" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" Text="{Binding OrderPreCode} "/>
-                                <Label Grid.Column="6" HorizontalOptions="FillAndExpand" VerticalOptions="Center" Text="{Binding OrderCode}"/>
+                                <Label Grid.Column="6" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalOptions="Center" Text="{Binding OrderCode}"/>
                                 <Label Grid.Column="5" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding EntityCode}"/>
                                 <Label Grid.Column="4" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding EntityName}"/>
                                 <Label Grid.Column="3" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Address}"/>

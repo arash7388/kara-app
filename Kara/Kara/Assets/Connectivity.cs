@@ -423,9 +423,6 @@ namespace Kara.Assets
             //public decimal WeightSumPercent { get; set; }
         }
 
-
-        
-
         public static async Task<ResultSuccess<GetOrderEditDataDto>> GetEditData(Guid orderId, bool? NotForEdit, bool? ForReInsertTheOrder, bool? FromDistributionReversionForm, bool AllowEditInTransportationState)
         {
             try
@@ -456,6 +453,49 @@ namespace Kara.Assets
             catch (Exception ex)
             {
                 return new ResultSuccess<GetOrderEditDataDto>(false, ex.ProperMessage());
+            }
+        }
+
+        
+        public class ReturnOrderCompletelyDto
+        {
+            public bool IsSuccess { get; set; }
+        }
+
+        public static async Task<ResultSuccess<ReturnOrderCompletelyDto>> ReturnOrderCompletely(Guid orderId,Guid reasonId,string description)
+        {
+            try
+            {
+                HttpContent Content = new StringContent(JsonConvert.SerializeObject(
+                    new {
+                          OrderId=orderId,
+                        ReasonId= reasonId,
+                        Description = description
+                    }), Encoding.UTF8, "application/json");
+                
+                var resultTask = HttpClient.PostAsyncForUnicode(ServerRoot + $"ReturnOrderCompletely", Content);
+                var result = await resultTask;
+
+                if (resultTask.Exception != null)
+                {
+                    return new ResultSuccess<ReturnOrderCompletelyDto>(false, resultTask.Exception.ProperMessage());
+                }
+
+                if (!result.Success)
+                    throw new Exception(result.Message);
+
+                var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<ReturnOrderCompletelyDto>>(result.Data);
+
+                if (!resultDeserialized.Success)
+                {
+                    return new ResultSuccess<ReturnOrderCompletelyDto>(false, resultDeserialized.Message);
+                }
+
+                return new ResultSuccess<ReturnOrderCompletelyDto>(true, "", resultDeserialized.Data);
+            }
+            catch (Exception ex)
+            {
+                return new ResultSuccess<ReturnOrderCompletelyDto>(false, ex.ProperMessage());
             }
         }
 
@@ -577,7 +617,7 @@ namespace Kara.Assets
         {
             public Guid OrderId { get; set; }
             public int OrderPreCode { get; set; }
-            public string OrderCode { get; internal set; }
+            public string OrderCode { get; set; }
             public string EntityCode { get; set; }
             public string EntityName { get; set; }
             public string PersonLegalName { get; set; }

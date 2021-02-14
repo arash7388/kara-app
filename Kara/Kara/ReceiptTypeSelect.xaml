@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:controls="clr-namespace:SignaturePad.Forms;assembly=SignaturePad.Forms"
+             x:Class="Kara.ReceiptTypeSelect"
+             Title="نوع دریافت">
+    <ContentPage.Content>
+        <StackLayout>
+            <Grid Padding="1" VerticalOptions="FillAndExpand" ColumnSpacing="1" RowSpacing="2" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                    <RowDefinition Height="50"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Row="0" VerticalOptions="StartAndExpand" Text="نقد" x:Name="btnNaghd" Clicked="btnNaghd_Clicked" FontSize="Large"></Button>
+                <Button Grid.Row="1" VerticalOptions="StartAndExpand" Text="حواله" x:Name="btnHavaleh" Clicked="btnHavaleh_Clicked" FontSize="Large"></Button>
+                <Button Grid.Row="2" VerticalOptions="StartAndExpand" Text="چک" x:Name="btnCheque" Clicked="btnCheque_Clicked" FontSize="Large"></Button>
+
+            </Grid>
+            
+            
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
