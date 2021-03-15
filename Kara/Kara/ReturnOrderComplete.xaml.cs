@@ -59,7 +59,39 @@ namespace Kara
                     return;
                 }
 
-                var result = await Connectivity.ReturnOrderCompletely(SelectedOrderId, ReversionReasons[ReversionReasonPicker.SelectedIndex].Id, txtDesc.Text);
+                var orderData = await Connectivity.GetEditData(SelectedOrderId, true, true, false, false);
+
+                if (!orderData.Success)
+                {
+                    App.ShowError("خطا در دریافت اطلاعات فاکتور", orderData.Message, "خوب");
+                    return;
+                }
+
+                if (orderData.Data.SaleOrder == null)
+                {
+                    App.ShowError("خطا در دریافت اطلاعات فاکتور", "orderData.Data.SaleOrder is null", "خوب");
+                    return;
+                }
+
+                var data = new DtoEditSaleOrderMobile()
+                {
+                    DistributionReversionReasonId = ReversionReasons[ReversionReasonPicker.SelectedIndex].Id,
+                    OrderId = SelectedOrderId,
+                    UserId = App.UserId.Value,
+                    Description = "***",
+                    Stuffs = orderData.Data.SaleOrderStuffs.Where(a => a.Quantity > 0).Select(a => new DtoEditStuffMobile
+                    {
+                        ArticleId = a.Id,
+                        StuffId = a.StuffId.ToSafeGuid(),
+                        PackageId = a.PackageId,
+                        Quantity = 0,
+                        SalePrice = a.SalePrice,
+                        StuffQuantity = 0,
+                        BatchNumberId = a.BatchNumberId.ToSafeString() != "" ? Guid.Parse(a.BatchNumberId) : (Guid?)null,
+                    }).ToList()
+                };
+
+                var result = await Connectivity.EditSaleOrder(data);
 
                 if (!result.Success)
                 {
@@ -67,13 +99,13 @@ namespace Kara
                     return;
                 }
 
-                if (!result.Data.IsSuccess)
-                {
-                    App.ShowError("خطا در بازگشت کامل", result.Message, "خوب");
-                    return;
-                }
+                //if (!result.Data.IsSuccess)
+                //{
+                //    App.ShowError("خطا در بازگشت کامل", result.Message, "خوب");
+                //    return;
+                //}
 
-                if (result.Data.IsSuccess)
+                if (result.Success)
                 {
                     App.ToastMessageHandler.ShowMessage("فاکتور به طور کامل بازگشت داده شد", Helpers.ToastMessageDuration.Short);
                     await Navigation.PopAsync();

@@ -567,63 +567,44 @@ namespace Kara
             App.UniversalLineInApp = 875234002;
 
             WarehouseId = __WarehouseId;
-            //App.UniversalLineInApp = 875234003;
 
             if (!WarehouseId.HasValue && !string.IsNullOrEmpty(App.DefaultWarehouseId.Value))
                 WarehouseId = new Guid(App.DefaultWarehouseId.Value);
-            //App.UniversalLineInApp = 875234004;
 
             if (!WarehouseId.HasValue && App.DefineWarehouseForSaleAndBuy.Value)
                 PrepareWarehousePicker();
-            //App.UniversalLineInApp = 875234005;
 
             var CloseButtonTapGestureRecognizer = new TapGestureRecognizer();
-            //App.UniversalLineInApp = 875234006;
             CloseButtonTapGestureRecognizer.Tapped += CloseButtonTapGestureRecognizer_Tapped;
-            //App.UniversalLineInApp = 875234007;
             CloseButton.GestureRecognizers.Add(CloseButtonTapGestureRecognizer);
             App.UniversalLineInApp = 875234008;
 
             PartnerChangeButton = new LeftEntryCompanionLabel() { VerticalOptions = LayoutOptions.FillAndExpand, VerticalTextAlignment = TextAlignment.Center, HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, FontSize = 18, Text = "🔍" };
-            //App.UniversalLineInApp = 875234009;
             PartnerLabel = new RightRoundedLabel() { VerticalOptions = LayoutOptions.FillAndExpand, VerticalTextAlignment = TextAlignment.Center, HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.End, Text = "مشتری", Padding = new Thickness(0, 0, 50, 0) };
-            //App.UniversalLineInApp = 875234010;
             PartnerLabel.FontSize *= 1.5;
-            //App.UniversalLineInApp = 875234011;
 
             PartnerRemainderLabel = new RightRoundedLabel() { VerticalOptions = LayoutOptions.FillAndExpand, VerticalTextAlignment = TextAlignment.Center, HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.End, Text = PartnerAccountingData(), Padding = new Thickness(0, 0, 50, 0) };
-            //App.UniversalLineInApp = 875234012;
             PartnerRemainderDetailButton = new LeftEntryCompanionLabel() { VerticalOptions = LayoutOptions.FillAndExpand, VerticalTextAlignment = TextAlignment.Center, HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, FontSize = 18, Text = "🔍" };
-            //App.UniversalLineInApp = 875234013;
 
             GallaryStuffGroupChangeButton = new LeftEntryCompanionLabel() { VerticalOptions = LayoutOptions.FillAndExpand, HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.Center, FontSize = 18, Text = "🔍" };
             App.UniversalLineInApp = 875234014;
             GallaryStuffGroupLabelPlaceholder = App.StuffListGroupingMethod.Value == 0 ? "" : App.StuffListGroupingMethod.Value == 1 ? "گروه کالا" : "سبد کالا";
-            //App.UniversalLineInApp = 875234015;
             GallaryStuffGroupLabel = new RightRoundedLabel() { VerticalOptions = LayoutOptions.FillAndExpand, HorizontalOptions = LayoutOptions.FillAndExpand, HorizontalTextAlignment = TextAlignment.End, Text = GallaryStuffGroupLabelPlaceholder };
-            //App.UniversalLineInApp = 875234016;
             GallaryStuffGroupLabel.FontSize *= 1.5;
-            //App.UniversalLineInApp = 875234017;
             GallaryStuffGroupPicker = new Picker();
-            //App.UniversalLineInApp = 875234018;
             GallaryStuffGroupPicker.SelectedIndexChanged += (sender, e) =>
             {
-                //App.UniversalLineInApp = 875234019;
                 if (GallaryStuffGroupPicker.SelectedIndex != -1)
                     OpenGroup(LastStuffsGroups[GallaryStuffGroupPicker.SelectedIndex].StuffId);
-                //App.UniversalLineInApp = 875234020;
             };
             App.UniversalLineInApp = 875234021;
 
-            StuffItems.IsVisible = !InsertOrderForm_ShowGallaryMode.Value;
-            //App.UniversalLineInApp = 875234022;
-            GallaryContainer.IsVisible = InsertOrderForm_ShowGallaryMode.Value;
-            //App.UniversalLineInApp = 875234023;
+            //991128
+            //StuffItems.IsVisible = !InsertOrderForm_ShowGallaryMode.Value;
+            //GallaryContainer.IsVisible = InsertOrderForm_ShowGallaryMode.Value;
 
             this.OrdersForm = OrdersForm;
-            //App.UniversalLineInApp = 875234024;
             this.PartnerListForm = PartnerListForm;
-            //App.UniversalLineInApp = 875234025;
 
             EditingSaleOrder = SaleOrder != null ? SaleOrder : null;
             App.UniversalLineInApp = 875234026;
@@ -631,22 +612,17 @@ namespace Kara
             {
                 App.UniversalLineInApp = 875234027;
                 this.SettlementTypeId = EditingSaleOrder.SettlementTypeId;
-                //App.UniversalLineInApp = 875234028;
                 this.Description = EditingSaleOrder.Description;
-                //App.UniversalLineInApp = 875234029;
             }
             App.UniversalLineInApp = 875234030;
 
             var _Partner = Partner != null ? Partner : SaleOrder != null ? SaleOrder.Partner : null;
-            //App.UniversalLineInApp = 875234031;
             if (_Partner != null)
             {
                 App.UniversalLineInApp = 875234032;
                 _BeforeSelectedPartner = _Partner;
                 _SelectedPartner = _Partner;
                 PartnerLabel.Text = !string.IsNullOrEmpty(SelectedPartner.LegalName) ? (SelectedPartner.LegalName + (!string.IsNullOrEmpty(SelectedPartner.Name) ? (" (" + SelectedPartner.Name + ")") : "")) : (SelectedPartner.Name);
-                //FetchPartnerCycleInformationFromServer();
-
             }
             App.UniversalLineInApp = 875234037;
             if (SelectedPartner == null)
@@ -654,14 +630,12 @@ namespace Kara
                 PartnerChangeButton.IsEnabled = true;
                 App.UniversalLineInApp = 875234038;
                 PartnerRemainderDetailButton.IsEnabled = true;
-                //App.UniversalLineInApp = 875234039;
             }
             else
             {
                 PartnerChangeButton.IsEnabled = false;
                 App.UniversalLineInApp = 875234040;
                 PartnerRemainderDetailButton.IsEnabled = false;
-                //App.UniversalLineInApp = 875234041;
             }
 
             var PartnerChangeButtonTapGestureRecognizer = new TapGestureRecognizer();
@@ -693,7 +667,6 @@ namespace Kara
             PartnerChangeButton.WidthRequest = 150;
 
             var PartnerRemainderDetailButtonTapGestureRecognizer = new TapGestureRecognizer();
-            //App.UniversalLineInApp = 875234054;
             PartnerRemainderDetailButtonTapGestureRecognizer.Tapped += (sender, e) => {
                 if (!TapEventHandlingInProgress)
                 {
@@ -701,18 +674,13 @@ namespace Kara
 
                     try
                     {
-                        //App.UniversalLineInApp = 875234055;
                         if (PartnerRemainderDetailButton.IsEnabled)
                         {
                             App.UniversalLineInApp = 875234056;
                             FocusedQuantityTextBoxId = null;
-                            //App.UniversalLineInApp = 875234057;
                             var PartnerReportForm = new PartnerReportForm(SelectedPartner.Id);
-                            //App.UniversalLineInApp = 875234058;
                             Navigation.PushAsync(PartnerReportForm);
-                            //App.UniversalLineInApp = 875234059;
                         }
-                        //App.UniversalLineInApp = 875234060;
                     }
                     catch (Exception)
                     { }
@@ -763,8 +731,10 @@ namespace Kara
             ToolbarItem_LocalSave.Clicked += SubmitToStorage;
             ToolbarItem_LocalSave.Order = ToolbarItemOrder.Primary;
             ToolbarItem_LocalSave.Priority = 0;
+           
             //if (!JustShow)
             //    this.ToolbarItems.Add(ToolbarItem_LocalSave);
+
             if (!this.ToolbarItems.Contains(ToolbarItem_LocalSave)) 
                 this.ToolbarItems.Add(ToolbarItem_LocalSave);
 
@@ -1316,7 +1286,9 @@ namespace Kara
                 this.ToolbarItems.Add(ToolbarItem_GallaryMode);
             InsertOrderForm_ShowGallaryMode.Value = false;
             GallaryContainer.IsVisible = false;
-            StuffItems.IsVisible = true;
+            
+            //991128
+            //StuffItems.IsVisible = true;
 
             RefreshPartnerSection(LastWidth > LastHeight);
         }
@@ -1344,6 +1316,7 @@ namespace Kara
             {
                 await FillStuffs(StuffsSearchBar.Text, null, true, false);
                 //await FetchPartnerCycleInformationFromServer();
+                StuffItems.IsVisible = true;
             }
         }
 
@@ -1781,6 +1754,20 @@ namespace Kara
         }
 
         public List<DBRepository.StuffListModel> AllStuffsData;
+
+        //private void chkIsFreeProduct_Clicked(object sender, EventArgs e)
+        //{
+        //    var Ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+        //    var StuffId = new Guid(Ids[0]);
+        //    var StuffModel = AllStuffsData.SingleOrDefault(a => a.StuffId == StuffId);
+
+        //    if (StuffModel != null)
+        //    {
+        //        StuffModel.ReversionVATPercent = "";
+        //        StuffModel.ReversionDiscountPercent = "";
+        //    }
+        //}
+
         public List<DBRepository.StuffListModel> AllStuffGroupsData;
         List<DBRepository.StuffListModel> LastStuffsGroups;
 
@@ -1960,7 +1947,6 @@ namespace Kara
             FocusedQuantityTextBoxId = null;
         }
 
-
         private async void SubmitToServer(object sender, System.EventArgs e)
         {
             WaitToggle(false);
@@ -2028,13 +2014,18 @@ namespace Kara
                 if(txtDate.Text?.Length!=10)
                     return new ResultSuccess<Reversion>(false, "تاریخ وارد شده صحیح نیست.");
 
+                if(txtReversionDiscountAmount.Text.ToSafeString()!="" && txtReversionDiscountPercent.Text.ToSafeString()!="")
+                        return new ResultSuccess<Reversion>(false, "یکی از مقادیر درصد یا مبلغ تخفیف باید پر شود");
+
                 Guid newId = Guid.NewGuid();
 
                 var newReversion = new Reversion()
                 {
                     Id = newId,
+                    ReversionDiscountAmount = txtReversionDiscountAmount.Text.ToLatinDigits().ToSafeDecimal(),
+                    ReversionDiscountPercent = txtReversionDiscountPercent.Text.ToLatinDigits().ToSafeDecimal(),
                     PartnerId = SelectedPartner.Id,
-                    Description="***",
+                    Description=txtDesc.Text.ToSafeString()=="" ? "***" : txtDesc.Text,
                     ReversionDate = txtDate.Text.PersianDateStringToDate(),
                     PersonelId = Visitors[VisitorPicker.SelectedIndex].Id,
                     ReasonId = ReversionReasons[ReversionReasonPicker.SelectedIndex].Id,

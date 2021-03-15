@@ -192,6 +192,7 @@ namespace Kara.Assets
         public bool MeasurementDone { get; set; }
         public List<string> StuffGroupNames { get; set; }
         public List<Guid> StuffGroupIds { get; set; }
+        public Guid ArticleId { get; set; }
     }
 
     public class GetOrderEditDataDto

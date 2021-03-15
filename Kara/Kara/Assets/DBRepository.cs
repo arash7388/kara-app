@@ -1420,28 +1420,49 @@ namespace Kara.Assets
             public string ReversionVATPercent
             {
                 get { return _reversionVATPercent.ToPersianDigits(); }
-                set { _reversionVATPercent = value.ToLatinDigits(); }
+                set 
+                {
+                    if (ReversionIsFreeProduct)
+                        _reversionVATPercent = "";
+                    else
+                        _reversionVATPercent = value.ToLatinDigits(); 
+                }
             }
 
             public string _reversionVATAmount;
             public string ReversionVATAmount
             {
                 get { return _reversionVATAmount.ToPersianDigits(); }
-                set { _reversionVATAmount = value.ToLatinDigits(); }
+                set
+                {_reversionVATAmount = value.ToLatinDigits(); }
             }
 
             public string _reversionDiscountPercent;
             public string ReversionDiscountPercent
             {
                 get { return _reversionDiscountPercent.ToPersianDigits(); }
-                set { _reversionDiscountPercent = value.ToLatinDigits(); }
+                set 
+                {
+                    if (ReversionIsFreeProduct)
+                        _reversionDiscountPercent = "";
+                    else
+                        _reversionDiscountPercent = value.ToLatinDigits(); 
+                }
             }
 
             public bool _reversionIsFreeProduct;
             public bool ReversionIsFreeProduct
             {
                 get { return _reversionIsFreeProduct; }
-                set { _reversionIsFreeProduct = value; }
+                set 
+                {
+                    _reversionIsFreeProduct = value;
+                    if(value)
+                    {
+                        ReversionDiscountPercent = "";
+                        ReversionVATPercent = "";
+                    }
+                }
             }
 
             public string ConsumerFee { get { return "ق م: " + (!_ConsumerUnitPrice.HasValue ? "---" : (_ConsumerUnitPrice.Value * (SelectedPackage == null ? 1 : SelectedPackage.Coefficient)).ToString("###,###,###,###,###,###,##0.").ToPersianDigits()); } }
@@ -1479,6 +1500,7 @@ namespace Kara.Assets
                 OnPropertyChanged("_Price");
                 OnPropertyChanged("Price");
                 OnPropertyChanged("QuantityLabel");
+                OnPropertyChanged("ReversionIsFreeProduct");
             }
 
             public event PropertyChangedEventHandler PropertyChanged;
@@ -1487,6 +1509,8 @@ namespace Kara.Assets
                 var handler = PropertyChanged;
                 if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
             }
+
+            public Guid ArticleId { get; set; }
         }
 
         public static StuffListModel CloneStuff(StuffListModel obj)

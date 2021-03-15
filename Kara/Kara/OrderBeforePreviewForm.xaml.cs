@@ -30,6 +30,7 @@ namespace Kara
         private PartnerListForm PartnerListForm;
         private InsertedInformations_Orders OrdersForm;
         public Guid? EditingSaleOrderId;
+        private SaleOrder EditingSaleOrder;
         private OrderInsertForm OrderInsertForm;
         private Guid? SettlementTypeId;
         MyKeyboard<QuantityEditingStuffModel, decimal> QuantityKeyboard;
@@ -62,7 +63,7 @@ namespace Kara
             this.OrderInsertForm = OrderInsertForm;
 
             EditingSaleOrderId = SaleOrder != null ? SaleOrder.Id : new Nullable<Guid>();
-            
+            EditingSaleOrder = SaleOrder;
             this.AllStuffsData = AllStuffsData;
 
             this.PartnerListForm = PartnerListForm;
@@ -128,15 +129,19 @@ namespace Kara
             if (!this.ToolbarItems.Contains(ToolbarItem_OrderPreviewForm))
                 this.ToolbarItems.Add(ToolbarItem_OrderPreviewForm);
 
-            ToolbarItem_SaveOrder = new ToolbarItem();
-            ToolbarItem_SaveOrder.Text = "ذخیره";
-            ToolbarItem_SaveOrder.Icon = "Upload.png";
-            ToolbarItem_SaveOrder.Activated += ToolbarItem_SaveOrder_Activated;
-            ToolbarItem_SaveOrder.Order = ToolbarItemOrder.Primary;
-            ToolbarItem_SaveOrder.Priority = 3;
+            if (FromTour)
+            {
+                ToolbarItem_SaveOrder = new ToolbarItem();
+                ToolbarItem_SaveOrder.Text = "ذخیره";
+                ToolbarItem_SaveOrder.Icon = "Upload.png";
+                ToolbarItem_SaveOrder.Activated += ToolbarItem_SaveOrder_Activated;
+                ToolbarItem_SaveOrder.Order = ToolbarItemOrder.Primary;
+                ToolbarItem_SaveOrder.Priority = 3;
 
-            if (!this.ToolbarItems.Contains(ToolbarItem_SaveOrder))
-                this.ToolbarItems.Add(ToolbarItem_SaveOrder);
+                if (!this.ToolbarItems.Contains(ToolbarItem_SaveOrder))
+                    this.ToolbarItems.Add(ToolbarItem_SaveOrder);
+            }
+            
 
             SettlementTypes = App.SettlementTypes.Where(a => a.Enabled).ToArray();
             foreach (var SettlementType in SettlementTypes)
@@ -234,42 +239,53 @@ namespace Kara
         private async void ToolbarItem_SaveOrder_Activated(object sender, EventArgs e)
         {
             //WaitToggle(false);
-            await Task.Delay(100);
-
-            if (ReversionReasonPicker.SelectedIndex == -1)
+            try
             {
-                App.ShowError("خطا", "دلیل انتخاب نشده است.","خوب");
-                return;
-            }
 
-            var data = new DtoEditSaleOrderMobile()
-            {
-                DistributionReversionReasonId = ReversionReasons[ReversionReasonPicker.SelectedIndex].Id,
-                OrderId = (Guid)EditingSaleOrderId,
-                UserId = App.UserId.Value,
-                Description="***",
-                Stuffs = _StuffsList.Where(a=>a.Quantity>0).Select(a => new DtoEditStuffMobile
+
+                await Task.Delay(100);
+
+                if (ReversionReasonPicker.SelectedIndex == -1)
                 {
-                   StuffId=a.StuffId,
-                   PackageId=a.SelectedPackage.Id,
-                   Quantity=a.Quantity,
-                   SalePrice= a.Price.ToLatinDigits().ToSafeDecimal(),
-                   BatchNumberId=a.BatchNumberId
-                }).ToList()
-            };
+                    App.ShowError("خطا", "دلیل انتخاب نشده است.", "خوب");
+                    return;
+                }
 
-            var submitResult = await Connectivity.EditSaleOrder(data);
+                var data = new DtoEditSaleOrderMobile()
+                {
+                    DistributionReversionReasonId = ReversionReasons[ReversionReasonPicker.SelectedIndex].Id,
+                    OrderId = (Guid)EditingSaleOrderId,
+                    UserId = App.UserId.Value,
+                    Description = "***",
+                    Stuffs = _StuffsList.Where(a => a.Quantity > 0).Select(a => new DtoEditStuffMobile
+                    {
+                        ArticleId = EditingSaleOrder?.SaleOrderStuffs?.SingleOrDefault(x=>x.Package.StuffId==a.StuffId)?.ArticleId,
+                        StuffId = a.StuffId.ToSafeGuid(),
+                        PackageId = a.SelectedPackage.Id,
+                        Quantity = a.Quantity,
+                        SalePrice = a.Price.ToLatinDigits().ToSafeDecimal(),
+                        StuffQuantity = a.SelectedPackage.Coefficient * a.Quantity,
+                        BatchNumberId = a.BatchNumberId
+                    }).ToList()
+                };
 
-            if (!submitResult.Success)
-            {
-                App.ShowError("خطا", "خطا در ارسال اطلاعات" +"\n" + submitResult.Message, "خوب");
+                var submitResult = await Connectivity.EditSaleOrder(data);
+
+                if (!submitResult.Success)
+                {
+                    App.ShowError("خطا", "خطا در ارسال اطلاعات" + "\n" + submitResult.Message, "خوب");
+                }
+                else
+                {
+                    Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 1]);
+
+                    App.ToastMessageHandler.ShowMessage("فاکتور با موفقیت به روزرسانی شد", Helpers.ToastMessageDuration.Long);
+                    try { await Navigation.PopAsync(); } catch (Exception) { }
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Navigation.RemovePage(Navigation.NavigationStack[Navigation.NavigationStack.Count - 1]);
-
-                App.ToastMessageHandler.ShowMessage("فاکتور با موفقیت به روزرسانی شد", Helpers.ToastMessageDuration.Long);
-                try { await Navigation.PopAsync(); } catch (Exception) { }
+                App.ShowError("خطا", ex.Message, "باشه");
             }
         }
 
@@ -346,6 +362,7 @@ namespace Kara
                 .Union(AllStuffsData.Where(a => a.HasBatchNumbers).SelectMany(a => a.StuffRow_BatchNumberRows.SelectMany(b => b.PackagesData.Where(c => c.Quantity != 0).Select(c => new { Stuff = a, BatchNumber = b, Package = c }))))
                 .Select((a, index) => new
                 {
+                    Id = a.Stuff.Id,
                     ArticleIndex = index + 1,
                     StuffData = a.Stuff.StuffData,
                     PackageData = a.Package.Package,
@@ -366,7 +383,7 @@ namespace Kara
 
             var SaleOrderStuffs = _SaleOrderStuffs.Select(a => new SaleOrderStuff()
             {
-                Id = Guid.NewGuid(),
+                Id = a.Id ==string.Empty || a.Id==null ? Guid.NewGuid() : a.Id.Replace("|","").ToSafeGuid(),
                 OrderId = SaleOrder.Id,
                 SaleOrder = SaleOrder,
                 ArticleIndex = a.ArticleIndex,

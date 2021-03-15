@@ -816,6 +816,7 @@ namespace Kara.Models
         [Ignore]
         public decimal FinalPrice { get { return SalePriceQuantity - DiscountAmount - CashDiscountAmount - ProporatedDiscount + VATAmount; } }
         public int? StuffSettlementDay { get; set; }
+        public Guid ArticleId { get; set; }
     }
     
     [Table("CashDiscount")]

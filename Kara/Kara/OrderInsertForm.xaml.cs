@@ -1799,7 +1799,7 @@ namespace Kara
                 var EditingSaleOrderStuffs = EditingOrder.SaleOrderStuffs.Where(a => !a.FreeProduct);
                 foreach (var saleOrderStuff in EditingSaleOrderStuffs)
                 {
-                    var StuffInList = AllStuffsData.SingleOrDefault(a => a.StuffId == saleOrderStuff.Package.StuffId);
+                    DBRepository.StuffListModel StuffInList = AllStuffsData.SingleOrDefault(a => a.StuffId == saleOrderStuff.Package.StuffId);
                     if(StuffInList != null)
                     {
                         if (StuffInList.HasBatchNumbers)
@@ -1812,6 +1812,8 @@ namespace Kara
                                 StuffInList.SelectedPackage = saleOrderStuff.Package;
                             StuffInList.Quantity = saleOrderStuff.Quantity;
                         }
+
+                        StuffInList.ArticleId = saleOrderStuff.Id;
                     }
                 }
                 EditingOrderStuffsInitialized = true;

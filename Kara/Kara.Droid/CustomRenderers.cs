@@ -243,12 +243,15 @@ namespace Kara.Droid
                 !element.RightRounded && element.LeftRounded ? Resource.Drawable.MyEntryEditTextLeftRounded :
                 Resource.Drawable.MyEntryEditTextNotRounded
             );
+
             this.Control.SetPadding(
                 element.Padding.HasValue ? (int)element.Padding.Value.Left : 20,
                 element.Padding.HasValue ? (int)element.Padding.Value.Top : 10,
                 element.Padding.HasValue ? (int)element.Padding.Value.Right : 10,
                 element.Padding.HasValue ? (int)element.Padding.Value.Bottom : 10
             );
+
+            Control.Gravity = GravityFlags.CenterVertical;
         }
     }
 

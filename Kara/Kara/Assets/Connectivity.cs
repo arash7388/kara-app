@@ -462,41 +462,70 @@ namespace Kara.Assets
             public bool IsSuccess { get; set; }
         }
 
-        public static async Task<ResultSuccess<ReturnOrderCompletelyDto>> ReturnOrderCompletely(Guid orderId,Guid reasonId,string description)
+        public static async Task<ResultSuccess> ReturnOrderCompletely(DtoEditSaleOrderMobile order)
         {
             try
             {
-                HttpContent Content = new StringContent(JsonConvert.SerializeObject(
-                    new {
-                          OrderId=orderId,
-                        ReasonId= reasonId,
-                        Description = description
-                    }), Encoding.UTF8, "application/json");
-                
-                var resultTask = HttpClient.PostAsyncForUnicode(ServerRoot + $"ReturnOrderCompletely", Content);
+                HttpContent Content = new StringContent(JsonConvert.SerializeObject(order), Encoding.UTF8, "application/json");
+
+                var resultTask = HttpClient.PostAsyncForUnicode(ServerRoot + $"EditSaleOrder", Content);
                 var result = await resultTask;
 
                 if (resultTask.Exception != null)
-                {
-                    return new ResultSuccess<ReturnOrderCompletelyDto>(false, resultTask.Exception.ProperMessage());
-                }
+                    throw new Exception(resultTask.Exception.ProperMessage());
 
                 if (!result.Success)
                     throw new Exception(result.Message);
 
-                var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<ReturnOrderCompletelyDto>>(result.Data);
+                var deserilizedResult = JsonConvert.DeserializeObject<ResultSuccess>(result.Data);
+                if (!deserilizedResult.Success)
+                    throw new Exception(deserilizedResult.Message);
 
-                if (!resultDeserialized.Success)
-                {
-                    return new ResultSuccess<ReturnOrderCompletelyDto>(false, resultDeserialized.Message);
-                }
+                //var updateResult = await App.DB.InsertOrUpdateRecordAsync<Reversion>(reversion);
 
-                return new ResultSuccess<ReturnOrderCompletelyDto>(true, "", resultDeserialized.Data);
+                return new ResultSuccess(true, "");
             }
-            catch (Exception ex)
+            catch (Exception err)
             {
-                return new ResultSuccess<ReturnOrderCompletelyDto>(false, ex.ProperMessage());
+                //var Message = (documents.Count() == 1 ? "" : SentCount == 0 ? "هیچ سندی به سرور ارسال نشد." : "تعداد " + SentCount + " سند به سرور ارسال شد، اما در ادامه مشکلی رخ داد.") + err.ProperMessage();
+                //return new ResultSuccess<int>(false, Message, SentCount);
+                return new ResultSuccess(false, err.Message);
             }
+
+            //try
+            //{
+            //    HttpContent Content = new StringContent(JsonConvert.SerializeObject(
+            //        new {
+            //              OrderId=orderId,
+            //            ReasonId= reasonId,
+            //            Description = description,
+            //            UserId = userId
+            //        }), Encoding.UTF8, "application/json");
+
+            //    var resultTask = HttpClient.PostAsyncForUnicode(ServerRoot + $"ReturnOrderCompletely", Content);
+            //    var result = await resultTask;
+
+            //    if (resultTask.Exception != null)
+            //    {
+            //        return new ResultSuccess<ReturnOrderCompletelyDto>(false, resultTask.Exception.ProperMessage());
+            //    }
+
+            //    if (!result.Success)
+            //        throw new Exception(result.Message);
+
+            //    var resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess<ReturnOrderCompletelyDto>>(result.Data);
+
+            //    if (!resultDeserialized.Success)
+            //    {
+            //        return new ResultSuccess<ReturnOrderCompletelyDto>(false, resultDeserialized.Message);
+            //    }
+
+            //    return new ResultSuccess<ReturnOrderCompletelyDto>(true, "", resultDeserialized.Data);
+            //}
+            //catch (Exception ex)
+            //{
+            //    return new ResultSuccess<ReturnOrderCompletelyDto>(false, ex.ProperMessage());
+            //}
         }
 
 

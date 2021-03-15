@@ -93,7 +93,7 @@ namespace Kara
 
             BusyIndicatorContainder.BackgroundColor = Color.FromRgba(255, 255, 255, 70);
             BusyIndicator.Color = Color.FromRgba(80, 100, 150, 255);
-            RefreshToolbarItems(true, true, true, true,true,true);
+            RefreshToolbarItems(true, true, true, true, App.UseCollectorAndroidApplication.Value, true);
         }
 
         private async void ToolbarItem_ReturnComplete_Activated(object sender, EventArgs e)
@@ -160,6 +160,12 @@ namespace Kara
             if (!selectedOrderIds.Any())
             {
                 App.ShowError("خطا", "یک پیش فاکتور را انتخاب نمایید", "خوب");
+                return;
+            }
+
+            if (TotalDetailsObservableCollection.Where(a => a.Selected).Any(a => a.Confirmed))
+            {
+                App.ShowError("خطا", "پیش فاکتور تایید شده قابل ویرایش نیست", "خوب");
                 return;
             }
 
@@ -230,6 +236,7 @@ namespace Kara
                         BatchNumberId = s.BatchNumberId.ToSafeString() != "" ? Guid.Parse(s.BatchNumberId) : (Guid?)null,
                         Id=s.Id,
                         OrderId=sr.OrderId,
+                        ArticleId = s.Id,
                     }
                     ).ToArray()
                 };

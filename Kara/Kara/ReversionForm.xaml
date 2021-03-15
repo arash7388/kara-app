@@ -17,28 +17,37 @@
 
         <StackLayout Orientation="Vertical" Grid.Row="0" Grid.Column="0" >
             <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" >
-                <Grid Padding="1" VerticalOptions="Fill" ColumnSpacing="2" RowSpacing="1" Margin="1" >
+                <Grid Padding="1" VerticalOptions="Fill" ColumnSpacing="1" RowSpacing="1" Margin="1" >
 
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"></RowDefinition>
                         <RowDefinition Height="Auto"></RowDefinition>
                         <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="5*"></ColumnDefinition>
+                        <ColumnDefinition Width="3*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="2*"></ColumnDefinition>
                         <ColumnDefinition Width="2*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
 
-                    <Label Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="تاریخ:" VerticalTextAlignment="Center" FontSize="Medium"/>
-                    <local:DateEntry x:Name="txtDate" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End"  FontSize="Medium">
+                    <Label Grid.Column="3" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="تاریخ:" VerticalTextAlignment="Center" FontSize="Medium"/>
+                    <local:DateEntry x:Name="txtDate" Grid.Column="0" Grid.ColumnSpan="3" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End"  FontSize="Medium">
                         <Entry.Behaviors>
                             <conv:MaskedBehavior Mask="XXXX/XX/XX" />
                         </Entry.Behaviors>
                     </local:DateEntry>
-                    <Label Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="دلیل ویرایش:" VerticalTextAlignment="Center" FontSize="Medium"/>
-                    <Picker Grid.Row="1" x:Name="ReversionReasonPicker" Grid.Column="0" HorizontalOptions="FillAndExpand" />
-                    <Label Grid.Row="2" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="بازاریاب:" VerticalTextAlignment="Center" FontSize="Medium"/>
-                    <Picker Grid.Row="2" x:Name="VisitorPicker" Grid.Column="0" HorizontalOptions="FillAndExpand" />
+                    <Label Grid.Row="1" Grid.Column="3" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="علت:" VerticalTextAlignment="Center" FontSize="Medium"/>
+                    <Picker Grid.Row="1" x:Name="ReversionReasonPicker" Grid.Column="0" Grid.ColumnSpan="3" HorizontalOptions="FillAndExpand" />
+                    <Label Grid.Row="2" Grid.Column="3" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="بازاریاب:" VerticalTextAlignment="Center" FontSize="Medium"/>
+                    <Picker Grid.Row="2" x:Name="VisitorPicker" Grid.Column="0"  Grid.ColumnSpan="3" HorizontalOptions="FillAndExpand" />
+                    <Label Grid.Row="3" Grid.Column="3" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="توضیحات:" VerticalTextAlignment="Center" FontSize="Medium"/>
+                    <Entry Grid.Row="3" x:Name="txtDesc" Grid.Column="0" Grid.ColumnSpan="3" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" VerticalOptions="Center"/>
+                    <Label Grid.Row="4" Grid.Column="3" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="تخفیف حجمی:" VerticalTextAlignment="Center" FontSize="Medium"/>
+                    <Entry Grid.Row="4" x:Name="txtReversionDiscountPercent" Grid.Column="2" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" VerticalOptions="Center"/>
+                    <Label Grid.Row="4" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" Text="%" VerticalTextAlignment="Center" FontSize="Medium"/>
+                    <Entry Grid.Row="4" x:Name="txtReversionDiscountAmount" Grid.Column="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" VerticalOptions="Center"/>
                 </Grid>
 
                 <Grid x:Name="PartnerSection" Padding="5, 5, 5, 0" RowSpacing="5" ColumnSpacing="0" BackgroundColor="#e7e7e7" >
@@ -78,14 +87,19 @@
                                     <Label x:Name="NameLabel" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" HorizontalOptions="End" HorizontalTextAlignment="End" LineBreakMode="TailTruncation"  Text="{Binding Name} " FontSize="Medium" />
                                     <Label x:Name="CodeLabel" Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" HorizontalOptions="End" HorizontalTextAlignment="End" LineBreakMode="HeadTruncation"  Text="{Binding Code} " FontSize="Medium" />
 
-                                    <Label x:Name="PriceLabel" Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" HorizontalTextAlignment="Start" Text="{Binding Price}" FontSize="Medium" IsVisible="False"/>
-                                    <local:MyEntry x:Name="FeeText" Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding ReversionFee,Mode=TwoWay}" FontSize="Medium" />
+                                    <Label x:Name="PriceLabel" Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" HorizontalTextAlignment="Start" Text="{Binding Price}" FontSize="Medium" IsVisible="False" VerticalOptions="Center"/>
+                                    <local:MyEntry x:Name="FeeText" Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding ReversionFee,Mode=TwoWay}" FontSize="Medium" HeightRequest="32" VerticalOptions="Center" />
                                     <Label x:Name="FeeLabel" Grid.Row="1" Grid.Column="2" HorizontalOptions="Start" HorizontalTextAlignment="Start" Text="فی:" FontSize="Medium" />
 
-                                    <local:MyCheckBox x:Name="chkIsFreeProduct" Grid.Row="2" Grid.Column="0" Text="اشانتیون" Checked="{Binding ReversionIsFreeProduct,Mode=TwoWay}"  FontSize="Medium"></local:MyCheckBox>
-                                    <local:MyEntry x:Name="txtReversionDiscountPercent" Grid.Row="2" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding ReversionDiscountPercent,Mode=TwoWay}" FontSize="Medium" />
+                                    <local:MyCheckBox x:Name="chkIsFreeProduct" Grid.Row="2" Grid.Column="0" Text="اشانتیون" Checked="{Binding ReversionIsFreeProduct,Mode=TwoWay}" FontSize="Medium" HorizontalOptions="Start">
+                                        <!--<local:MyCheckBox.GestureRecognizers>
+                                            <TapGestureRecognizer Tapped="chkIsFreeProduct_Clicked" CommandParameter="{Binding Id,Mode=TwoWay}"></TapGestureRecognizer>
+                                        </local:MyCheckBox.GestureRecognizers>-->
+                                    </local:MyCheckBox>
+
+                                    <local:MyEntry x:Name="txtReversionDiscountPercent" Grid.Row="2" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding ReversionDiscountPercent,Mode=TwoWay}" FontSize="Medium" HeightRequest="32"/>
                                     <Label x:Name="lblReversionDiscountPercent" Grid.Row="2" Grid.Column="2" HorizontalOptions="Start" HorizontalTextAlignment="Start" Text="ت%" FontSize="Medium" />
-                                    <local:MyEntry x:Name="txtReversionVATPercent" Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding ReversionDiscountPercent,Mode=TwoWay}" FontSize="Medium" />
+                                    <local:MyEntry x:Name="txtReversionVATPercent" Grid.Row="2" Grid.Column="3" Grid.ColumnSpan="2" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding ReversionVATPercent,Mode=TwoWay}" FontSize="Medium" HeightRequest="32"/>
                                     <Label x:Name="lblReversionVATPercent" Grid.Row="2" Grid.Column="5" HorizontalOptions="Start" HorizontalTextAlignment="Start" Text="م%" FontSize="Medium" />
 
                                     <local:LeftEntryCompanionLabel x:Name="QuantityMinusLabel" Grid.Row="1" Grid.Column="3" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalOptions="Center" VerticalTextAlignment="Center"  FontSize="Large" Text="-" LineBreakMode = "TailTruncation">
