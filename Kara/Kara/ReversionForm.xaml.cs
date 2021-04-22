@@ -1785,7 +1785,8 @@ namespace Kara
             await Task.Delay(100);
             if (AllStuffsData == null || RefreshStuffsData)
             {
-                var StuffsResult = await App.DB.GetAllStuffsListAsync(SelectedPartner != null ? SelectedPartner.Id : new Nullable<Guid>(), EditingOrder != null ? EditingOrder.Id : new Nullable<Guid>(), false, WarehouseId);
+                //var StuffsResult = await App.DB.GetAllStuffsListAsync(SelectedPartner != null ? SelectedPartner.Id : new Nullable<Guid>(), EditingOrder != null ? EditingOrder.Id : new Nullable<Guid>(), false, WarehouseId);
+                var StuffsResult = await App.DB.GetAllStuffsListForReversionAsync();
                 if (!StuffsResult.Success)
                 {
                     App.ShowError("خطا", "در نمایش لیست کالاها خطایی رخ داد.\n" + StuffsResult.Message, "خوب");
@@ -1901,6 +1902,8 @@ namespace Kara
                 StuffsListTemp = StuffsListTemp.OrderBy(a => StuffsListOrderDic[a.StuffId]).ThenBy(a => a.BatchNumberId.HasValue).ToList();
 
                 _StuffsList = new ObservableCollection<DBRepository.StuffListModel>(StuffsListTemp);
+               
+                //var xxx = _StuffsList.Select(a => a.Code).ToList();
             }
             catch (Exception err)
             {
@@ -2034,11 +2037,11 @@ namespace Kara
                         //BatchNumber = a.BatchNumber,
                         ReversionId = newId,
                         Id = Guid.NewGuid(),
-                        DiscountPercent = a.ReversionDiscountPercent.ToSafeString().ToLatinDigits().ToSafeDecimal(),
+                        DiscountPercent = !a.ReversionIsFreeProduct ? a.ReversionDiscountPercent.ToSafeString().ToLatinDigits().ToSafeDecimal() : 0,
                         IsFreeProduct = a.ReversionIsFreeProduct,
                         Quantity = a.Quantity,
                         VATAmount = a.ReversionVATAmount.ToLatinDigits().ToSafeDecimal(),
-                        VATPercent = a.ReversionVATPercent.ToLatinDigits().ToSafeDecimal(),
+                        VATPercent = !a.ReversionIsFreeProduct ?  a.ReversionVATPercent.ToLatinDigits().ToSafeDecimal() : 0,
                         StuffId = a.StuffId,
                         MinorPackagePrice= a.ReversionFee.ToLatinDigits().ToSafeDecimal(), //???
                         ReversionFee = a.ReversionFee.ToLatinDigits().ToSafeDecimal(),

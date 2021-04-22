@@ -26,7 +26,7 @@ namespace Kara.Assets
                 if (_HttpClient == null)
                 {
                     _HttpClient = new HttpClient();
-                    _HttpClient.Timeout = new TimeSpan(0, 2, 30);
+                    _HttpClient.Timeout = new TimeSpan(0, 2, 00);
                     _HttpClient.DefaultRequestHeaders.Add("Accept", "application/json");
                 }
                 return _HttpClient;
@@ -456,7 +456,39 @@ namespace Kara.Assets
             }
         }
 
-        
+        public static async Task<LicHelper> CheckLicense(string uniqueIdentifier)
+        {
+            try
+            {
+                var url = ServerRoot + $"CheckLicense?deviceUniqueIdentifier={uniqueIdentifier}";
+                                                
+                var client = new System.Net.Http.HttpClient();
+
+                HttpResponseMessage response = await client.GetAsync(url);
+
+                LicHelper resultDeserialized = null;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    resultDeserialized = JsonConvert.DeserializeObject<LicHelper>(content);
+                }
+
+                return resultDeserialized;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public class LicHelper
+        {
+            public bool HasVisitorLic { get; set; }
+            public bool HasTahsildarLic { get; set; }
+            public bool HasDistributerLic { get; set; }
+        }
+
         public class ReturnOrderCompletelyDto
         {
             public bool IsSuccess { get; set; }
@@ -660,6 +692,8 @@ namespace Kara.Assets
             public decimal GeoLocation_Long { get; set; }
             public Guid PartnerEntityId { get; set; }
             public bool Confirmed { get; set; }
+            public bool AllStuffsReturned { get; set; }
+            public Guid? ReShipmentOrderId { get; set; }
         }
 
         public static async Task<ResultSuccess<List<TotalDetailModel>>> GetTotalDetails(string UserName, string Password, string CurrentVersionNumber, Guid totalId)
@@ -2255,6 +2289,7 @@ namespace Kara.Assets
                     App.CalculateStuffsSettlementDaysBasedOn.Value = AppSettings[0].CalculateStuffsSettlementDaysBasedOn;
                     App.UseCollectorAndroidApplication.Value = AppSettings[0].UseCollectorAndroidApplication;
                     App.UseVisitorsNadroidApplication.Value = AppSettings[0].UseVisitorsNadroidApplication;
+                    App.UseDistributerAndroidApplication.Value = AppSettings[0].UseDistributerAndroidApplication;
                 }
 
                 var AccessesResult = await App.DB.FetchUserAccessesAsync();

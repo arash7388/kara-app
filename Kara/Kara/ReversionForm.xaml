@@ -87,8 +87,8 @@
                                     <Label x:Name="NameLabel" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" HorizontalOptions="End" HorizontalTextAlignment="End" LineBreakMode="TailTruncation"  Text="{Binding Name} " FontSize="Medium" />
                                     <Label x:Name="CodeLabel" Grid.Row="0" Grid.Column="4" Grid.ColumnSpan="2" HorizontalOptions="End" HorizontalTextAlignment="End" LineBreakMode="HeadTruncation"  Text="{Binding Code} " FontSize="Medium" />
 
-                                    <Label x:Name="PriceLabel" Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" HorizontalTextAlignment="Start" Text="{Binding Price}" FontSize="Medium" IsVisible="False" VerticalOptions="Center"/>
-                                    <local:MyEntry x:Name="FeeText" Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding ReversionFee,Mode=TwoWay}" FontSize="Medium" HeightRequest="32" VerticalOptions="Center" />
+                                    <Label x:Name="PriceLabel" Grid.Row="1" Grid.Column="0" HorizontalOptions="Start" HorizontalTextAlignment="End" Text="{Binding Price}" FontSize="Medium" IsVisible="False" VerticalOptions="Center"/>
+                                    <local:MyEntry x:Name="FeeText" Grid.Row="1" Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Start" Text="{Binding ReversionFee,Mode=TwoWay}" FontSize="Medium" HeightRequest="32" VerticalOptions="Center" />
                                     <Label x:Name="FeeLabel" Grid.Row="1" Grid.Column="2" HorizontalOptions="Start" HorizontalTextAlignment="Start" Text="فی:" FontSize="Medium" />
 
                                     <local:MyCheckBox x:Name="chkIsFreeProduct" Grid.Row="2" Grid.Column="0" Text="اشانتیون" Checked="{Binding ReversionIsFreeProduct,Mode=TwoWay}" FontSize="Medium" HorizontalOptions="Start">

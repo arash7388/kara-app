@@ -1,8 +1,12 @@
 ﻿using Kara.Assets;
 using Kara.CustomRenderer;
+using Kara.Services;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using Xamarin.Essentials;
+using Java.Security;
+using Permissions = Xamarin.Essentials.Permissions;
 
 namespace Kara
 {
@@ -14,7 +18,8 @@ namespace Kara
         private Image UsernameIcon = new EntryCompanionIcon() { Source = "username.png" };
         private Entry Password = new MyEntry() { HorizontalTextAlignment = TextAlignment.End, Placeholder = "کلمه عبور", IsPassword = true, LeftRounded = true };
         private Image PasswordIcon = new EntryCompanionIcon() { Source = "password.png" };
-        private Button LoginButton = new RoundButton() { Text = "ورود", FontAttributes = FontAttributes.Bold };
+        private Button LoginButton = new RoundButton() { Text = "ورود", FontAttributes = FontAttributes.Bold ,BackgroundColor = Color.Black };
+        private Button UniqueIdButton = new RoundButton() { Text = "شناسه سیستمی", FontAttributes = FontAttributes.Bold };
         private ActivityIndicator BusyIndicator = new ActivityIndicator() { VerticalOptions = LayoutOptions.Center, HorizontalOptions = LayoutOptions.Center, HeightRequest = 30, Color = Color.FromHex("E6EBEF"), IsRunning = false };
         private Label LoginErrorText = new Label() { TextColor = Color.FromHex("f33"), HorizontalTextAlignment = TextAlignment.Center };
 
@@ -24,12 +29,24 @@ namespace Kara
             NavigationPage.SetHasNavigationBar(this, false);
 
             LoginButton.Clicked += Login;
+            UniqueIdButton.Clicked += UniqueIdButton_Clicked;
 
             ServerAddress.Text = App.ServerAddress;
             if (App.Username.Value != "")
                 Username.Text = App.Username.Value;
 
             BusyIndicator.IsRunning = false;
+        }
+
+        private async void UniqueIdButton_Clicked(object sender, EventArgs e)
+        {
+            string deviceIdentifier = DependencyService.Get<IDevice>().GetIdentifier();
+            var s = await DisplayActionSheet("", "انصراف", deviceIdentifier + " : شناسه سیستمی", "کپی");
+            
+            if (s == "کپی")
+            {
+                await Clipboard.SetTextAsync(deviceIdentifier);
+            }
         }
 
         private Guid LastSizeAllocationId = Guid.NewGuid();
@@ -63,7 +80,8 @@ namespace Kara
                     new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) },
                     new RowDefinition() { Height = new GridLength(0.5, GridUnitType.Auto) },
                     new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) },
-                    new RowDefinition() { Height = new GridLength(10, GridUnitType.Star) }
+                    new RowDefinition() { Height = new GridLength(10, GridUnitType.Star) },
+                    new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) },
                 };
 
                     var y = 0.8;
@@ -79,16 +97,27 @@ namespace Kara
 
                     LoginLayoutGrid.Children.Add(ServerAddress, 1, 1);
                     Grid.SetColumnSpan(ServerAddress, 2);
+                                        
                     LoginLayoutGrid.Children.Add(ServerAddressIcon, 3, 1);
+
                     LoginLayoutGrid.Children.Add(Username, 1, 2);
                     Grid.SetColumnSpan(Username, 2);
+
                     LoginLayoutGrid.Children.Add(UsernameIcon, 3, 2);
+
                     LoginLayoutGrid.Children.Add(Password, 1, 3);
                     Grid.SetColumnSpan(Password, 2);
+
                     LoginLayoutGrid.Children.Add(PasswordIcon, 3, 3);
+
                     LoginLayoutGrid.Children.Add(LoginButton, 1, 5);
                     Grid.SetColumnSpan(LoginButton, 3);
+
+                    LoginLayoutGrid.Children.Add(UniqueIdButton, 1, 7);
+                    Grid.SetColumnSpan(UniqueIdButton, 3);
+
                     LoginLayoutGrid.Children.Add(BusyIndicator, 1, 5);
+
                     LoginLayoutGrid.Children.Add(LoginErrorText, 1, 6);
                     Grid.SetColumnSpan(LoginErrorText, 3);
                 }
@@ -110,6 +139,46 @@ namespace Kara
             {
                 BusyIndicator.IsRunning = true;
 
+                if (!DependencyService.Get<IDevice>().PhonePermissionGranted())
+                {
+                    // Notify user permission was denied
+                    App.ShowError("خطا", "لطفا از قسمت تنظیمات اجازه دسترسی به اطلاعات گوشی را صادر نمایید ", "باشه");
+                    return;
+                }
+
+                var getSettingTask = Kara.Assets.Connectivity.GetAndroidAppSettings(Username.Text, Password.Text);
+                await getSettingTask;
+
+                App.UseVisitorsNadroidApplication.Value = getSettingTask.Result.Data.UseVisitorsNadroidApplication;
+                App.UseCollectorAndroidApplication.Value = getSettingTask.Result.Data.UseCollectorAndroidApplication;
+                App.UseDistributerAndroidApplication.Value = getSettingTask.Result.Data.UseDistributerAndroidApplication;
+
+                var lic = await Kara.Assets.Connectivity.CheckLicense(DependencyService.Get<IDevice>().GetIdentifier());
+
+                if (App.UseVisitorsNadroidApplication.Value)
+                    if (!lic.HasVisitorLic)
+                    {
+                        App.ShowError("خطا", "شما لایسنس استفاده از نسخه ویزیتور را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
+                        BusyIndicator.IsRunning = false;
+                        return;
+                    }
+
+                if (App.UseCollectorAndroidApplication.Value)
+                    if (!lic.HasTahsildarLic)
+                    {
+                        App.ShowError("خطا", "شما لایسنس استفاده از نسخه تحصیلدار را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
+                        BusyIndicator.IsRunning = false;
+                        return;
+                    }
+
+                if (App.UseDistributerAndroidApplication.Value)
+                    if (!lic.HasDistributerLic)
+                    {
+                        App.ShowError("خطا", "شما لایسنس استفاده از نسخه موزع را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
+                        BusyIndicator.IsRunning = false;
+                        return;
+                    }
+
                 var locationTask = App.CheckGps();
 
                 LoginErrorText.IsVisible = false;
@@ -120,8 +189,7 @@ namespace Kara
                 await locationTask;
                 var loginResult = await loginTask;
 
-                var getSettingTask = Kara.Assets.Connectivity.GetAndroidAppSettings(Username.Text, Password.Text);
-                await getSettingTask;
+                
 
                 var tasks = new Task[] { locationTask, loginTask, getSettingTask };
                 Task.WaitAll(tasks);
@@ -147,9 +215,6 @@ namespace Kara
                 App.UserEntityId.Value = loginResult.Data.EntityId;
                 App.UserRealName.Value = loginResult.Data.RealName;
                 App.EntityCode.Value = loginResult.Data.EntityCode;
-
-                App.UseVisitorsNadroidApplication.Value = getSettingTask.Result.Data.UseVisitorsNadroidApplication;
-                App.UseCollectorAndroidApplication.Value = getSettingTask.Result.Data.UseCollectorAndroidApplication;
 
                 await Navigation.PushAsync(new MainMenu()
                 {

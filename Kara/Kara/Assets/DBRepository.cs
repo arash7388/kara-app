@@ -33,7 +33,7 @@ namespace Kara.Assets
                 //conn.CreateTable(typeof(TempTable));
             }
         }
-        
+
         public async Task<ResultSuccess> CreateTablesAsync()
         {
             return await Task.Run(() =>
@@ -64,7 +64,7 @@ namespace Kara.Assets
                 {
                     foreach (var table in ModelsInterface.AllTables)
                         conn.Execute("Delete from " + table.Value);
-                        
+
                     CommitTransaction();
                     return new ResultSuccess(true, "");
                 }
@@ -76,7 +76,8 @@ namespace Kara.Assets
             });
         }
 
-        public ResultSuccess InitTransaction() {
+        public ResultSuccess InitTransaction()
+        {
             try
             {
                 conn.BeginTransaction();
@@ -113,7 +114,7 @@ namespace Kara.Assets
                 return new ResultSuccess(false, err.ProperMessage());
             }
         }
-        
+
         public async Task<ResultSuccess> InsertOrUpdateAllRecordsAsync<T>(IEnumerable<T> Records)
         {
             return await Task.Run(() =>
@@ -199,7 +200,7 @@ namespace Kara.Assets
                 }
             });
         }
-        
+
         public async Task<ResultSuccess> SetEnabledForAllRecordsAsync<T>(bool Enabled)
         {
             return await Task.Run(() =>
@@ -308,15 +309,21 @@ namespace Kara.Assets
             public Partner PartnerData { get; set; }
             public int? DistanceFromMe { get; set; }
             public bool Sent { get; set; }
-            public bool Selected { get { return _Selected; } set { _Selected = value; OnPropertyChanged("Selected"); OnPropertyChanged("RowColor"); if(App.InsertedInformations_Partners != null) App.InsertedInformations_Partners.RefreshToolbarItems(); } }
-            public string RowColor { get { return ForChangedPartnersList ? Selected ? "#F5F5A4" : Sent ? "#B7E5BF" : "#DCE6FA" :
-                Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE6FA"; } }
+            public bool Selected { get { return _Selected; } set { _Selected = value; OnPropertyChanged("Selected"); OnPropertyChanged("RowColor"); if (App.InsertedInformations_Partners != null) App.InsertedInformations_Partners.RefreshToolbarItems(); } }
+            public string RowColor
+            {
+                get
+                {
+                    return ForChangedPartnersList ? Selected ? "#F5F5A4" : Sent ? "#B7E5BF" : "#DCE6FA" :
+Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE6FA";
+                }
+            }
             public static bool Multiselection { get; set; }
             public bool CanBeSelectedInMultiselection { get { return Sent ? false : true; } }
             public GridLength CheckBoxColumnWidth { get { return Multiselection ? 60 : 0; } }
-            
+
             public bool ForChangedPartnersList { get; set; }
-            
+
             public event PropertyChangedEventHandler PropertyChanged;
             public void OnPropertyChanged(string propertyName)
             {
@@ -348,7 +355,7 @@ namespace Kara.Assets
                     var AllPartners = conn.Table<Partner>().Where(a => a.Enabled).ToList();
 
                     AllPartners = FilterPartners(AllPartners, Filter);
-                    
+
                     var Partners = DayPartners.Select(a => AllPartners.SingleOrDefault(b => a.PartnerId == b.Id)).Where(a => a != null).ToList();
 
                     var Routes = conn.Table<Zone>().Where(a => a.ZoneLevel == 3).ToList();
@@ -411,7 +418,7 @@ namespace Kara.Assets
                 }
             });
         }
-        
+
         public async Task<ResultSuccess<List<PartnerListModel>>> GetAllPartnersListAsync(bool JustChanged, bool? JustToday, bool? JustLocal, int? NearbyCustomers_Distance, string Filter)
         {
             Filter = Filter.ToLatinDigits();
@@ -423,18 +430,18 @@ namespace Kara.Assets
                     var Tomorrow = Today.AddDays(1);
                     var AllPartners = conn.Table<Partner>().Where(a => a.Enabled).ToList();
 
-                    if(JustChanged)
+                    if (JustChanged)
                     {
                         AllPartners = AllPartners.Where(a => a.ChangeDate.HasValue).ToList();
-                        if(JustToday.Value)
+                        if (JustToday.Value)
                             AllPartners = AllPartners.Where(a => a.ChangeDate.Value >= Today && a.ChangeDate.Value < Tomorrow).ToList();
 
                         if (JustLocal.Value)
                             AllPartners = AllPartners.Where(a => !a.Sent.GetValueOrDefault(false)).ToList();
                     }
-                    
+
                     AllPartners = FilterPartners(AllPartners, Filter);
-                    
+
                     var Cities = conn.Table<Zone>().Where(a => a.ZoneLevel == 1).ToList();
                     var Zones = conn.Table<Zone>().Where(a => a.ZoneLevel == 2).ToList();
                     var Routes = conn.Table<Zone>().Where(a => a.ZoneLevel == 3).ToList();
@@ -460,13 +467,13 @@ namespace Kara.Assets
                     var PartnersWithData = (from Partner in AllPartners
                                                 //join Route in Routes on Partner.ZoneId equals Route.Id
                                             join Route in Routes on Partner.ZoneId equals Route.Id into zones
-                                                 from z in zones.DefaultIfEmpty()
+                                            from z in zones.DefaultIfEmpty()
                                             join Group in Groups on Partner.Id equals Group.PartnerId into PartnerGroupNames
-                                                 from PartnerGroupName in PartnerGroupNames.DefaultIfEmpty()
+                                            from PartnerGroupName in PartnerGroupNames.DefaultIfEmpty()
                                             join Order in Orders on Partner.Id equals Order.PartnerId into PartnerOrders
-                                                 from PartnerOrder in PartnerOrders.DefaultIfEmpty()
+                                            from PartnerOrder in PartnerOrders.DefaultIfEmpty()
                                             join FailedVisit in FailedVisits on Partner.Id equals FailedVisit.PartnerId into PartnerFailedVisits
-                                                 from PartnerFailedVisit in PartnerFailedVisits.DefaultIfEmpty()
+                                            from PartnerFailedVisit in PartnerFailedVisits.DefaultIfEmpty()
                                             select new PartnerListModel()
                                             {
                                                 Id = Partner.Id,
@@ -551,9 +558,9 @@ namespace Kara.Assets
             {
                 try
                 {
-                    if(_StuffsSettlementDays == null)
+                    if (_StuffsSettlementDays == null)
                         _StuffsSettlementDays = conn.Table<StuffSettlementDay>().ToList().ToDictionary(a => a.Key.ToLower(), a => a.SettlementDay);
-                        
+
                     return new ResultSuccess<Dictionary<string, int>>(true, "", _StuffsSettlementDays);
                 }
                 catch (Exception err)
@@ -596,7 +603,7 @@ namespace Kara.Assets
                 }
             });
         }
-        
+
         public async Task<ResultSuccess<List<Zone>>> GetZonesAsync()
         {
             return await Task.Run(() =>
@@ -791,7 +798,7 @@ namespace Kara.Assets
             public int? _PreCode { get; set; }
             public DateTime _DateTime { get; set; }
             public decimal _Price { get; set; }
-            
+
             public Guid Id { get; set; }
             public string PreCode { get { return _PreCode.HasValue ? _PreCode.Value.ToString().ToPersianDigits() : "---"; } }
             public string PartnerName { get; set; }
@@ -826,7 +833,7 @@ namespace Kara.Assets
                 {
                     var SaleOrdersQueryable = conn.Table<SaleOrder>().AsQueryable();
                     var Partners = conn.Table<Partner>().ToList();
-                    
+
                     if (justToday)
                     {
                         var Today = DateTime.Now.Date;
@@ -907,13 +914,23 @@ namespace Kara.Assets
         {
             private bool _Selected;
             public DateTime _DateTime { get; set; }
-            
+
             public Guid Id { get; set; }
             public string PartnerName { get; set; }
-            public string Date { get {
-                    return _DateTime.Date.ToTooShortStringForDate().ToPersianDigits(); } }
-            public string Time { get {
-                    return _DateTime.ToTooShortStringForTime().ToPersianDigits(); } }
+            public string Date
+            {
+                get
+                {
+                    return _DateTime.Date.ToTooShortStringForDate().ToPersianDigits();
+                }
+            }
+            public string Time
+            {
+                get
+                {
+                    return _DateTime.ToTooShortStringForTime().ToPersianDigits();
+                }
+            }
             public string Description { get; set; }
             public string DescriptionColor { get { return "#CE4242"; } }
             public bool Sent { get; set; }
@@ -922,9 +939,9 @@ namespace Kara.Assets
             public static bool Multiselection { get; set; }
             public bool CanBeSelectedInMultiselection { get { return Sent ? false : true; } }
             public GridLength CheckBoxColumnWidth { get { return Multiselection ? 60 : 0; } }
-            
+
             public FailedVisit FailedVisitData { get; set; }
-            
+
             public event PropertyChangedEventHandler PropertyChanged;
             public void OnPropertyChanged(string propertyName)
             {
@@ -1013,7 +1030,7 @@ namespace Kara.Assets
                 }
             });
         }
-        
+
         public async Task<ResultSuccess> DeletePartnerDynamicGroupsAsync(Guid PartnerId, Guid[] GroupIds)
         {
             return await Task.Run(() =>
@@ -1041,10 +1058,10 @@ namespace Kara.Assets
                     var SentCount = FailedVisits.Count(a => a.Sent);
                     if (SentCount != 0)
                         return new ResultSuccess(false, (FailedVisits.Count() == 1 ? "عدم سفارش" : FailedVisits.Count() == SentCount ? "تمام عدم سفارشات" : "برخی از عدم سفارشات") + " انتخاب شده به سرور ارسال شده است و نمی توانید آن" + (FailedVisits.Count() > 1 ? " ها" : "") + " را حذف کنید.");
-                    
+
                     foreach (var FailedVisitId in VisitIds)
                         conn.Execute("Delete from FailedVisit where Id = '" + FailedVisitId.ToString() + "'");
-                    
+
                     return new ResultSuccess(true, "");
                 }
                 catch (Exception err)
@@ -1063,7 +1080,7 @@ namespace Kara.Assets
                     var SentCount = Partners.Count(a => !string.IsNullOrEmpty(a.Code));
                     if (SentCount != 0)
                         return new ResultSuccess(false, (Partners.Count() == 1 ? "مشتری" : Partners.Count() == SentCount ? "تمام مشتریان" : "برخی از مشتریان") + " انتخاب شده به سرور ارسال شده و نمی توانید آن" + (Partners.Count() > 1 ? " ها" : "") + " را حذف کنید.");
-                    
+
                     foreach (var PartnerId in PartnerIds)
                     {
                         conn.Execute("Delete from DynamicGroupPartner where PartnerId = '" + PartnerId.ToString() + "'");
@@ -1241,7 +1258,7 @@ namespace Kara.Assets
                 }
             });
         }
-        
+
         public class StuffListModelEqualityComparer : IEqualityComparer<StuffListModel>
         {
             public bool Equals(StuffListModel stuff1, StuffListModel stuff2)
@@ -1266,7 +1283,7 @@ namespace Kara.Assets
                     OnPropertyChanged("Stuffs");
                 }
             }
-            
+
             public event PropertyChangedEventHandler PropertyChanged;
             public void OnPropertyChanged(string propertyName)
             {
@@ -1274,7 +1291,7 @@ namespace Kara.Assets
                 if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
             }
         }
-        
+
         public class PackageQuantityModel
         {
             public Package Package { get; set; }
@@ -1285,7 +1302,7 @@ namespace Kara.Assets
             public StuffListModel(PackageQuantityModel[] PackagesData)
             {
                 this.PackagesData = PackagesData;
-                if(PackagesData != null)
+                if (PackagesData != null)
                     _SelectedPackage = PackagesData.Any(a => a.Package.DefaultPackage) ? PackagesData.First(a => a.Package.DefaultPackage).Package : PackagesData.Any(a => a.Package.Coefficient == 1) ? PackagesData.Single(a => a.Package.Coefficient == 1).Package : PackagesData.Single(a => a.Package.Coefficient == PackagesData.Min(b => b.Package.Coefficient)).Package;
             }
             private bool _SelectedInGallaryMode;
@@ -1361,7 +1378,7 @@ namespace Kara.Assets
                             PackagesData.Single(a => a.Package.Id == SelectedPackage.Id).Quantity = 0;
 
                         ChangeProperties();
-                        if(BatchNumberId.HasValue)
+                        if (BatchNumberId.HasValue)
                             BatchNumberRow_StuffParentRow.ChangeProperties();
                     }
                 }
@@ -1396,16 +1413,16 @@ namespace Kara.Assets
                     {
                         _SelectedPackage = value;
                         ChangeProperties();
-                        if(StuffRow_BatchNumberRows != null)
+                        if (StuffRow_BatchNumberRows != null)
                             foreach (var item in StuffRow_BatchNumberRows)
                                 item.ChangeProperties();
                     }
                 }
             }
             public string UnitName { get { return SelectedPackage == null ? "" : (SelectedPackage.Name + (SelectedPackage.Coefficient != 1 ? ("(" + SelectedPackage.Coefficient + ")") : "")).ToPersianDigits(); } }
-            
-            public string Fee 
-            { 
+
+            public string Fee
+            {
                 get { return !_UnitPrice.HasValue ? "" : (_UnitPrice.Value * (SelectedPackage == null ? 1 : SelectedPackage.Coefficient)).ToString("###,###,###,###,###,###,##0.").ToPersianDigits(); }
             }
 
@@ -1420,12 +1437,12 @@ namespace Kara.Assets
             public string ReversionVATPercent
             {
                 get { return _reversionVATPercent.ToPersianDigits(); }
-                set 
+                set
                 {
                     if (ReversionIsFreeProduct)
                         _reversionVATPercent = "";
                     else
-                        _reversionVATPercent = value.ToLatinDigits(); 
+                        _reversionVATPercent = value.ToLatinDigits();
                 }
             }
 
@@ -1434,19 +1451,19 @@ namespace Kara.Assets
             {
                 get { return _reversionVATAmount.ToPersianDigits(); }
                 set
-                {_reversionVATAmount = value.ToLatinDigits(); }
+                { _reversionVATAmount = value.ToLatinDigits(); }
             }
 
             public string _reversionDiscountPercent;
             public string ReversionDiscountPercent
             {
                 get { return _reversionDiscountPercent.ToPersianDigits(); }
-                set 
+                set
                 {
                     if (ReversionIsFreeProduct)
                         _reversionDiscountPercent = "";
                     else
-                        _reversionDiscountPercent = value.ToLatinDigits(); 
+                        _reversionDiscountPercent = value.ToLatinDigits();
                 }
             }
 
@@ -1454,10 +1471,10 @@ namespace Kara.Assets
             public bool ReversionIsFreeProduct
             {
                 get { return _reversionIsFreeProduct; }
-                set 
+                set
                 {
                     _reversionIsFreeProduct = value;
-                    if(value)
+                    if (value)
                     {
                         ReversionDiscountPercent = "";
                         ReversionVATPercent = "";
@@ -1474,7 +1491,8 @@ namespace Kara.Assets
             public PackageQuantityModel[] PackagesData { get; set; }
             public decimal TotalStuffQuantity { get { return HasBatchNumbers ? StuffRow_BatchNumberRows.Sum(a => a.TotalStuffQuantity) : PackagesData != null ? PackagesData.Any() ? PackagesData.Sum(a => a.Quantity * a.Package.Coefficient) : 0 : 0; } }
             private decimal __UnitStock;
-            public decimal _UnitStock {
+            public decimal _UnitStock
+            {
                 get { return !HasBatchNumbers ? __UnitStock : StuffRow_BatchNumberRows.Any() ? StuffRow_BatchNumberRows.Sum(a => a._UnitStock) : 0; }
                 set { if (!HasBatchNumbers) __UnitStock = value; }
             }
@@ -1531,18 +1549,19 @@ namespace Kara.Assets
                 _UnitStock = obj._UnitStock
             };
 
-            if(!obj.BatchNumberId.HasValue)
+            if (!obj.BatchNumberId.HasValue)
             {
                 result.StuffRow_BatchNumberRows = obj.StuffRow_BatchNumberRows.Select(a => CloneStuff(a)).ToArray();
                 foreach (var item in result.StuffRow_BatchNumberRows)
                     item.BatchNumberRow_StuffParentRow = result;
             }
-            
+
             return result;
         }
-        
+
         public static bool _AllStuffsDataInitialized = false;
         public static List<StuffListModel> _AllStuffsData;
+        public static List<StuffListModel> _AllStuffsDataForReversion;
         public static List<StuffListModel> _AllStuffGroupsData;
         class GuidArrayEqualityComparer : IEqualityComparer<Guid[]>
         {
@@ -1557,7 +1576,7 @@ namespace Kara.Assets
                 else
                     return true;
             }
-            
+
             public int GetHashCode(Guid[] obj)
             {
                 return (obj == null ? "null" : !obj.Any() ? "" : obj.OrderBy(a => a).Select(a => a.ToString()).Aggregate((sum, x) => sum + "|" + x)).GetHashCode();
@@ -1571,7 +1590,7 @@ namespace Kara.Assets
                 {
                     var AllStuffs_OrderLess = conn.Table<Stuff>().Where(a => a.Enabled).ToList();
                     var StuffOrders = conn.Table<StuffOrder>().ToList();
-                    
+
                     var AllStuffs = (
                         from stuff in AllStuffs_OrderLess
                         join order in StuffOrders on stuff.Id equals order.StuffId into stuffsWithOrder
@@ -1579,7 +1598,7 @@ namespace Kara.Assets
                         orderby stuffWithOrder != null ? stuffWithOrder.OrderIndex : 1000000000, stuff.Code
                         select stuff
                     ).ToList();
-                    
+
                     var AllPackages = conn.Table<Package>().Where(a => a.Enabled).ToList();
 
                     var AllBatchNumbers = conn.Table<StuffBatchNumber>().Where(a => a.Enabled).ToList();
@@ -1620,7 +1639,7 @@ namespace Kara.Assets
                         var MultipleBasketIdsStuffIds = StuffBasketStuffs.GroupBy(a => a.StuffId).Where(a => a.Count() > 1).ToArray();
                         var guidArrayEqualityComparer = new GuidArrayEqualityComparer();
                         var MultipleBasketIds = MultipleBasketIdsStuffIds.Select(a => a.Select(b => b.BasketId).OrderBy(b => b).ToArray()).Distinct(guidArrayEqualityComparer).ToArray();
-                        
+
                         var CompoundBaskets = MultipleBasketIds.Select(a => new KeyValuePair<Guid[], StuffBasket>(a, new StuffBasket()
                         {
                             Id = Guid.NewGuid(),
@@ -1630,7 +1649,7 @@ namespace Kara.Assets
                         var AddingStuffBaskets = CompoundBaskets.Select(a => a.Value).ToArray();
 
                         StuffBaskets.AddRange(AddingStuffBaskets);
-                        
+
                         var CompoundBasketsStuffs = MultipleBasketIdsStuffIds.Select(a => new StuffBasketStuff()
                         {
                             StuffId = a.Key,
@@ -1649,13 +1668,13 @@ namespace Kara.Assets
                     }
 
                     var StuffsWithBatchNumbers = (from stuff in AllStuffs
-                                                 from batch in AllBatchNumbers.Where(a => a.StuffId == stuff.Id).DefaultIfEmpty()
-                                                 group batch by stuff into batchs
-                                                 select new
-                                                 {
-                                                     Stuff = batchs.Key,
-                                                     BatchNumbers = batchs.Where(a => a != null).ToArray()
-                                                 }).ToArray();
+                                                  from batch in AllBatchNumbers.Where(a => a.StuffId == stuff.Id).DefaultIfEmpty()
+                                                  group batch by stuff into batchs
+                                                  select new
+                                                  {
+                                                      Stuff = batchs.Key,
+                                                      BatchNumbers = batchs.Where(a => a != null).ToArray()
+                                                  }).ToArray();
 
                     var StuffsWithData = (from Stuff in StuffsWithBatchNumbers
                                           join StuffGroup in StuffsGroups on Stuff.Stuff.Id equals StuffGroup.StuffId
@@ -1687,7 +1706,7 @@ namespace Kara.Assets
                                                       }
                                                   }).ToArray()
                                           }).ToList();
-                    
+
                     foreach (var StuffRow in StuffsWithData)
                         foreach (var BatchNumberRow in StuffRow.StuffRow_BatchNumberRows)
                             BatchNumberRow.BatchNumberRow_StuffParentRow = StuffRow;
@@ -1695,6 +1714,147 @@ namespace Kara.Assets
                     _AllStuffsData = StuffsWithData;
                     _AllStuffGroupsData = StuffsGroups.Any(a => a.GroupId != Guid.Empty) ? StuffsGroups.GroupBy(a => new { a.GroupId, a.GroupCode, a.GroupName }).OrderBy(a => a.Key.GroupCode).Select((a, index) => new StuffListModel(null) { StuffId = a.Key.GroupId, GroupCode = a.Key.GroupCode, GroupName = a.Key.GroupName, IsGroup = true, IsGroupOpen = false, GroupNumber = index + 1 }).ToList() : null;
                     _AllStuffsDataInitialized = true;
+
+                    return new ResultSuccess(true, "");
+                }
+                catch (Exception err)
+                {
+                    return new ResultSuccess(false, err.ProperMessage());
+                }
+            });
+        }
+
+        public async Task<ResultSuccess> FetchStuffsListForReversionAsync()
+        {
+            return await Task.Run(() =>
+            {
+                try
+                {
+                    var AllStuffs_OrderLess = conn.Table<Stuff>().Where(a => a.Enabled).ToList();
+                    var StuffOrders = conn.Table<StuffOrder>().ToList();
+
+                    var AllStuffs = (
+                        from stuff in AllStuffs_OrderLess
+                        join order in StuffOrders on stuff.Id equals order.StuffId into stuffsWithOrder
+                        from stuffWithOrder in stuffsWithOrder.DefaultIfEmpty()
+                        orderby stuffWithOrder != null ? stuffWithOrder.OrderIndex : 1000000000, stuff.Code
+                        select stuff
+                    ).ToList();
+
+                    var AllPackages = conn.Table<Package>().Where(a => a.Enabled).ToList();
+
+                    var AllBatchNumbers = conn.Table<StuffBatchNumber>().Where(a => a.Enabled).ToList();
+
+                    var StuffsGroups = AllStuffs.Select(a => new { GroupId = Guid.Empty, GroupCode = "", GroupName = "", StuffId = a.Id }).ToList();
+                    if (App.StuffListGroupingMethod.Value == 1)
+                    {
+                        var StuffGroups = conn.Table<StuffGroup>().ToList();
+                        var StuffGroupsWithParents = StuffGroups.Where(a => AllStuffs.Any(b => b.GroupId == a.Id)).Select(a => new
+                        {
+                            Group = a,
+                            Parent = StuffGroups.SingleOrDefault(b => b.Id == a.ParentId)
+                        }).Select(a => new
+                        {
+                            Group = a.Group,
+                            Parent = a.Parent,
+                            GrandParent = a.Parent == null ? null : StuffGroups.SingleOrDefault(b => b.Id == a.Parent.ParentId)
+                        }).Select(a => new
+                        {
+                            Group = a.Group,
+                            Parent = a.Parent,
+                            GrandParent = a.GrandParent,
+                            GrandGrandParent = a.GrandParent == null ? null : StuffGroups.SingleOrDefault(b => b.Id == a.GrandParent.ParentId)
+                        }).Select(a => new
+                        {
+                            GroupId = a.Group.Id,
+                            GroupCode = a.Group.Code,
+                            GroupName = (a.Parent == null ? "" : ((a.GrandParent == null ? "" : ((a.GrandGrandParent == null ? "" : (a.GrandGrandParent.Name + " > ")) + a.GrandParent.Name + " > ")) + a.Parent.Name + " > ")) + a.Group.Name
+                        });
+
+                        StuffsGroups = StuffGroupsWithParents.SelectMany(a => AllStuffs.Where(b => b.GroupId == a.GroupId).Select(b => new { GroupId = a.GroupId, GroupCode = a.GroupCode, GroupName = a.GroupName, StuffId = b.Id })).ToList();
+                    }
+                    else if (App.StuffListGroupingMethod.Value == 2)
+                    {
+                        var StuffBaskets = conn.Table<StuffBasket>().ToList();
+                        var StuffBasketStuffs = conn.Table<StuffBasketStuff>().ToList();
+
+                        var MultipleBasketIdsStuffIds = StuffBasketStuffs.GroupBy(a => a.StuffId).Where(a => a.Count() > 1).ToArray();
+                        var guidArrayEqualityComparer = new GuidArrayEqualityComparer();
+                        var MultipleBasketIds = MultipleBasketIdsStuffIds.Select(a => a.Select(b => b.BasketId).OrderBy(b => b).ToArray()).Distinct(guidArrayEqualityComparer).ToArray();
+
+                        var CompoundBaskets = MultipleBasketIds.Select(a => new KeyValuePair<Guid[], StuffBasket>(a, new StuffBasket()
+                        {
+                            Id = Guid.NewGuid(),
+                            Name = a.Select(b => StuffBaskets.Single(c => c.Id == b).Name).Aggregate((sum, x) => sum + "، " + x)
+                        })).ToArray();
+
+                        var AddingStuffBaskets = CompoundBaskets.Select(a => a.Value).ToArray();
+
+                        StuffBaskets.AddRange(AddingStuffBaskets);
+
+                        var CompoundBasketsStuffs = MultipleBasketIdsStuffIds.Select(a => new StuffBasketStuff()
+                        {
+                            StuffId = a.Key,
+                            BasketId = CompoundBaskets.Single(b => guidArrayEqualityComparer.Equals(a.Select(c => c.BasketId).ToArray(), b.Key)).Value.Id
+                        }).ToArray();
+
+                        var RemovingStuffBasketStuffs = StuffBasketStuffs.Where(a => MultipleBasketIdsStuffIds.Any(b => a.StuffId == b.Key)).ToArray();
+                        foreach (var item in RemovingStuffBasketStuffs)
+                            StuffBasketStuffs.Remove(item);
+                        StuffBasketStuffs.AddRange(CompoundBasketsStuffs);
+
+                        StuffsGroups = StuffBaskets.OrderBy(a => a.Name).SelectMany((a, index) => StuffBasketStuffs.Where(b => b.BasketId == a.Id).Select(b => new { GroupId = a.Id, GroupCode = index.ToString().PadLeft(3, '0'), GroupName = a.Name, StuffId = b.StuffId })).ToList();
+                        var WithoutBasketStuffs = AllStuffs.Where(a => !StuffBasketStuffs.Any(b => b.StuffId == a.Id)).Select(a => new { GroupId = Guid.Empty, GroupCode = "99999999", GroupName = "سایر کالاها", StuffId = a.Id }).ToArray();
+                        if (WithoutBasketStuffs.Any())
+                            StuffsGroups.AddRange(WithoutBasketStuffs);
+                    }
+
+                    var StuffsWithBatchNumbers = (from stuff in AllStuffs
+                                                  from batch in AllBatchNumbers.Where(a => a.StuffId == stuff.Id).DefaultIfEmpty()
+                                                  group batch by stuff into batchs
+                                                  select new
+                                                  {
+                                                      Stuff = batchs.Key,
+                                                      BatchNumbers = batchs.Where(a => a != null).ToArray()
+                                                  }).ToArray();
+
+                    var StuffsWithData = (from Stuff in StuffsWithBatchNumbers
+                                          join StuffGroup in StuffsGroups on Stuff.Stuff.Id equals StuffGroup.StuffId
+                                          join Package in AllPackages on Stuff.Stuff.Id equals Package.StuffId
+                                          group Package by new { Stuff, StuffGroup } into Packages
+                                          select new StuffListModel(Packages.Select(a => new PackageQuantityModel() { Package = a, Quantity = 0 }).ToArray())
+                                          {
+                                              StuffId = Packages.Key.Stuff.Stuff.Id,
+                                              GroupName = Packages.Key.StuffGroup.GroupName,
+                                              GroupCode = Packages.Key.StuffGroup.GroupCode,
+                                              _UnitStock = 0,
+                                              _UnitPrice = null,
+                                              _ConsumerUnitPrice = null,
+                                              StuffData = Packages.Key.Stuff.Stuff,
+                                              BatchNumberData = null,
+                                              ImageSource = !string.IsNullOrWhiteSpace(Packages.Key.Stuff.Stuff.ImageFileExtension) && Packages.Key.Stuff.Stuff.SavedImageDate.HasValue ? ImageSource.FromFile(Path.Combine(App.imagesDirectory, Packages.Key.Stuff.Stuff.Id + "." + Packages.Key.Stuff.Stuff.ImageFileExtension)) : "NoImage.png",
+
+                                              StuffRow_BatchNumberRows = !Packages.Key.Stuff.BatchNumbers.Any() ? new StuffListModel[] { } :
+                                                  Packages.Key.Stuff.BatchNumbers.OrderBy(a => a.ExpirationDate).ThenBy(a => a.BatchNumber).Select(a => new StuffListModel(Packages.Select(b => new PackageQuantityModel() { Package = b, Quantity = 0 }).ToArray())
+                                                  {
+                                                      StuffId = Packages.Key.Stuff.Stuff.Id,
+                                                      BatchNumberId = a.BatchNumberId,
+                                                      BatchNumberData = a
+                                                  }).ToArray().Union(new StuffListModel[] {
+                                                      new StuffListModel(Packages.Select(b => new PackageQuantityModel() { Package = b, Quantity = 0 }).ToArray()) {
+                                                          StuffId = Packages.Key.Stuff.Stuff.Id,
+                                                          BatchNumberId = Guid.Empty,
+                                                          BatchNumberData = null
+                                                      }
+                                                  }).ToArray()
+                                          }).ToList();
+
+                    foreach (var StuffRow in StuffsWithData)
+                        foreach (var BatchNumberRow in StuffRow.StuffRow_BatchNumberRows)
+                            BatchNumberRow.BatchNumberRow_StuffParentRow = StuffRow;
+
+                    _AllStuffsDataForReversion = StuffsWithData;
+                    _AllStuffGroupsData = StuffsGroups.Any(a => a.GroupId != Guid.Empty) ? StuffsGroups.GroupBy(a => new { a.GroupId, a.GroupCode, a.GroupName }).OrderBy(a => a.Key.GroupCode).Select((a, index) => new StuffListModel(null) { StuffId = a.Key.GroupId, GroupCode = a.Key.GroupCode, GroupName = a.Key.GroupName, IsGroup = true, IsGroupOpen = false, GroupNumber = index + 1 }).ToList() : null;
                     
                     return new ResultSuccess(true, "");
                 }
@@ -1716,7 +1876,7 @@ namespace Kara.Assets
                         if (!result.Success)
                             return new ResultSuccess<List<StuffListModel>[]>(false, result.Message);
                     }
-                    
+
                     var Stocks = conn.Table<Stock>().ToList().Select(a => new
                     {
                         WarehouseId = a.WarehouseId,
@@ -1751,7 +1911,7 @@ namespace Kara.Assets
                                                        a.Key.BatchNumberId,
                                                        Quantity = a.Sum(b => b.Quantity)
                                                    }).ToList();
-                    
+
 
                     var AllStocks = from stock in Stocks
                                     from ordered in NotSubmittedOrderStuffs.Where(a => a.StuffId == stock.StuffId && a.BatchNumberId == stock.BatchNumberId).DefaultIfEmpty()
@@ -1761,20 +1921,20 @@ namespace Kara.Assets
                                         stock.BatchNumberId,
                                         stock = stock.Stock - (ordered != null ? ordered.Quantity : 0)
                                     };
-                    
+
                     var Today = DateTime.Now.Date;
                     List<PriceListStuff> PriceListStuffs = new List<PriceListStuff>();
                     var PriceListStuffResult = await GetPartnerPriceListStuffsAsync(PartnerId, Today);
                     if (PriceListStuffResult.Success)
                         PriceListStuffs = PriceListStuffResult.Data;
-                    
+
                     var AllStuffsData = _AllStuffsData.Select(a => CloneStuff(a)).ToList().Distinct().ToList();
 
                     var PriceData = from StuffData in AllStuffsData
                                     from PriceListStuff in PriceListStuffs.Where(a => a.StuffId == StuffData.StuffId).DefaultIfEmpty()
                                     select new { StuffData, PriceListStuff };
                     foreach (var item in PriceData)
-                        if(item.PriceListStuff != null)
+                        if (item.PriceListStuff != null)
                         {
                             item.StuffData._UnitPrice = item.PriceListStuff.SalePrice;
                             item.StuffData._ConsumerUnitPrice = item.PriceListStuff.ConsumerPrice;
@@ -1798,10 +1958,10 @@ namespace Kara.Assets
                     foreach (var item in AllStuffsData)
                     {
                         var ShouldBeDeletedBatchNumbers = item.StuffRow_BatchNumberRows.Where(a => a._UnitStock <= 0 && (a.BatchNumberId == Guid.Empty || !App.ShowNotAvailableStuffsOnOrderInsertion.Value)).ToArray();
-                        if(ShouldBeDeletedBatchNumbers.Any())
+                        if (ShouldBeDeletedBatchNumbers.Any())
                             item.StuffRow_BatchNumberRows = item.StuffRow_BatchNumberRows.Where(a => !ShouldBeDeletedBatchNumbers.Any(b => b.BatchNumberId == a.BatchNumberId)).ToArray();
                     }
-                    
+
                     if (_AllStuffGroupsData != null && !WithoutGroups)
                     {
                         var ThisStuffsGroups = _AllStuffGroupsData.Where(a => AllStuffsData.Any(b => b.GroupCode == a.GroupCode)).ToList();
@@ -1809,6 +1969,45 @@ namespace Kara.Assets
                     }
                     else
                         return new ResultSuccess<List<StuffListModel>[]>(true, "", new List<StuffListModel>[] { AllStuffsData, null });
+                }
+                catch (Exception err)
+                {
+                    return new ResultSuccess<List<StuffListModel>[]>(false, err.ProperMessage());
+                }
+            });
+        }
+
+        public async Task<ResultSuccess<List<StuffListModel>[]>> GetAllStuffsListForReversionAsync()
+        {
+            return await Task.Run(async () =>
+            {
+                try
+                {
+                    var result = await FetchStuffsListForReversionAsync();
+
+                    if (!result.Success)
+                        return new ResultSuccess<List<StuffListModel>[]>(false, result.Message);
+
+                    var AllStuffsData = _AllStuffsDataForReversion.Select(a => CloneStuff(a)).ToList().Distinct().ToList();
+
+                    var StuffsWithBatchNumbers = AllStuffsData.Where(a => !a.HasBatchNumbers).ToList();
+                    StuffsWithBatchNumbers.AddRange(AllStuffsData.Where(a => a.HasBatchNumbers).SelectMany(a => a.StuffRow_BatchNumberRows));
+
+                    var StuffsArray = StuffsWithBatchNumbers.Select(a => new
+                    {
+                        Id = a.StuffId.ToString() + "|" + a.BatchNumberId.GetValueOrDefault(Guid.Empty).ToString(),
+                        Model = a
+                    }).ToArray();
+
+
+                    foreach (var item in AllStuffsData)
+                    {
+                        var ShouldBeDeletedBatchNumbers = item.StuffRow_BatchNumberRows.Where(a => a._UnitStock <= 0 && (a.BatchNumberId == Guid.Empty || !App.ShowNotAvailableStuffsOnOrderInsertion.Value)).ToArray();
+                        if (ShouldBeDeletedBatchNumbers.Any())
+                            item.StuffRow_BatchNumberRows = item.StuffRow_BatchNumberRows.Where(a => !ShouldBeDeletedBatchNumbers.Any(b => b.BatchNumberId == a.BatchNumberId)).ToArray();
+                    }
+
+                    return new ResultSuccess<List<StuffListModel>[]>(true, "", new List<StuffListModel>[] { AllStuffsData, null });
                 }
                 catch (Exception err)
                 {
@@ -1828,7 +2027,7 @@ namespace Kara.Assets
 
                 for (int i = 0; i < App.QRScannerInVisitorAppForSelectingStuffTemplates.Length; i++)
                 {
-                    if(App.QRScannerInVisitorAppForSelectingStuffTemplates[i].Contains("<BatchNo>") || App.QRScannerInVisitorAppForSelectingStuffTemplates[i].Contains("<ExpDate>"))
+                    if (App.QRScannerInVisitorAppForSelectingStuffTemplates[i].Contains("<BatchNo>") || App.QRScannerInVisitorAppForSelectingStuffTemplates[i].Contains("<ExpDate>"))
                     {
                         for (int j = 0; j < stuff.StuffRow_BatchNumberRows.Length; j++)
                         {
@@ -1878,7 +2077,7 @@ namespace Kara.Assets
             catch (Exception err)
             {
             }
-            
+
             return false;
         }
 
@@ -1915,7 +2114,7 @@ namespace Kara.Assets
                             ).ToList();
                         }
                     }
-                    
+
                     AllStuffs = (
                         from TotalPoint in TotalPoints
                         join Stuff in AllStuffs on TotalPoint.Key.Id.ToString() + (TotalPoint.Key.GroupCode != null ? TotalPoint.Key.GroupCode : "") equals Stuff.Id.ToString() + (Stuff.GroupCode != null ? Stuff.GroupCode : "")
@@ -1940,7 +2139,7 @@ namespace Kara.Assets
                     if (PartnerId.HasValue)
                     {
                         var Partner = (await GetPartnerAsync(PartnerId.Value, null)).Data;
-                        
+
                         var PriceListZones = conn.Table<PriceListZone>().ToList().Where(a => Partner.ZoneCompleteCode.StartsWith(a.ZoneCompleteCode)).ToList();
                         PriceListVersions = PriceListVersions.Where(a => PriceListZones.Any(b => b.PriceListId == a.PriceListId)).ToList();
 
@@ -1991,7 +2190,7 @@ namespace Kara.Assets
         {
             var GroupIds = conn.Table<DynamicGroupPartner>().Where(a => a.PartnerId == PartnerId).ToList().Select(a => a.GroupId).ToArray();
             var AllGroups = conn.Table<DynamicGroup>().ToList();
-            
+
             return AllGroups.Where(a => GroupIds.Contains(a.Id)).ToArray();
         }
         public DynamicGroup[] GetPartnerGroups()
@@ -2053,7 +2252,7 @@ namespace Kara.Assets
                 var __AllStuffBasketStuffs = conn.Table<StuffBasketStuff>().ToList();
                 var __AllStuffBasketStuffsDic = __AllStuffBasketStuffs.GroupBy(a => a.StuffId).ToDictionary(a => a.Key, a => a.Select(b => b.BasketId).ToArray());
                 var __AllStuffs = conn.Table<Stuff>().ToList();
-                
+
                 var AllStuffGroups = __AllStuffGroups.Select(a => new
                 {
                     Id = a.Id,
@@ -2068,7 +2267,7 @@ namespace Kara.Assets
                     StuffGroupCode = a.GroupCode,
                     StuffBasketIds = __AllStuffBasketStuffsDic.ContainsKey(a.Id) ? __AllStuffBasketStuffsDic[a.Id] : new Guid[] { }
                 }).ToList();
-                
+
                 var AllZones = (await GetZonesAsync()).Data
                     .Select(a => new
                     {
@@ -2731,21 +2930,21 @@ namespace Kara.Assets
         {
             //if (FetchedDiscountRules == null)
             //{
-                var Rules = App.SystemName.Value == "Saman" ? await GeDiscountRulesInModelForCalculation_ForSaman() : await GetDiscountRulesInModelForCalculation();
-                if (Rules == null)
-                    return null;
+            var Rules = App.SystemName.Value == "Saman" ? await GeDiscountRulesInModelForCalculation_ForSaman() : await GetDiscountRulesInModelForCalculation();
+            if (Rules == null)
+                return null;
 
-                FetchedDiscountRules = Rules.Select(a => new
-                {
-                    key = a.Key,
-                    value = a.Value
-                        .GroupBy(b => b.RuleId.ToString().Substring(0, 24))
-                        .Select(b => new
-                        {
-                            RuleId = b.Key,
-                            Rules = b.ToList()
-                        }).ToDictionary(aa => aa.RuleId, aa => aa.Rules)
-                }).ToDictionary(a => a.key, a => a.value);
+            FetchedDiscountRules = Rules.Select(a => new
+            {
+                key = a.Key,
+                value = a.Value
+                    .GroupBy(b => b.RuleId.ToString().Substring(0, 24))
+                    .Select(b => new
+                    {
+                        RuleId = b.Key,
+                        Rules = b.ToList()
+                    }).ToDictionary(aa => aa.RuleId, aa => aa.Rules)
+            }).ToDictionary(a => a.key, a => a.value);
             //}
 
             return FetchedDiscountRules;

@@ -227,6 +227,7 @@ namespace Kara
         public static SettingField<bool> DefineWarehouseForSaleAndBuy = new SettingField<bool>("DefineWarehouseForSaleAndBuy", false);
         public static SettingField<int> CalculateStuffsSettlementDaysBasedOn = new SettingField<int>("CalculateStuffsSettlementDaysBasedOn", 0);
         public static SettingField<bool> UseCollectorAndroidApplication = new SettingField<bool>("UseCollectorAndroidApplication", false);
+        public static SettingField<bool> UseDistributerAndroidApplication = new SettingField<bool>("UseDistributerAndroidApplication", false);
         public static SettingField<bool> UseVisitorsNadroidApplication = new SettingField<bool>("UseVisitorsNadroidApplication", false);
         public static SettingField<bool> UseBarcodeScannerInVisitorAppToSelectStuff = new SettingField<bool>("UseBarcodeScannerInVisitorAppToSelectStuff", false);
         public static SettingField<bool> UseQRScannerInVisitorAppToSelectStuff = new SettingField<bool>("UseQRScannerInVisitorAppToSelectStuff", false);

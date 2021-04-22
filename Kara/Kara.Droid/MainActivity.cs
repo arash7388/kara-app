@@ -22,6 +22,9 @@ using Microsoft.AppCenter.Crashes;
 using Exception = System.Exception;
 using Xamarin.Essentials;
 using System.Collections.Generic;
+using Kara.Services;
+using Android.Support.V4.App;
+using Android;
 
 namespace Kara.Droid
 {
@@ -100,8 +103,40 @@ namespace Kara.Droid
             Xamarin.Essentials.Platform.Init(this, bundle); // add this line to your code, it may also be called: bundle
             Analytics.TrackEvent("OnCreate", GetDeviceInfoAsDic());
 
+            //if (!CheckPermissionGranted("READ_PHONE_STATE"))
+            if (!CheckPermissionGranted(Manifest.Permission.ReadPhoneState))
+            {
+                RequestPhonePermission();
+            }
         }
 
+        private void RequestPhonePermission()
+        {
+            //if (ActivityCompat.ShouldShowRequestPermissionRationale(this, Manifest.Permission.ReadPhoneState))
+            //{
+            //    // Provide an additional rationale to the user if the permission was not granted
+            //    // and the user would benefit from additional context for the use of the permission.
+            //    // For example if the user has previously denied the permission.
+                ActivityCompat.RequestPermissions(this, new string[] { Manifest.Permission.ReadPhoneState }, 0);
+
+            //}
+
+        }
+
+        public bool CheckPermissionGranted(string Permissions)
+        {
+            // Check if the permission is already available.
+            if (ActivityCompat.CheckSelfPermission(this, Permissions) != Permission.Granted)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+
+
+        }
         private void StartService(MainMenu page)
         {
             KaraNewServiceLauncher.StartAndScheduleAlarmManagerForkaraNewService(this);
@@ -302,4 +337,6 @@ namespace Kara.Droid
             }
         }
     }
+
+    
 }

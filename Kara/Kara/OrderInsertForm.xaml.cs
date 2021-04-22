@@ -1737,6 +1737,7 @@ namespace Kara
         {
             await FillStuffs(StuffsSearchBar.Text, null, false, false);
         }
+
         bool EditingOrderStuffsInitialized = false;
         private async Task FillStuffs(string Filter, SaleOrder EditingOrder, bool RefreshStuffsData, bool WithRefreshingAnimation)
         {

@@ -561,8 +561,8 @@ namespace Kara
                 Tels = a.Tels.ToPersianDigits(),
                 Visitor = a.Visitor,
                 PartnerEntityId=a.PartnerEntityId,
-                Confirmed = a.OrderCode.ToSafeString()!="",
-                OrderCode = a.OrderCode.ToPersianDigits()
+                Confirmed = (a.AllStuffsReturned && a.ReShipmentOrderId != null) || !string.IsNullOrEmpty(a.OrderCode.ToSafeString()),
+                OrderCode = (a.AllStuffsReturned && a.ReShipmentOrderId != null) ? "کاملا مرجوعی" : a.OrderCode
             }).ToList();
         }
 
