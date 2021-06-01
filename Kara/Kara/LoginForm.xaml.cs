@@ -139,6 +139,10 @@ namespace Kara
             {
                 BusyIndicator.IsRunning = true;
 
+                LoginErrorText.IsVisible = false;
+                var _ServerAddress = ServerAddress != null ? ServerAddress.Text != null ? ServerAddress.Text.ToLatinDigits() : "" : "";
+                App.ServerAddress = _ServerAddress;
+
                 if (!DependencyService.Get<IDevice>().PhonePermissionGranted())
                 {
                     // Notify user permission was denied
@@ -180,10 +184,7 @@ namespace Kara
                     }
 
                 var locationTask = App.CheckGps();
-
-                LoginErrorText.IsVisible = false;
-                var _ServerAddress = ServerAddress != null ? ServerAddress.Text != null ? ServerAddress.Text.ToLatinDigits() : "" : "";
-                App.ServerAddress = _ServerAddress;
+                              
 
                 var loginTask = Kara.Assets.Connectivity.Login(Username.Text, Password.Text);
                 await locationTask;
