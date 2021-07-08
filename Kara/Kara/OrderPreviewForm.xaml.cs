@@ -676,6 +676,9 @@ namespace Kara
 
                     row--;
                     var VATExceptions = new List<int>();
+                    
+                    //_SaleOrderStuffs[0].DiscountPercent = decimal.Parse("1.1234");
+
                     for (int i = 0; i < _SaleOrderStuffs.Length; i++)
                     {
                         var BG = i % 2 == 1 ? LIGHTGRAY : WHITE;
@@ -802,7 +805,7 @@ namespace Kara
                                 HorizontalTextAlignment = TextAlignment.End,
                                 VerticalTextAlignment = TextAlignment.Center,
                                 LineBreakMode = LineBreakMode.WordWrap,
-                                Text = _SaleOrderStuffs[i].FreeProduct ? "---" : (_SaleOrderStuffs[i].DiscountAmount + _SaleOrderStuffs[i].CashDiscountAmount != 0 ? (_SaleOrderStuffs[i].DiscountAmount + _SaleOrderStuffs[i].CashDiscountAmount).ToString("###,###,###,###,###,###,##0.") + "\n" + (_SaleOrderStuffs[i].DiscountPercent != 0 && _SaleOrderStuffs[i].CashDiscountPercent != 0 ? "(" : "") + (new decimal[] { _SaleOrderStuffs[i].DiscountPercent , _SaleOrderStuffs[i].CashDiscountPercent }.Where(a => a != 0).Select(a => a.ToString("##0.##").Replace(".", "/")).Aggregate((sum, x) => sum + " + " + x)) + (_SaleOrderStuffs[i].DiscountPercent != 0 && _SaleOrderStuffs[i].CashDiscountPercent != 0 ? ")" : "") + " %" : "0").ToPersianDigits()
+                                Text = _SaleOrderStuffs[i].FreeProduct ? "---" : (_SaleOrderStuffs[i].DiscountAmount + _SaleOrderStuffs[i].CashDiscountAmount != 0 ? (_SaleOrderStuffs[i].DiscountAmount + _SaleOrderStuffs[i].CashDiscountAmount).ToString("###,###,###,###,###,###,##0.") + "\n" + (_SaleOrderStuffs[i].DiscountPercent != 0 && _SaleOrderStuffs[i].CashDiscountPercent != 0 ? "(" : "") + (new decimal[] { _SaleOrderStuffs[i].DiscountPercent , _SaleOrderStuffs[i].CashDiscountPercent }.Where(a => a != 0).Select(a => a.ToString("##0.####").Replace(".", "/")).Aggregate((sum, x) => sum + " + " + x)) + (_SaleOrderStuffs[i].DiscountPercent != 0 && _SaleOrderStuffs[i].CashDiscountPercent != 0 ? ")" : "") + " %" : "0").ToPersianDigits()
                             };
                             LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesBody_Discount, 1));
                             ArticlesGrid.Children.Add(ArticlesBody_Discount, col, row + 1);
@@ -1248,7 +1251,38 @@ namespace Kara
             if (!App.GpsEnabled)
                 return new ResultSuccess<SaleOrder>(false, "لطفا مکان یاب را فعال نمایید");
 
+
+            //جلوگیری از ثبت=2 هشدار=1 هیچکدام=0
+            if (App.WarnIfSalePriceIsLessThanTheLastBuyPrice.Value != 0)
+            {
+                var lastBuyPrices = await Kara.Assets.Connectivity.GetLastBuyPrice(SaleOrder.SaleOrderStuffs.Select(a => a.Id).ToList());
+
+                string resultMessage = "";
+                int rowNumber = 1;
+
+                foreach (SaleOrderStuff item in SaleOrder.SaleOrderStuffs)
+                {
+                    if (item.SalePrice < lastBuyPrices.FirstOrDefault(a => a.Key == item.Id).Value)
+                    {
+                        resultMessage += "فی فروش کمتر از آخرین فی خرید، سطر " + rowNumber + Environment.NewLine;
+                    }
+
+                    rowNumber++;
+                }
+
+                if (resultMessage!="" && App.WarnIfSalePriceIsLessThanTheLastBuyPrice.Value == 2)
+                    return new ResultSuccess<SaleOrder>(false, resultMessage);
+
+                if (resultMessage != "" &&  App.WarnIfSalePriceIsLessThanTheLastBuyPrice.Value == 1)
+                {
+                    var answer = await DisplayActionSheet(resultMessage, "بستن","", "ادامه", "انصراف");
+                    if(answer=="انصراف")
+                        return new ResultSuccess<SaleOrder>(false, "ثبت فاکتور کنسل شد");
+                }
+            }
+
             var result = await App.SaveSaleOrder(SaleOrder);
+
             if(result.Success)
             {
                 if (OrderInsertForm != null)

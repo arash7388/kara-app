@@ -256,7 +256,7 @@ namespace Kara
                     DistributionReversionReasonId = ReversionReasons[ReversionReasonPicker.SelectedIndex].Id,
                     OrderId = (Guid)EditingSaleOrderId,
                     UserId = App.UserId.Value,
-                    Description = "***",
+                    Description = EditingSaleOrder?.Description.ToSafeString()=="" ? "***" : DescriptionEditor.Text,
                     Stuffs = _StuffsList.Where(a => a.Quantity > 0).Select(a => new DtoEditStuffMobile
                     {
                         ArticleId = EditingSaleOrder?.SaleOrderStuffs?.SingleOrDefault(x=>x.Package.StuffId==a.StuffId)?.ArticleId,

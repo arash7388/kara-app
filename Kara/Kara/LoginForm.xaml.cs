@@ -150,6 +150,15 @@ namespace Kara
                     return;
                 }
 
+                var loginTask = Kara.Assets.Connectivity.Login(Username.Text, Password.Text);
+                var loginResult = await loginTask;
+                if (!loginResult.Success)
+                {
+                    LoginErrorText.Text = loginResult.Message;
+                    LoginErrorText.IsVisible = true;
+                    return;
+                }
+
                 var getSettingTask = Kara.Assets.Connectivity.GetAndroidAppSettings(Username.Text, Password.Text);
                 await getSettingTask;
 
@@ -163,7 +172,6 @@ namespace Kara
                     if (!lic.HasVisitorLic)
                     {
                         App.ShowError("خطا", "شما لایسنس استفاده از نسخه ویزیتور را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
-                        BusyIndicator.IsRunning = false;
                         return;
                     }
 
@@ -171,7 +179,6 @@ namespace Kara
                     if (!lic.HasTahsildarLic)
                     {
                         App.ShowError("خطا", "شما لایسنس استفاده از نسخه تحصیلدار را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
-                        BusyIndicator.IsRunning = false;
                         return;
                     }
 
@@ -179,36 +186,20 @@ namespace Kara
                     if (!lic.HasDistributerLic)
                     {
                         App.ShowError("خطا", "شما لایسنس استفاده از نسخه موزع را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
-                        BusyIndicator.IsRunning = false;
                         return;
                     }
 
                 var locationTask = App.CheckGps();
-                              
-
-                var loginTask = Kara.Assets.Connectivity.Login(Username.Text, Password.Text);
-                await locationTask;
-                var loginResult = await loginTask;
-
                 
-
                 var tasks = new Task[] { locationTask, loginTask, getSettingTask };
+                await locationTask;
                 Task.WaitAll(tasks);
-
-                BusyIndicator.IsRunning = false;
 
                 if (locationTask.Result == null)
                 {
                     return;
                 }
-
-                if (!loginResult.Success)
-                {
-                    LoginErrorText.Text = loginResult.Message;
-                    LoginErrorText.IsVisible = true;
-                    return;
-                }
-
+                
                 App.UserId.Value = loginResult.Data.UserId;
                 App.Username.Value = Username.Text;
                 App.Password.Value = Password.Text;
@@ -216,6 +207,7 @@ namespace Kara
                 App.UserEntityId.Value = loginResult.Data.EntityId;
                 App.UserRealName.Value = loginResult.Data.RealName;
                 App.EntityCode.Value = loginResult.Data.EntityCode;
+                App.WarnIfSalePriceIsLessThanTheLastBuyPrice.Value = getSettingTask.Result.Data.WarnIfSalePriceIsLessThanTheLastBuyPrice;
 
                 await Navigation.PushAsync(new MainMenu()
                 {
@@ -238,6 +230,10 @@ namespace Kara
             catch (Exception exc)
             {
                 throw;
+            }
+            finally 
+            {
+                BusyIndicator.IsRunning = false;
             }
         }
     }

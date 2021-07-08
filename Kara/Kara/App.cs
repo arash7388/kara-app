@@ -411,6 +411,7 @@ namespace Kara
         public static SettingField<Guid> UserEntityId = new SettingField<Guid>("UserEntityId", Guid.Empty);
         public static SettingField<string> UserRealName = new SettingField<string>("UserRealName", "");
         public static SettingField<string> EntityCode = new SettingField<string>("EntityCode", "");
+        public static SettingField<int> WarnIfSalePriceIsLessThanTheLastBuyPrice = new SettingField<int>("WarnIfSalePriceIsLessThanTheLastBuyPrice", 2);
         public static SettingField<Guid> LastLoginUserId = new SettingField<Guid>("LastLoginUserId", Guid.Empty);
         public static DBRepository DB;
         public static DBRepository.AccessModel Accesses;
@@ -802,6 +803,24 @@ namespace Kara
 
                     SaleOrder.InsertDateTime = DateTime.Now;
                 }
+
+                //if (App.WarnIfSalePriceIsLessThanTheLastBuyPrice.Value != 2)
+                //{
+                //    var lastBuyPrices = await Kara.Assets.Connectivity.GetLastBuyPrice(SaleOrder.SaleOrderStuffs.Select(a => a.Id).ToList());
+
+                //    string resultMessage = "";
+                //    int rowNumber = 1;
+                        
+                //    foreach (SaleOrderStuff item in SaleOrder.SaleOrderStuffs)
+                //    {
+                //        if (item.SalePrice < lastBuyPrices.FirstOrDefault(a => a.Key == item.Id).Value)
+                //        {
+                //            resultMessage+="فی فروش کمتر از آخرین فی خرید، سطر " + rowNumber;
+                //        }
+
+                //        rowNumber++;
+                //    }
+                //}
 
                 var result = await App.DB.InsertOrUpdateRecordAsync<SaleOrder>(SaleOrder);
                 if (!result.Success)

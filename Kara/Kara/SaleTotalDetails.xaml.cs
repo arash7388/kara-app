@@ -457,21 +457,23 @@ namespace Kara
             {
                 BusyIndicatorContainder.IsVisible = true;
 
-                //temp
-                var details = await Connectivity.GetTotalDetails(App.Username.Value, App.Password.Value, App.CurrentVersionNumber, totalId);
 
-                //var details = new ResultSuccess<List<TotalDetailModel>>() { Success = true };
+                //var details = await Connectivity.GetTotalDetails(App.Username.Value, App.Password.Value, App.CurrentVersionNumber, totalId);
 
-                //details.Data = new List<TotalDetailModel>
-                //{
-                //                                                                                                    //35.77819690121176, 51.33577083417429 sare ashrafi 3
-                //                                                                                                    //35.77058910303877, 51.33699392144137 taghato ashrafi niyayesh 2
-                //                                                                                                    //35.77047516927987, 51.31835622724807 taghato  satari niyayesh 1
+                //temp add
 
-                //    new TotalDetailModel{EntityCode="1",EntityName="درست",Address="آدرس", GeoLocation_Lat=(decimal)35.77047516927987,GeoLocation_Long=(decimal)51.31835622724807,OrderId=new Guid("406A46C5-7A38-4BEC-B62D-0000D77B4258"),PartnerEntityId=new Guid("87013AA3-51CC-4913-B89C-75149D4C6C7F")},
-                //    new TotalDetailModel{EntityCode="2",EntityName="شسی",Address="آدرس", GeoLocation_Lat=(decimal)35.77058910303877,GeoLocation_Long=(decimal)51.33699392144137,OrderId=new Guid("406A46C5-7A38-4BEC-B62D-0000D77B4258"),PartnerEntityId=new Guid("87013AA3-51CC-4913-B89C-75149D4C6C7F")},
-                //    new TotalDetailModel{EntityCode="3",EntityName="سیبس",Address="آدرس", GeoLocation_Lat=(decimal)35.77819690121176,GeoLocation_Long=(decimal)51.33577083417429,OrderId=new Guid("F216BEE8-C22C-4595-8F65-00017C1EF608"),PartnerEntityId=new Guid("279FC028-FB45-4F10-841C-118FE99268D0")},
-                //};
+                var details = new ResultSuccess<List<TotalDetailModel>>() { Success = true };
+
+                details.Data = new List<TotalDetailModel>
+                {
+                                                                                                                    //35.77819690121176, 51.33577083417429 sare ashrafi 3
+                                                                                                                    //35.77058910303877, 51.33699392144137 taghato ashrafi niyayesh 2
+                                                                                                                    //35.77047516927987, 51.31835622724807 taghato  satari niyayesh 1
+
+                    new TotalDetailModel{EntityCode="1",EntityName="درست",Address="آدرس", GeoLocation_Lat=(decimal)35.77047516927987,GeoLocation_Long=(decimal)51.31835622724807,OrderId=new Guid("406A46C5-7A38-4BEC-B62D-0000D77B4258"),PartnerEntityId=new Guid("87013AA3-51CC-4913-B89C-75149D4C6C7F"),Price=1000},
+                    new TotalDetailModel{EntityCode="2",EntityName="شسی",Address="آدرس", GeoLocation_Lat=(decimal)35.77058910303877,GeoLocation_Long=(decimal)51.33699392144137,OrderId=new Guid("406A46C5-7A38-4BEC-B62D-0000D77B4258"),PartnerEntityId=new Guid("87013AA3-51CC-4913-B89C-75149D4C6C7F"),Price=2000},
+                    new TotalDetailModel{EntityCode="3",EntityName="سیبس",Address="آدرس", GeoLocation_Lat=(decimal)35.77819690121176,GeoLocation_Long=(decimal)51.33577083417429,OrderId=new Guid("F216BEE8-C22C-4595-8F65-00017C1EF608"),PartnerEntityId=new Guid("279FC028-FB45-4F10-841C-118FE99268D0"),Price=3000},
+                };
 
                 if (!details.Success)
                     throw new Exception(details.Message);

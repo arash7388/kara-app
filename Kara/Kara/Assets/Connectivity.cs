@@ -482,6 +482,30 @@ namespace Kara.Assets
             }
         }
 
+        public static async Task<List<KeyValuePair<Guid,decimal>>> GetLastBuyPrice(List<Guid> stuffIds)
+        {
+            try
+            {
+                HttpContent Content = new StringContent(JsonConvert.SerializeObject(stuffIds), Encoding.UTF8, "application/json");
+                var client = new System.Net.Http.HttpClient();
+                var response = await client.PostAsync(ServerRoot + $"GetLastBuyPrice", Content);
+
+                List<KeyValuePair<Guid, decimal>> resultDeserialized = null;
+
+                if (response.IsSuccessStatusCode)
+                {
+                    string content = await response.Content.ReadAsStringAsync();
+                    resultDeserialized = JsonConvert.DeserializeObject<List<KeyValuePair<Guid, decimal>>>(content);
+                }
+
+                return resultDeserialized;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
         public class LicHelper
         {
             public bool HasVisitorLic { get; set; }

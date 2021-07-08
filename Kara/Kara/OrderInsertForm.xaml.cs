@@ -12,6 +12,7 @@ using CarouselView.FormsPlugin.Abstractions;
 using FFImageLoading.Forms;
 using XLabs.Forms.Controls;
 using static Kara.Assets.Connectivity;
+using Microsoft.AppCenter.Crashes;
 
 namespace Kara
 {
@@ -49,7 +50,7 @@ namespace Kara
             var BatchNumberRow = new RowDefinition() { };
             BatchNumberRow.SetBinding(RowDefinition.HeightProperty, "BatchNumberRowHeight");
             GridWrapper.RowDefinitions = new RowDefinitionCollection() { GroupRow1, GroupRow2, StuffRow1, StuffRow2, BatchNumberRow };
-            
+
             GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
             GridWrapper.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Star) });
             if (App.ShowConsumerPrice.Value)
@@ -121,7 +122,7 @@ namespace Kara
             GridWrapper.Children.Add(BatchNumberQuantityEntry, 3 + ShowConsumerPriceAddedSpace, 4);
             GridWrapper.Children.Add(BatchNumberQuantityPlusLabel, 4 + ShowConsumerPriceAddedSpace, 4);
             GridWrapper.Children.Add(BatchNumberStockLabel, 5 + ShowConsumerPriceAddedSpace, 4);
-            
+
             GroupLabel.SetBinding(Label.TextProperty, "DisplayGroupName");
             GroupButtonImage.SetBinding(Image.SourceProperty, "GroupButtonIcon");
             GroupPriceSumLabel.SetBinding(Label.TextProperty, "GroupSummary");
@@ -295,7 +296,7 @@ namespace Kara
             BottomContentBG.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
             QuantityPlusLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
             QuantityMinusLabel.SetBinding(Label.IsVisibleProperty, "SelectedInGallaryMode");
-            
+
             var UnitNameTapGestureRecognizer = new TapGestureRecognizer();
             UnitNameTapGestureRecognizer.Tapped += UnitNameTapEventHandler;
             UnitNameTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
@@ -340,61 +341,69 @@ namespace Kara
             BindableProperty.Create("StuffsArray", typeof(DBRepository.StuffListModel[]), typeof(StuffGallaryViewGrid), null, propertyChanged: OnStuffsArrayChanged);
         public static Dictionary<Guid, StuffGallaryView> StuffViewHistory;
         public static Dictionary<int, Guid[]> PageStuffIds;
-        
+
         static Guid[] LastStuffIds = null;
         static void OnStuffsArrayChanged(BindableObject bindable, object oldValue, object newValue)
         {
-            var OldStuffsArray = LastStuffIds != null ? LastStuffIds.ToArray() : null;
-            var NewStuffsArray = ((DBRepository.StuffListModel[])newValue).Where(a => !a.BatchNumberId.HasValue).Select(a => a.StuffId);
-            LastStuffIds = NewStuffsArray.ToArray();
-
-            var OldPageIndex = OldStuffsArray == null ? -1 : PageStuffIds.Single(a => OldStuffsArray.All(b => a.Value.Contains(b))).Key;
-            var NewPageIndex = PageStuffIds.Single(a => NewStuffsArray.All(b => a.Value.Contains(b))).Key;
-
-            var ShouldBeRemovedPageIndex = NewPageIndex + (OldPageIndex > NewPageIndex ? 3 : -3);
-            if(PageStuffIds.Any(a => a.Key == ShouldBeRemovedPageIndex))
+            try
             {
-                var ShouldBeRemovedStuffIds = PageStuffIds.Single(a => a.Key == ShouldBeRemovedPageIndex).Value;
+                var OldStuffsArray = LastStuffIds != null ? LastStuffIds.ToArray() : null;
+                var NewStuffsArray = ((DBRepository.StuffListModel[])newValue).Where(a => !a.BatchNumberId.HasValue).Select(a => a.StuffId);
+                LastStuffIds = NewStuffsArray.ToArray();
 
-                foreach (var item in ShouldBeRemovedStuffIds)
+                var OldPageIndex = OldStuffsArray == null ? -1 : PageStuffIds.Single(a => OldStuffsArray.All(b => a.Value.Contains(b))).Key;
+                var NewPageIndex = PageStuffIds.Single(a => NewStuffsArray.All(b => a.Value.Contains(b))).Key;
+
+                var ShouldBeRemovedPageIndex = NewPageIndex + (OldPageIndex > NewPageIndex ? 3 : -3);
+                if (PageStuffIds.Any(a => a.Key == ShouldBeRemovedPageIndex))
                 {
-                    if (StuffViewHistory.ContainsKey(item))
+                    var ShouldBeRemovedStuffIds = PageStuffIds.Single(a => a.Key == ShouldBeRemovedPageIndex).Value;
+
+                    foreach (var item in ShouldBeRemovedStuffIds)
                     {
-                        var OldView = StuffViewHistory[item];
-                        OldView.NewStuffImage.Source = null;
-                        StuffViewHistory.Remove(item);
+                        if (StuffViewHistory.ContainsKey(item))
+                        {
+                            var OldView = StuffViewHistory[item];
+                            OldView.NewStuffImage.Source = null;
+                            StuffViewHistory.Remove(item);
+                        }
                     }
                 }
-            }
-
-            //foreach (var item in NewStuffsArray)
-            //{
-            //    if(StuffViewHistory.ContainsKey(item.Id))
-            //    {
-            //        var OldView = StuffViewHistory[item.Id];
-            //        OldView.NewStuffImage.Source = null;
-            //        StuffViewHistory.Remove(item.Id);
-            //    }
-            //}
 
             ((StuffGallaryViewGrid)bindable).CreatePageContents();
+            }
+            catch (Exception ex)
+            {
+                var data = new Dictionary<string, string>();
+                data.Add("Place:", "OrderInsertForm.OnStuffArrayChanged");
+                Crashes.TrackError(ex, data);
+            }
         }
 
         public static void SetPageStuffIds(Dictionary<int, Guid[]> _PageStuffIds)
         {
-            if (StuffViewHistory != null)
+            try
             {
-                var _StuffViewHistory = StuffViewHistory.ToArray();
-                foreach (var item in _StuffViewHistory)
+                if (StuffViewHistory != null)
                 {
-                    var OldView = StuffViewHistory[item.Key];
-                    OldView.NewStuffImage.Source = null;
-                    StuffViewHistory.Remove(item.Key);
+                    var _StuffViewHistory = StuffViewHistory.ToArray();
+                    foreach (var item in _StuffViewHistory)
+                    {
+                        var OldView = StuffViewHistory[item.Key];
+                        OldView.NewStuffImage.Source = null;
+                        StuffViewHistory.Remove(item.Key);
+                    }
                 }
+                LastStuffIds = null;
+                StuffViewHistory = new Dictionary<Guid, StuffGallaryView>();
+                PageStuffIds = _PageStuffIds;
             }
-            LastStuffIds = null;
-            StuffViewHistory = new Dictionary<Guid, StuffGallaryView>();
-            PageStuffIds = _PageStuffIds;
+            catch (Exception ex)
+            {
+                var data = new Dictionary<string, string>();
+                data.Add("Place:", "OrderInsertForm.SetPageStuffIds");
+                Crashes.TrackError(ex, data);
+            }
         }
 
         public DBRepository.StuffListModel[] StuffsArray
@@ -402,11 +411,11 @@ namespace Kara
             get { return (DBRepository.StuffListModel[])GetValue(StuffsArrayProperty); }
             set { SetValue(StuffsArrayProperty, value); }
         }
-        
+
         public StuffGallaryViewGrid()
         {
             this.SetBinding(StuffGallaryViewGrid.StuffsArrayProperty, "Stuffs");
-            
+
             _grid = new Grid()
             {
                 RowSpacing = 0,
@@ -421,7 +430,7 @@ namespace Kara
 
             Content = _grid;
         }
-        
+
         public IList<View> Children { get { return _grid.Children; } }
 
         private Guid LastLayingoutRequestId;
@@ -437,7 +446,7 @@ namespace Kara
 
             var OldIsHorizontal = ThisWidth > ThisHeight;
             var NewIsHorizontal = width > height;
-            
+
             ThisWidth = width;
             ThisHeight = height;
             foreach (var child in Children)
@@ -453,14 +462,14 @@ namespace Kara
                     var Children = this.Children.ToList();
                     foreach (var child in Children)
                         _grid.Children.Remove(child);
-            
+
                     _grid.RowDefinitions.Clear();
                     _grid.ColumnDefinitions.Clear();
                     for (int i = 0; i < (NewIsHorizontal ? RowCount : ColumnCount); i++)
                         _grid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Star });
                     for (int j = 0; j < (NewIsHorizontal ? ColumnCount : RowCount); j++)
                         _grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Star });
-            
+
                     for (int i = 0; i < (NewIsHorizontal ? RowCount : ColumnCount); i++)
                     {
                         for (int j = 0; j < (NewIsHorizontal ? ColumnCount : RowCount); j++)
@@ -485,7 +494,7 @@ namespace Kara
                 bindableObject.BindingContext = dataSource;
             return view;
         }
-        
+
         static bool Initialized = false;
         public void CreatePageContents()
         {
@@ -503,7 +512,7 @@ namespace Kara
                                 var dataSource = StuffsArray[i * (IsHorizontal ? ColumnCount : RowCount) + j];
                                 var NewItemInPage = MakeNewItemInPage(dataSource);
                                 _grid.Children.Add(NewItemInPage, j, i);
-                                if(!StuffViewHistory.ContainsKey(dataSource.StuffId))
+                                if (!StuffViewHistory.ContainsKey(dataSource.StuffId))
                                     StuffViewHistory.Add(dataSource.StuffId, (StuffGallaryView)NewItemInPage);
                             }
                         }
@@ -512,7 +521,7 @@ namespace Kara
             }
         }
     }
-    
+
     public partial class OrderInsertForm : GradientContentPage
     {
         public static SettingField<bool> InsertOrderForm_ShowGallaryMode = new SettingField<bool>("InsertOrderForm_ShowGallaryMode", false);
@@ -548,13 +557,13 @@ namespace Kara
         Guid? WarehouseId;
         bool TapEventHandlingInProgress = false;
         bool FromTour;
-        
+
 
         CarouselViewControl gallaryCarousel;
 
         Guid LastSearchWhenTypingId = Guid.NewGuid();
-        
-        public OrderInsertForm(Partner Partner,SaleOrder SaleOrder, InsertedInformations_Orders OrdersForm, PartnerListForm PartnerListForm, Guid? __WarehouseId,bool fromTour=false)
+
+        public OrderInsertForm(Partner Partner, SaleOrder SaleOrder, InsertedInformations_Orders OrdersForm, PartnerListForm PartnerListForm, Guid? __WarehouseId, bool fromTour = false)
         {
             App.UniversalLineInApp = 875234001;
 
@@ -660,7 +669,8 @@ namespace Kara
 
             var PartnerChangeButtonTapGestureRecognizer = new TapGestureRecognizer();
             //App.UniversalLineInApp = 875234042;
-            PartnerChangeButtonTapGestureRecognizer.Tapped += (sender, e) => {
+            PartnerChangeButtonTapGestureRecognizer.Tapped += (sender, e) =>
+            {
                 if (!TapEventHandlingInProgress)
                 {
                     TapEventHandlingInProgress = true;
@@ -684,7 +694,7 @@ namespace Kara
                     }
                     catch (Exception)
                     { }
-                    
+
                     TapEventHandlingInProgress = false;
                 }
             };
@@ -698,7 +708,8 @@ namespace Kara
 
             var PartnerRemainderDetailButtonTapGestureRecognizer = new TapGestureRecognizer();
             //App.UniversalLineInApp = 875234054;
-            PartnerRemainderDetailButtonTapGestureRecognizer.Tapped += (sender, e) => {
+            PartnerRemainderDetailButtonTapGestureRecognizer.Tapped += (sender, e) =>
+            {
                 if (!TapEventHandlingInProgress)
                 {
                     TapEventHandlingInProgress = true;
@@ -720,14 +731,14 @@ namespace Kara
                     }
                     catch (Exception)
                     { }
-                    
+
                     TapEventHandlingInProgress = false;
                 }
             };
-            
+
             PartnerRemainderDetailButton.GestureRecognizers.Add(PartnerRemainderDetailButtonTapGestureRecognizer);
             PartnerRemainderDetailButton.WidthRequest = 150;
-            
+
             StuffItems.HasUnevenRows = true;
             App.UniversalLineInApp = 875234064;
             StuffItems.SeparatorVisibility = SeparatorVisibility.None;
@@ -781,11 +792,11 @@ namespace Kara
             ToolbarItem_GallaryMode.Order = ToolbarItemOrder.Primary;
 
             ToolbarItem_GallaryMode.Priority = 11;
-            
-            if(!fromTour)
+
+            if (!fromTour)
                 if (!InsertOrderForm_ShowGallaryMode.Value && !this.ToolbarItems.Contains(ToolbarItem_GallaryMode))
                     this.ToolbarItems.Add(ToolbarItem_GallaryMode);
-            
+
 
             ToolbarItem_StuffListMode = new ToolbarItem();
             ToolbarItem_StuffListMode.Text = "لیست کالاها";
@@ -802,7 +813,8 @@ namespace Kara
             ToolbarItem_OrderBasket.Order = ToolbarItemOrder.Primary;
             ToolbarItem_OrderBasket.Priority = 1;
 
-            StuffsSearchBar.TextChanged += async (sender, args) => {
+            StuffsSearchBar.TextChanged += async (sender, args) =>
+            {
                 App.UniversalLineInApp = 875234103;
                 var thisTextSearchId = Guid.NewGuid();
                 //App.UniversalLineInApp = 875234104;
@@ -847,41 +859,36 @@ namespace Kara
             QuantityKeyboard = new MyKeyboard<QuantityEditingStuffModel, decimal>
             (
                 QuantityKeyboardHolder,
-                new Command((parameter) => {        //OnOK
+                new Command((parameter) =>
+                {        //OnOK
                     FocusedQuantityTextBoxId = null;
                     CheckToShowOrderBasketTollbar();
                 }),
-                new Command((parameter) => {        //OnChange
+                new Command((parameter) =>
+                {        //OnChange
                     CheckToShowOrderBasketTollbar();
                 })
             );
             App.UniversalLineInApp = 875234118;
-
-            //if (FromTour)
-            //{
-            //    FillReversionReasons();
-            //}
         }
-
-        
 
         public async void PrepareWarehousePicker()
         {
             var warehouses = (await App.DB.GetWarehousesAsync()).Data.ToArray()
                 .Select(a => new KeyValuePair<Warehouse, string>(a, a.WarehouseName.ToPersianDigits())).ToArray();
-            
+
             if (warehouses.Length == 1)
             {
                 WarehouseId = warehouses.Single().Key.WarehouseId;
                 return;
             }
-            
+
             WarehousePicker.Items.Clear();
             foreach (var Warehouse in warehouses)
                 WarehousePicker.Items.Add(Warehouse.Value);
 
             WarehousePicker.SelectedIndex = -1;
-            
+
             WarehousePicker.SelectedIndexChanged += (sender, e) =>
             {
                 WarehouseId = warehouses[WarehousePicker.SelectedIndex].Key.WarehouseId;
@@ -891,7 +898,7 @@ namespace Kara
 
             WarehousePicker.Unfocused += (s, e) =>
             {
-                if(!WarehouseId.HasValue)
+                if (!WarehouseId.HasValue)
                     try { Navigation.PopAsync(); } catch (Exception) { }
             };
 
@@ -904,7 +911,6 @@ namespace Kara
                 WarehousePicker.Focus();
             });
         }
-        
 
         async Task FetchPartnerCycleInformationFromServer()
         {
@@ -916,7 +922,7 @@ namespace Kara
                 PartnerUncashedChequesPrice = null;
                 PartnerReturnedChequesCount = null;
                 PartnerReturnedChequesPrice = null;
-                await RefreshPartnerCycleInformation();
+                //await RefreshPartnerCycleInformation();
 
                 var result = await Connectivity.GetPartnerCycleInformationFromServerAsync(SelectedPartner.Id, false);
                 GettingPartnerCycleInformations = 0;
@@ -951,12 +957,12 @@ namespace Kara
             if (App.Accesses.AccessToViewPartnerRemainder)
             {
                 PartnerRemainderLabel.Text = PartnerAccountingData();
-                if (GettingPartnerCycleInformations != 0)
-                {
-                    GettingPartnerCycleInformations = new int[] { -1, 2, 3, 1 }[GettingPartnerCycleInformations];
-                    await Task.Delay(500);
-                    await RefreshPartnerCycleInformation();
-                }
+                //if (GettingPartnerCycleInformations != 0)
+                //{
+                //    GettingPartnerCycleInformations = new int[] { -1, 2, 3, 1 }[GettingPartnerCycleInformations];
+                //    await Task.Delay(500);
+                //    await RefreshPartnerCycleInformation();
+                //}
             }
         }
 
@@ -968,7 +974,8 @@ namespace Kara
                 base.OnAppearing();
                 App.UniversalLineInApp = 875234120;
 
-                CustomStuffListCell.UnitNameTapEventHandler = (s, e) => {
+                CustomStuffListCell.UnitNameTapEventHandler = (s, e) =>
+                {
                     if (!TapEventHandlingInProgress)
                     {
                         TapEventHandlingInProgress = true;
@@ -993,7 +1000,8 @@ namespace Kara
                 };
                 //App.UniversalLineInApp = 875234126;
 
-                CustomStuffListCell.QuantityTextBoxTapEventHandler = (s, e) => {
+                CustomStuffListCell.QuantityTextBoxTapEventHandler = (s, e) =>
+                {
                     if (!TapEventHandlingInProgress)
                     {
                         TapEventHandlingInProgress = true;
@@ -1018,7 +1026,8 @@ namespace Kara
                 };
                 App.UniversalLineInApp = 875234132;
 
-                CustomStuffListCell.QuantityPlusTapEventHandler = (s, e) => {
+                CustomStuffListCell.QuantityPlusTapEventHandler = (s, e) =>
+                {
                     if (!TapEventHandlingInProgress)
                     {
                         TapEventHandlingInProgress = true;
@@ -1042,7 +1051,8 @@ namespace Kara
                     }
                 };
 
-                CustomStuffListCell.QuantityMinusTapEventHandler = (s, e) => {
+                CustomStuffListCell.QuantityMinusTapEventHandler = (s, e) =>
+                {
                     if (!TapEventHandlingInProgress)
                     {
                         TapEventHandlingInProgress = true;
@@ -1065,7 +1075,8 @@ namespace Kara
                         TapEventHandlingInProgress = false;
                     }
                 };
-                CustomStuffListCell.GroupTapEventHandler = (s, e) => {
+                CustomStuffListCell.GroupTapEventHandler = (s, e) =>
+                {
                     if (!TapEventHandlingInProgress)
                     {
                         TapEventHandlingInProgress = true;
@@ -1093,7 +1104,8 @@ namespace Kara
                 //App.UniversalLineInApp = 875234149;
 
 
-                StuffGallaryView.UnitNameTapEventHandler = (s, e) => {
+                StuffGallaryView.UnitNameTapEventHandler = (s, e) =>
+                {
                     if (!TapEventHandlingInProgress)
                     {
                         TapEventHandlingInProgress = true;
@@ -1118,7 +1130,8 @@ namespace Kara
                 };
                 App.UniversalLineInApp = 875234155;
 
-                StuffGallaryView.QuantityTextBoxTapEventHandler = (s, e) => {
+                StuffGallaryView.QuantityTextBoxTapEventHandler = (s, e) =>
+                {
                     if (!TapEventHandlingInProgress)
                     {
                         TapEventHandlingInProgress = true;
@@ -1143,7 +1156,8 @@ namespace Kara
                 };
                 App.UniversalLineInApp = 875234161;//THISLINE
 
-                StuffGallaryView.QuantityPlusTapEventHandler = (s, e) => {
+                StuffGallaryView.QuantityPlusTapEventHandler = (s, e) =>
+                {
                     if (!TapEventHandlingInProgress)
                     {
                         TapEventHandlingInProgress = true;
@@ -1180,7 +1194,8 @@ namespace Kara
                 };
                 App.UniversalLineInApp = 875234170;//THISLINE
 
-                StuffGallaryView.QuantityMinusTapEventHandler = (s, e) => {
+                StuffGallaryView.QuantityMinusTapEventHandler = (s, e) =>
+                {
                     if (!TapEventHandlingInProgress)
                     {
                         TapEventHandlingInProgress = true;
@@ -1205,9 +1220,9 @@ namespace Kara
                     }
                 };
 
-                if(FromTour)
+                if (FromTour)
                 {
-                    
+
                 }
             }
             catch (Exception err)
@@ -1283,14 +1298,14 @@ namespace Kara
         {
             FocusedQuantityTextBoxId = null;
 
-            var BewforePreviewForm = new OrderBeforePreviewForm(AllStuffsData, SelectedPartner, EditingSaleOrder, PartnerListForm, OrdersForm, SettlementTypeId, Description, this, PartnerChangeButton.IsEnabled, WarehouseId,FromTour)
+            var BewforePreviewForm = new OrderBeforePreviewForm(AllStuffsData, SelectedPartner, EditingSaleOrder, PartnerListForm, OrdersForm, SettlementTypeId, Description, this, PartnerChangeButton.IsEnabled, WarehouseId, FromTour)
             {
                 StartColor = Color.FromHex("E6EBEF"),
                 EndColor = Color.FromHex("A6CFED")
             };
             Navigation.PushAsync(BewforePreviewForm);
         }
-        
+
         private async void PartnerSelected()
         {
             PartnerLabel.Text = SelectedPartner == null ? "مشتری" :
@@ -1308,7 +1323,7 @@ namespace Kara
         class QuantityEditingStuffModel
         {
             DBRepository.StuffListModel StuffModel;
-            
+
             private decimal _Quantity;
             public decimal Quantity
             {
@@ -1422,7 +1437,7 @@ namespace Kara
             FocusedQuantityTextBoxId = null;
             if (AllStuffsData != null)
             {
-                if(AllStuffsData.Count(a => a.StuffId == StuffId) > 1)
+                if (AllStuffsData.Count(a => a.StuffId == StuffId) > 1)
                 {
                     MultipleRecordsInAllStuffsData_Log = AllStuffsData.Where(a => a.StuffId == StuffId).Select(a =>
                         "BarCode: " + a.BarCode +
@@ -1521,7 +1536,8 @@ namespace Kara
                 action.ContinueWith(task =>
                 {
                     if (task.Result)
-                        Xamarin.Forms.Device.BeginInvokeOnMainThread(() => {
+                        Xamarin.Forms.Device.BeginInvokeOnMainThread(() =>
+                        {
                             try { Navigation.PopAsync(); } catch (Exception) { }
                         });
                 });
@@ -1567,7 +1583,7 @@ namespace Kara
             var StuffModel = AllStuffGroupsData.SingleOrDefault(a => a.StuffId == GroupId);
             if (StuffModel != null)
                 StuffModel.IsGroupOpen = false;
-            
+
             GallaryStuffGroupLabel.Text = GallaryStuffGroupLabelPlaceholder;
 
             await FillStuffs(StuffsSearchBar.Text, null, false, false);
@@ -1611,7 +1627,7 @@ namespace Kara
         {
             App.QRScanner.OnScanResult = new Action<QRScanResult>((result) =>
             {
-                if(!result.success)
+                if (!result.success)
                     App.ToastMessageHandler.ShowMessage("در خواندن بارکد/QR Code خطایی رخ داده است. لطفا مجددا تلاش کنید.", ToastMessageDuration.Long);
                 else
                     FillStuffs("ScannedBarcode:" + result.contents, null, false, false);
@@ -1652,14 +1668,14 @@ namespace Kara
                 RefreshPartnerSection(LastWidth > LastHeight);
             }
         }
-        
+
         void RefreshPartnerSection(bool Horizental)
         {
             PartnerSection.RowDefinitions = new RowDefinitionCollection();
             PartnerSection.ColumnDefinitions = new ColumnDefinitionCollection();
             PartnerSection.Children.Clear();
 
-            var ShowAccountingCycleOfPartner = 
+            var ShowAccountingCycleOfPartner =
                 App.Accesses.AccessToViewPartnerRemainder &&
                 (
                     App.ShowAccountingCycleOfPartner_Remainder.Value ||
@@ -1683,7 +1699,7 @@ namespace Kara
                     PartnerSection.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                     GallaryStuffGroupOffset = 3;
                 }
-                
+
                 PartnerSection.Children.Add(PartnerChangeButton, 0 + GallaryStuffGroupOffset, 0);
                 PartnerSection.Children.Add(PartnerLabel, 1 + GallaryStuffGroupOffset, 0);
 
@@ -1760,7 +1776,7 @@ namespace Kara
                 }
                 var NewStuffsData = StuffsResult.Data[0];
                 var NewStuffGroupsData = StuffsResult.Data[1];
-                
+
                 if (AllStuffsData != null)
                 {
                     try
@@ -1790,22 +1806,22 @@ namespace Kara
                     {
                     }
                 }
-                
+
                 AllStuffsData = NewStuffsData;
                 AllStuffGroupsData = NewStuffGroupsData;
             }
-            
-            if(EditingOrder != null && !EditingOrderStuffsInitialized)
+
+            if (EditingOrder != null && !EditingOrderStuffsInitialized)
             {
                 var EditingSaleOrderStuffs = EditingOrder.SaleOrderStuffs.Where(a => !a.FreeProduct);
                 foreach (var saleOrderStuff in EditingSaleOrderStuffs)
                 {
                     DBRepository.StuffListModel StuffInList = AllStuffsData.SingleOrDefault(a => a.StuffId == saleOrderStuff.Package.StuffId);
-                    if(StuffInList != null)
+                    if (StuffInList != null)
                     {
                         if (StuffInList.HasBatchNumbers)
                             StuffInList = StuffInList.StuffRow_BatchNumberRows.SingleOrDefault(a => a.BatchNumberId == saleOrderStuff.BatchNumberId.GetValueOrDefault(Guid.Empty));
-                        if(StuffInList != null)
+                        if (StuffInList != null)
                         {
                             if (StuffInList.BatchNumberId.HasValue)
                                 StuffInList.BatchNumberRow_StuffParentRow.SelectedPackage = saleOrderStuff.Package;
@@ -1825,19 +1841,19 @@ namespace Kara
                     item.SelectedInGallaryMode = true;
 
             var FilteredStuffs = await App.DB.FilterStuffsAsync(AllStuffsData, Filter);
-            
+
             if (EditingOrder != null)
                 FilteredStuffs = FilteredStuffs.OrderBy(a => a.Quantity == 0).ToList();
-            
+
             var StuffsWithGroupsData = FilteredStuffs.ToList();
-            if(AllStuffGroupsData != null)
+            if (AllStuffGroupsData != null)
             {
                 var StuffCounts = from g in AllStuffGroupsData
                                   from c in FilteredStuffs.GroupBy(a => a.GroupCode).Select(a => new { GroupCode = a.Key, Count = a.Count() }).ToList().Where(a => a.GroupCode == g.GroupCode)
                                   select new { g, c };
                 foreach (var item in StuffCounts)
                     item.g.GroupStuffsCount = item.c.Count;
-                    
+
                 LastStuffsGroups = StuffCounts.Select(a => a.g).ToList();
 
                 StuffsWithGroupsData.AddRange(LastStuffsGroups);
@@ -1854,11 +1870,11 @@ namespace Kara
             try
             {
                 var StuffsListTemp = StuffsWithGroupsData.ToList();
-                
+
                 var BatchNumbers = StuffsListTemp.Where(a => !a.IsGroup).SelectMany(a => a.StuffRow_BatchNumberRows).ToList();
-                
+
                 StuffsListTemp.AddRange(BatchNumbers);
-                
+
                 var StuffsListOrderDic = StuffsListTemp.Where(a => !a.BatchNumberId.HasValue).Select((a, index) => new { a, index }).ToDictionary(a => a.a.StuffId, a => a.index);
                 foreach (var item in StuffsListTemp)
                     item.OddRow = StuffsListOrderDic[item.StuffId] % 2 == 1;
@@ -1871,7 +1887,7 @@ namespace Kara
             {
                 var wefwef = err;
             }
-            
+
             StuffItems.ItemsSource = null;
             StuffItems.ItemsSource = _StuffsList;
 
@@ -1889,7 +1905,7 @@ namespace Kara
             }).ToArray();
             StuffGallaryViewGrid.SetPageStuffIds(StuffsListForGallaryCarousel.ToDictionary(a => (int)a.Key, a => a.Stuffs.Select(b => b.StuffId).ToArray()));
             gallaryCarousel.ItemsSource = new ObservableCollection<DBRepository.StuffListModelArray>(StuffsListForGallaryCarousel.Select(a => new DBRepository.StuffListModelArray() { Stuffs = a.Stuffs }));
-            
+
             if (EditingOrder != null)
                 CheckToShowOrderBasketTollbar();
 
@@ -1897,16 +1913,16 @@ namespace Kara
 
             FocusedQuantityTextBoxId = null;
         }
-        
+
         private async Task FillBatchNumbers(Guid StuffId)
         {
             await Task.Delay(100);
-            
+
             var _BatchNumbersList = new ObservableCollection<DBRepository.StuffListModel>(AllStuffsData.Single(a => a.StuffId == StuffId).StuffRow_BatchNumberRows.ToList());
 
             GallaryStuffBatchNumbersList.ItemsSource = null;
             GallaryStuffBatchNumbersList.ItemsSource = _BatchNumbersList;
-            
+
             FocusedQuantityTextBoxId = null;
         }
     }

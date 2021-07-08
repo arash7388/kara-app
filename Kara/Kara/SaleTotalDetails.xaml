@@ -22,18 +22,20 @@
                             <ColumnDefinition Width="2*"></ColumnDefinition>
                             <ColumnDefinition Width="2*"></ColumnDefinition>
                             <ColumnDefinition Width="2*"></ColumnDefinition>
+                            <ColumnDefinition Width="2*"></ColumnDefinition>
                             <ColumnDefinition Width="*"></ColumnDefinition>
                         </Grid.ColumnDefinitions>
 
                         
-                        <Label Text="" BackgroundColor="Navy" TextColor="White" Grid.Column="7" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
-                        <Label Text="ش پ ف" BackgroundColor="Navy" TextColor="White" Grid.Column="7" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
-                        <Label Text="ش ف" BackgroundColor="Navy" TextColor="White" Grid.Column="6" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
-                        <Label Text="کد ط ح" BackgroundColor="Navy" TextColor="White" Grid.Column="5" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
-                        <Label Text="نام ط ح" BackgroundColor="Navy" TextColor="White" Grid.Column="4" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small" />
-                        <Label Text="آدرس" BackgroundColor="Navy" TextColor="White" Grid.Column="3" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
-                        <Label Text="تلفن" BackgroundColor="Navy" TextColor="White" Grid.Column="2" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
-                        <Label Text="ویزیتور" BackgroundColor="Navy" TextColor="White" Grid.Column="1" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
+                        <Label Text="" BackgroundColor="Navy" TextColor="White" Grid.Column="9" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
+                        <Label Text="ش پ ف" BackgroundColor="Navy" TextColor="White" Grid.Column="8" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
+                        <Label Text="ش ف" BackgroundColor="Navy" TextColor="White" Grid.Column="7" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
+                        <Label Text="کد ط ح" BackgroundColor="Navy" TextColor="White" Grid.Column="6" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
+                        <Label Text="نام ط ح" BackgroundColor="Navy" TextColor="White" Grid.Column="5" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small" />
+                        <Label Text="آدرس" BackgroundColor="Navy" TextColor="White" Grid.Column="4" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
+                        <Label Text="تلفن" BackgroundColor="Navy" TextColor="White" Grid.Column="3" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
+                        <Label Text="ویزیتور" BackgroundColor="Navy" TextColor="White" Grid.Column="2" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
+                        <Label Text="مبلغ" BackgroundColor="Navy" TextColor="White" Grid.Column="1" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
                         <Label Text="تایید شده" BackgroundColor="Navy" TextColor="White" Grid.Column="0" Grid.Row="0" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" FontSize="Small"/>
                         
                     </Grid>
@@ -54,18 +56,20 @@
                                     <ColumnDefinition Width="2*"></ColumnDefinition>
                                     <ColumnDefinition Width="2*"></ColumnDefinition>
                                     <ColumnDefinition Width="2*"></ColumnDefinition>
+                                    <ColumnDefinition Width="2*"></ColumnDefinition>
                                     <ColumnDefinition Width="*"></ColumnDefinition>
                                     <!--<ColumnDefinition Width="{Binding CheckBoxColumnWidth}"></ColumnDefinition>-->
                                 </Grid.ColumnDefinitions>
 
-                                <local:MyCheckBox x:Name="selectedCheckBox" Grid.Column="8" HorizontalOptions="Center" VerticalOptions="Center" Checked="{Binding Selected, Mode=TwoWay}" ></local:MyCheckBox>
-                                <Label Grid.Column="7" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" Text="{Binding OrderPreCode} "/>
-                                <Label Grid.Column="6" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalOptions="Center" Text="{Binding OrderCode}"/>
-                                <Label Grid.Column="5" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding EntityCode}"/>
-                                <Label Grid.Column="4" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding EntityName}"/>
-                                <Label Grid.Column="3" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Address}"/>
-                                <Label Grid.Column="2" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Tels}"/>
-                                <Label Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Visitor}"/>
+                                <local:MyCheckBox x:Name="selectedCheckBox" Grid.Column="9" HorizontalOptions="Center" VerticalOptions="Center" Checked="{Binding Selected, Mode=TwoWay}" ></local:MyCheckBox>
+                                <Label Grid.Column="8" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" Text="{Binding OrderPreCode} "/>
+                                <Label Grid.Column="7" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalOptions="Center" Text="{Binding OrderCode}"/>
+                                <Label Grid.Column="6" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding EntityCode}"/>
+                                <Label Grid.Column="5" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding EntityName}"/>
+                                <Label Grid.Column="4" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Address}"/>
+                                <Label Grid.Column="3" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Tels}"/>
+                                <Label Grid.Column="2" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding Visitor}"/>
+                                <Label Grid.Column="1" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="End" Text="{Binding PriceFa}"/>
                                 <local:MyCheckBox Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center" Checked="{Binding Confirmed}" IsEnabled="False"/>
                                 
                                 

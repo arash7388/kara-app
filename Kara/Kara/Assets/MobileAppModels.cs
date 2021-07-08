@@ -112,6 +112,7 @@ namespace Kara.Assets
         public bool UseCollectorAndroidApplication { get; set; }//تحصیلدار
         public bool UseVisitorsNadroidApplication { get; set; } 
         public bool UseDistributerAndroidApplication { get; set; }//موزع
+        public int WarnIfSalePriceIsLessThanTheLastBuyPrice { get; set; }
     }
     public class UpdateDB_OtherInformationBatchModel
     {
