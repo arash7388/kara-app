@@ -168,26 +168,32 @@ namespace Kara
 
                 var lic = await Kara.Assets.Connectivity.CheckLicense(DependencyService.Get<IDevice>().GetIdentifier());
 
-                if (App.UseVisitorsNadroidApplication.Value)
-                    if (!lic.HasVisitorLic)
-                    {
-                        App.ShowError("خطا", "شما لایسنس استفاده از نسخه ویزیتور را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
-                        return;
-                    }
+                //temppppppppppppp
+                var checkLic = true;
 
-                if (App.UseCollectorAndroidApplication.Value)
-                    if (!lic.HasTahsildarLic)
-                    {
-                        App.ShowError("خطا", "شما لایسنس استفاده از نسخه تحصیلدار را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
-                        return;
-                    }
+                if (checkLic)
+                {
+                    if (App.UseVisitorsNadroidApplication.Value)
+                        if (!lic.HasVisitorLic)
+                        {
+                            App.ShowError("خطا", "شما لایسنس استفاده از نسخه ویزیتور را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
+                            return;
+                        }
 
-                if (App.UseDistributerAndroidApplication.Value)
-                    if (!lic.HasDistributerLic)
-                    {
-                        App.ShowError("خطا", "شما لایسنس استفاده از نسخه موزع را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
-                        return;
-                    }
+                    if (App.UseCollectorAndroidApplication.Value)
+                        if (!lic.HasTahsildarLic)
+                        {
+                            App.ShowError("خطا", "شما لایسنس استفاده از نسخه تحصیلدار را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
+                            return;
+                        }
+
+                    if (App.UseDistributerAndroidApplication.Value)
+                        if (!lic.HasDistributerLic)
+                        {
+                            App.ShowError("خطا", "شما لایسنس استفاده از نسخه موزع را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
+                            return;
+                        }
+                }
 
                 var locationTask = App.CheckGps();
                 

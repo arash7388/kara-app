@@ -1441,6 +1441,7 @@ namespace Kara.Assets
                         new KeyValuePair<string, string>("Id", FailedVisit.Id.ToString()),
                         new KeyValuePair<string, string>("PartnerId", FailedVisit.PartnerId.ToString()),
                         new KeyValuePair<string, string>("ReasonId", FailedVisit.ReasonId.ToString()),
+                        new KeyValuePair<string, string>("MobileInserted", true.ToString()),
                         new KeyValuePair<string, string>("VisitTime", FailedVisit.VisitTime.ToString("yyyy-MM-dd HH-mm-ss"))
                     };
                     HttpContent Content = new FormUrlEncodedContent(Data);
@@ -2319,6 +2320,8 @@ namespace Kara.Assets
                 var AccessesResult = await App.DB.FetchUserAccessesAsync();
                 if (!AccessesResult.Success)
                     return new ResultSuccess<int>(false, AccessesResult.Message);
+                
+                App.DB.CommitTransaction();
 
                 return new ResultSuccess<int>(true, "", resultDeserialized.Data.TotalCount);
             }

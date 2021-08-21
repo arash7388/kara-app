@@ -607,6 +607,7 @@ namespace Kara.Models
         public Guid ReasonId { get; set; }
         public string Description { get; set; }
         public bool Sent { get; set; }
+        public bool MobileInserted { get; set; }
     }
 
     [Table("DiscountRule")]
