@@ -2284,6 +2284,7 @@ namespace Kara.Assets
                     App.UseBatchNumberAndExpirationDate.Value = AppSettings[0].UseBatchNumberAndExpirationDate;
                     App.UseVisitProgram.Value = AppSettings[0].UseVisitProgram;
                     App.AllowOptionalDiscountRules_MultiSelection.Value = AppSettings[0].AllowOptionalDiscountRules_MultiSelection;
+                    App.AllowOptionalDiscountRules.Value = AppSettings[0].AllowOptionalDiscountRules;
                     App.SystemName.Value = AppSettings[0].SystemName;
 
                     App.VisitorBeginWorkTime.Value = AppSettings[0].VisitorBeginWorkTime;

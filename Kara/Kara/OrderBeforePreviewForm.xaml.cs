@@ -14,30 +14,28 @@ namespace Kara
 {
     public partial class OrderBeforePreviewForm : GradientContentPage
     {
-        ObservableCollection<DBRepository.StuffListModel> _StuffsList = null;
-        private Partner _SelectedPartner;
+        private ObservableCollection<DBRepository.StuffListModel> _stuffsList = null;
+        private Partner _selectedPartner;
         public Partner SelectedPartner
         {
-            get { return _SelectedPartner; }
+            get => _selectedPartner;
             set
             {
-                _SelectedPartner = value;
+                _selectedPartner = value;
                 PartnerSelected();
             }
         }
-        private ToolbarItem ToolbarItem_OrderPreviewForm, ToolbarItem_SaveOrder;
-        private SettlementType[] SettlementTypes;
-        private PartnerListForm PartnerListForm;
-        private InsertedInformations_Orders OrdersForm;
+
+        private readonly PartnerListForm _partnerListForm;
+        private readonly InsertedInformations_Orders _ordersForm;
         public Guid? EditingSaleOrderId;
-        private SaleOrder EditingSaleOrder;
-        private OrderInsertForm OrderInsertForm;
-        private Guid? SettlementTypeId;
-        MyKeyboard<QuantityEditingStuffModel, decimal> QuantityKeyboard;
-        Guid? WarehouseId;
-        bool FromTour;
-        DtoReversionReason[] ReversionReasons = null;
-        //Dictionary<Guid, decimal> PackagesQuantity;
+        private readonly SaleOrder _editingSaleOrder;
+        private SaleOrder _saleOrder;
+        private readonly OrderInsertForm _orderInsertForm;
+        private Guid? _settlementTypeId;
+        private readonly MyKeyboard<QuantityEditingStuffModel, decimal> _quantityKeyboard;
+        private readonly Guid? _warehouseId;
+        private DtoReversionReason[] _reversionReasons = null;
 
         public OrderBeforePreviewForm
         (
@@ -46,7 +44,7 @@ namespace Kara
             SaleOrder SaleOrder,
             PartnerListForm PartnerListForm,
             InsertedInformations_Orders OrdersForm,
-            Guid? _SettlementTypeId,
+            Guid? settlementTypeId,
             string Description,
             OrderInsertForm OrderInsertForm,
             bool CanChangePartner,
@@ -56,42 +54,40 @@ namespace Kara
         {
             InitializeComponent();
 
-            FromTour = fromTour;
-
-            this.WarehouseId = WarehouseId;
-
-            this.OrderInsertForm = OrderInsertForm;
+            _saleOrder = SaleOrder;
+            _warehouseId = WarehouseId;
+            _orderInsertForm = OrderInsertForm;
 
             EditingSaleOrderId = SaleOrder != null ? SaleOrder.Id : new Nullable<Guid>();
-            EditingSaleOrder = SaleOrder;
+            _editingSaleOrder = SaleOrder;
             this.AllStuffsData = AllStuffsData;
 
-            this.PartnerListForm = PartnerListForm;
-            this.OrdersForm = OrdersForm;
+            _partnerListForm = PartnerListForm;
+            _ordersForm = OrdersForm;
 
             CustomStuffListCell.UnitNameTapEventHandler = (s, e) => {
-                var Ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
-                var StuffId = new Guid(Ids[0]);
-                var BatchNumberId = Ids.Length == 2 ? new Guid(Ids[1]) : new Nullable<Guid>();
-                UnitNameClicked(StuffId);
+                var ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+                var stuffId = new Guid(ids[0]);
+                var batchNumberId = ids.Length == 2 ? new Guid(ids[1]) : new Nullable<Guid>();
+                UnitNameClicked(stuffId);
             };
             CustomStuffListCell.QuantityTextBoxTapEventHandler = (s, e) => {
-                var Ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
-                var StuffId = new Guid(Ids[0]);
-                var BatchNumberId = Ids.Length == 2 ? new Guid(Ids[1]) : new Nullable<Guid>();
-                FocusedQuantityTextBoxId = BatchNumberId.HasValue ? new Guid[] { StuffId, BatchNumberId.Value } : new Guid[] { StuffId };
+                var ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+                var stuffId = new Guid(ids[0]);
+                var batchNumberId = ids.Length == 2 ? new Guid(ids[1]) : new Nullable<Guid>();
+                FocusedQuantityTextBoxId = batchNumberId.HasValue ? new Guid[] { stuffId, batchNumberId.Value } : new Guid[] { stuffId };
             };
             CustomStuffListCell.QuantityPlusTapEventHandler = (s, e) => {
-                var Ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
-                var StuffId = new Guid(Ids[0]);
-                var BatchNumberId = Ids.Length == 2 ? new Guid(Ids[1]) : new Nullable<Guid>();
-                QuantityPlusClicked(StuffId, BatchNumberId);
+                var ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+                var stuffId = new Guid(ids[0]);
+                var batchNumberId = ids.Length == 2 ? new Guid(ids[1]) : new Nullable<Guid>();
+                QuantityPlusClicked(stuffId, batchNumberId);
             };
             CustomStuffListCell.QuantityMinusTapEventHandler = (s, e) => {
-                var Ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
-                var StuffId = new Guid(Ids[0]);
-                var BatchNumberId = Ids.Length == 2 ? new Guid(Ids[1]) : new Nullable<Guid>();
-                QuantityMinusClicked(StuffId, BatchNumberId);
+                var ids = ((string)((TappedEventArgs)e).Parameter).Split(new string[] { "|" }, StringSplitOptions.RemoveEmptyEntries);
+                var stuffId = new Guid(ids[0]);
+                var batchNumberId = ids.Length == 2 ? new Guid(ids[1]) : new Nullable<Guid>();
+                QuantityMinusClicked(stuffId, batchNumberId);
             };
             StuffItems.ItemTemplate = new DataTemplate(typeof(CustomStuffListCell));
 
@@ -102,76 +98,76 @@ namespace Kara
                 PartnerChangeButton.IsEnabled = false;
             PartnerLabel.FontSize *= 1.5;
             
-            var PartnerChangeButtonTapGestureRecognizer = new TapGestureRecognizer();
-            PartnerChangeButtonTapGestureRecognizer.Tapped += (sender, e) => {
+            var partnerChangeButtonTapGestureRecognizer = new TapGestureRecognizer();
+            partnerChangeButtonTapGestureRecognizer.Tapped += (sender, e) => {
                 if (PartnerChangeButton.IsEnabled)
                 {
                     FocusedQuantityTextBoxId = null;
-                    var PartnerListForm1 = new PartnerListForm();
-                    PartnerListForm1.OrderBeforePreviewForm = this;
-                    Navigation.PushAsync(PartnerListForm1);
+                    var partnerListForm1 = new PartnerListForm();
+                    partnerListForm1.OrderBeforePreviewForm = this;
+                    Navigation.PushAsync(partnerListForm1);
                 }
             };
-            PartnerChangeButtonTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
-            PartnerChangeButton.GestureRecognizers.Add(PartnerChangeButtonTapGestureRecognizer);
+            partnerChangeButtonTapGestureRecognizer.SetBinding(TapGestureRecognizer.CommandParameterProperty, "Id");
+            PartnerChangeButton.GestureRecognizers.Add(partnerChangeButtonTapGestureRecognizer);
             PartnerChangeButton.WidthRequest = 150;
 
             StuffItems.HasUnevenRows = true;
             StuffItems.SeparatorVisibility = SeparatorVisibility.None;
             StuffItems.ItemSelected += StuffItems_ItemSelected;
 
-            ToolbarItem_OrderPreviewForm = new ToolbarItem();
-            ToolbarItem_OrderPreviewForm.Text = "پیش نمایش سفارش";
-            ToolbarItem_OrderPreviewForm.Icon = "ShowInvoice.png";
-            ToolbarItem_OrderPreviewForm.Activated += ToolbarItem_OrderPreviewForm_Activated;
-            ToolbarItem_OrderPreviewForm.Order = ToolbarItemOrder.Primary;
-            ToolbarItem_OrderPreviewForm.Priority = 2;
-            if (!this.ToolbarItems.Contains(ToolbarItem_OrderPreviewForm))
-                this.ToolbarItems.Add(ToolbarItem_OrderPreviewForm);
+            var toolbarItemOrderPreviewForm = new ToolbarItem();
+            toolbarItemOrderPreviewForm.Text = "پیش نمایش سفارش";
+            toolbarItemOrderPreviewForm.Icon = "ShowInvoice.png";
+            toolbarItemOrderPreviewForm.Activated += ToolbarItem_OrderPreviewForm_Activated;
+            toolbarItemOrderPreviewForm.Order = ToolbarItemOrder.Primary;
+            toolbarItemOrderPreviewForm.Priority = 2;
+            if (!ToolbarItems.Contains(toolbarItemOrderPreviewForm))
+                ToolbarItems.Add(toolbarItemOrderPreviewForm);
 
-            if (FromTour)
+            if (fromTour)
             {
-                ToolbarItem_SaveOrder = new ToolbarItem();
-                ToolbarItem_SaveOrder.Text = "ذخیره";
-                ToolbarItem_SaveOrder.Icon = "Upload.png";
-                ToolbarItem_SaveOrder.Activated += ToolbarItem_SaveOrder_Activated;
-                ToolbarItem_SaveOrder.Order = ToolbarItemOrder.Primary;
-                ToolbarItem_SaveOrder.Priority = 3;
+                var toolbarItemSaveOrder = new ToolbarItem();
+                toolbarItemSaveOrder.Text = "ذخیره";
+                toolbarItemSaveOrder.Icon = "Upload.png";
+                toolbarItemSaveOrder.Activated += ToolbarItem_SaveOrder_Activated;
+                toolbarItemSaveOrder.Order = ToolbarItemOrder.Primary;
+                toolbarItemSaveOrder.Priority = 3;
 
-                if (!this.ToolbarItems.Contains(ToolbarItem_SaveOrder))
-                    this.ToolbarItems.Add(ToolbarItem_SaveOrder);
+                if (!ToolbarItems.Contains(toolbarItemSaveOrder))
+                    ToolbarItems.Add(toolbarItemSaveOrder);
             }
             
 
-            SettlementTypes = App.SettlementTypes.Where(a => a.Enabled).ToArray();
-            foreach (var SettlementType in SettlementTypes)
-                SettlementTypePicker.Items.Add(SettlementType.Name);
+            var settlementTypes = App.SettlementTypes.Where(a => a.Enabled).ToArray();
+            foreach (var settlementType in settlementTypes)
+                SettlementTypePicker.Items.Add(settlementType.Name);
 
             if(SaleOrder != null)
-                _SettlementTypeId = SaleOrder.SettlementTypeId;
+                settlementTypeId = SaleOrder.SettlementTypeId;
 
-            if (_SettlementTypeId.HasValue && _SettlementTypeId.Value!=Guid.Parse("00000000-0000-0000-0000-000000000000"))
+            if (settlementTypeId.HasValue && settlementTypeId.Value!=Guid.Parse("00000000-0000-0000-0000-000000000000"))
             {
-                SettlementTypePicker.SelectedIndex = SettlementTypes.Select((a, index) => new { a, index }).Single(a => a.a.Id == _SettlementTypeId).index;
-                SettlementTypeLabel.Text = SettlementTypes[SettlementTypePicker.SelectedIndex].Name;
+                SettlementTypePicker.SelectedIndex = settlementTypes.Select((a, index) => new { a, index }).Single(a => a.a.Id == settlementTypeId).index;
+                SettlementTypeLabel.Text = settlementTypes[SettlementTypePicker.SelectedIndex].Name;
             }
 
-            SettlementTypeId = _SettlementTypeId;
+            _settlementTypeId = settlementTypeId;
 
             SettlementTypePicker.SelectedIndexChanged += (sender, e) => {
                 FocusedQuantityTextBoxId = null;
 
-                SettlementTypeLabel.Text = SettlementTypes[SettlementTypePicker.SelectedIndex].Name;
+                SettlementTypeLabel.Text = settlementTypes[SettlementTypePicker.SelectedIndex].Name;
 
-                var SettlementType = SettlementTypePicker.SelectedIndex == -1 ? null : SettlementTypes[SettlementTypePicker.SelectedIndex];
-                this.SettlementTypeId = SettlementType == null ? new Nullable<Guid>() : SettlementType.Id;
-                OrderInsertForm.SettlementTypeId = SettlementTypeId;
+                var settlementType = SettlementTypePicker.SelectedIndex == -1 ? null : settlementTypes[SettlementTypePicker.SelectedIndex];
+                _settlementTypeId = settlementType == null ? new Nullable<Guid>() : settlementType.Id;
+                OrderInsertForm.SettlementTypeId = _settlementTypeId;
             };
 
-            var _Description = SaleOrder != null ? SaleOrder.Description : Description;
-            DescriptionEditor.Text = !string.IsNullOrEmpty(_Description) ? _Description : "";
+            var description = SaleOrder != null ? SaleOrder.Description : Description;
+            DescriptionEditor.Text = !string.IsNullOrEmpty(description) ? description : "";
             
-            QuantityKeyboard = new MyKeyboard<QuantityEditingStuffModel, decimal>
+            _quantityKeyboard = new MyKeyboard<QuantityEditingStuffModel, decimal>
             (
                 QuantityKeyboardHolder,
                 new Command((parameter) => {        //OnOK
@@ -181,48 +177,70 @@ namespace Kara
                 new Command((parameter) => {        //OnChange
                     CheckToBackToOrderInsertFormIfStuffsEmpty();
                 })
-                //new Command((parameter) => {        //OnOK
-                //    var Value = (decimal)parameter;
-                //    //var StuffModel3 = OrderInsertForm.StuffsList.SingleOrDefault(a => a.StuffId == FocusedQuantityTextBoxId);
-                //    var StuffModel4 = OrderInsertForm.AllStuffsData.Where(a => a.StuffId == FocusedQuantityTextBoxId).ToArray();
-                //    //if (StuffModel3 != null)
-                //    //    StuffModel3.Quantity = Value;
-                //    foreach (var item in StuffModel4)
-                //        item.Quantity = Value;
-                //    FocusedQuantityTextBoxId = null;
-                //    CheckToBackToOrderInsertFormIfStuffsEmpty();
-                //}),
-                //new Command((parameter) => {        //OnChange
-                //    var Value = (decimal)parameter;
-                //    //var StuffModel3 = OrderInsertForm.StuffsList.SingleOrDefault(a => a.StuffId == FocusedQuantityTextBoxId);
-                //    var StuffModel4 = OrderInsertForm.AllStuffsData.Where(a => a.StuffId == FocusedQuantityTextBoxId).ToArray();
-                //    //if (StuffModel3 != null)
-                //    //    StuffModel3.Quantity = Value;
-                //    foreach (var item in StuffModel4)
-                //        item.Quantity = Value;
-                //    CheckToBackToOrderInsertFormIfStuffsEmpty();
-                //})
             );
 
-            if(FromTour)
+            if(fromTour)
             {
                 gridReasons.IsVisible = true;
                 FillReversionReasons();
             }
+
+            
+        }
+
+        protected async override void OnAppearing()
+        {
+            base.OnAppearing();
+
+            //if (App.AllowOptionalDiscountRules.Value)
+            //{
+            //    var discountRules = await App.DB.GetDiscountRulesAsync();
+
+            //    if (discountRules == null || !discountRules.Any())
+            //        return;
+
+            //    int? settlementDay = _saleOrder?.SettlementType?.Day;
+
+            //    OrderModel saleOrderModel = new OrderModel()
+            //    {
+            //        SettlementTypeId = Guid.Empty,
+            //        SettlementDay = settlementDay.GetValueOrDefault(0),
+            //        VisitorId = App.UserPersonnelId.Value,
+            //        OrderInsertDate = DateTime.Now,
+            //        //Partner = _saleOrder.Partner,
+            //        Articles = _saleOrder?.SaleOrderStuffs.Select(a => new ArticleModel()
+            //        {
+            //            Id = a.Id,
+            //            Stuff = a.Package.Stuff,
+            //            Package = a.Package,
+            //            BatchNumber = a.BatchNumber,
+            //            Quantity = a.Quantity,
+            //            UnitPrice = a.SalePrice / a.Package.Coefficient
+            //        }).ToArray()
+            //    };
+
+            //    var allSystemStuffs = (await App.DB.GetStuffsAsync()).Data.ToDictionary(a => a.Id);
+
+            //    var dc = new DiscountCalculator(App.SystemName.Value,
+            //        App.AllowOptionalDiscountRules_MultiSelection.Value, allSystemStuffs,
+            //        saleOrderModel, discountRules);
+
+            //    dc.ClaculateOrderDiscounts();
+            //}
         }
 
         private async Task FillReversionReasons()
         {
             try
             {
-                var result = await Connectivity.GetReversionReasons();
+                var result = await GetReversionReasons();
 
                 if (result.Success && result.Data != null)
                 {
-                    ReversionReasons = result.Data.ToArray();
+                    _reversionReasons = result.Data.ToArray();
 
-                    if (ReversionReasons != null)
-                        foreach (var r in ReversionReasons)
+                    if (_reversionReasons != null)
+                        foreach (var r in _reversionReasons)
                             ReversionReasonPicker.Items.Add(r.Name);
                 }
                 else
@@ -253,13 +271,13 @@ namespace Kara
 
                 var data = new DtoEditSaleOrderMobile()
                 {
-                    DistributionReversionReasonId = ReversionReasons[ReversionReasonPicker.SelectedIndex].Id,
+                    DistributionReversionReasonId = _reversionReasons[ReversionReasonPicker.SelectedIndex].Id,
                     OrderId = (Guid)EditingSaleOrderId,
                     UserId = App.UserId.Value,
-                    Description = EditingSaleOrder?.Description.ToSafeString()=="" ? "***" : DescriptionEditor.Text,
-                    Stuffs = _StuffsList.Where(a => a.Quantity > 0).Select(a => new DtoEditStuffMobile
+                    Description = _editingSaleOrder?.Description.ToSafeString()=="" ? "***" : DescriptionEditor.Text,
+                    Stuffs = _stuffsList.Where(a => a.Quantity > 0).Select(a => new DtoEditStuffMobile
                     {
-                        ArticleId = EditingSaleOrder?.SaleOrderStuffs?.SingleOrDefault(x=>x.Package.StuffId==a.StuffId)?.ArticleId,
+                        ArticleId = _editingSaleOrder?.SaleOrderStuffs?.SingleOrDefault(x=>x.Package.StuffId==a.StuffId)?.ArticleId,
                         StuffId = a.StuffId.ToSafeGuid(),
                         PackageId = a.SelectedPackage.Id,
                         Quantity = a.Quantity,
@@ -269,7 +287,7 @@ namespace Kara
                     }).ToList()
                 };
 
-                var submitResult = await Connectivity.EditSaleOrder(data);
+                var submitResult = await EditSaleOrder(data);
 
                 if (!submitResult.Success)
                 {
@@ -291,13 +309,13 @@ namespace Kara
 
         private void DescriptionEditor_TextChanged(object sender, TextChangedEventArgs e)
         {
-            OrderInsertForm.Description = ((CustomRenderer.PlaceholderEditor)sender).Text;
+            _orderInsertForm.Description = ((PlaceholderEditor)sender).Text;
         }
         
         private void ToolbarItem_OrderPreviewForm_Activated(object sender, EventArgs e)
         {
             FocusedQuantityTextBoxId = null;
-            if (SelectedPartner == null && !SettlementTypeId.HasValue)
+            if (SelectedPartner == null && !_settlementTypeId.HasValue)
             {
                 App.ShowError("خطا", "مشتری و نحوه تسویه را مشخص کنید.", "خوب");
                 return;
@@ -307,24 +325,24 @@ namespace Kara
                 App.ShowError("خطا", "مشتری را مشخص کنید.", "خوب");
                 return;
             }
-            else if (!SettlementTypeId.HasValue)
+            else if (!_settlementTypeId.HasValue)
             {
                 App.ShowError("خطا", "نحوه تسویه را مشخص کنید.", "خوب");
                 return;
             }
 
-            var WithoutPriceStuffs = AllStuffsData.Where(a => a.Quantity != 0 && !a._UnitPrice.HasValue).ToList();
-            if (WithoutPriceStuffs.Any())
+            var withoutPriceStuffs = AllStuffsData.Where(a => a.Quantity != 0 && !a._UnitPrice.HasValue).ToList();
+            if (withoutPriceStuffs.Any())
             {
-                var Message = "برخی اقلام در لیست قیمت این مشتری ثبت نشده اند:\n" + WithoutPriceStuffs.Select(a => a.StuffData.Name).Aggregate((sum, x) => sum + "\n" + x);
-                App.ShowError("خطا", Message, "خوب");
+                var message = "برخی اقلام در لیست قیمت این مشتری ثبت نشده اند:\n" + withoutPriceStuffs.Select(a => a.StuffData.Name).Aggregate((sum, x) => sum + "\n" + x);
+                App.ShowError("خطا", message, "خوب");
                 return;
             }
 
-            SaleOrder SaleOrder;
+            SaleOrder saleOrder;
             try
             {
-                SaleOrder = MakeOrder(SelectedPartner.Id, SettlementTypeId.Value, DescriptionEditor.Text);
+                saleOrder = MakeOrder(SelectedPartner.Id, _settlementTypeId.Value, DescriptionEditor.Text);
             }
             catch (Exception err)
             {
@@ -332,17 +350,17 @@ namespace Kara
                 return;
             }
             
-            var OrderPreviewForm = new OrderPreviewForm(SaleOrder, OrdersForm, PartnerListForm, OrderInsertForm, this, true)
+            var orderPreviewForm = new OrderPreviewForm(saleOrder, _ordersForm, _partnerListForm, _orderInsertForm, this, true)
             {
                 StartColor = Color.FromHex("ffffff"),
                 EndColor = Color.FromHex("ffffff")
             };
-            this.Navigation.PushAsync(OrderPreviewForm);
+            Navigation.PushAsync(orderPreviewForm);
         }
 
         private SaleOrder MakeOrder(Guid PartnerId, Guid SettlementTypeId, string Description)
         {
-            var SaleOrder = new SaleOrder()
+            var saleOrder = new SaleOrder()
             {
                 Id = EditingSaleOrderId.HasValue ? EditingSaleOrderId.Value : Guid.NewGuid(),
                 PreCode = null,
@@ -355,10 +373,10 @@ namespace Kara
                 GeoLocation_Latitude = null,//TODO
                 GeoLocation_Longitude = null,//TODO
                 GeoLocation_Accuracy = null,//TODO
-                WarehouseId = WarehouseId
+                WarehouseId = _warehouseId
             };
 
-            var _SaleOrderStuffs = AllStuffsData.Where(a => !a.HasBatchNumbers).SelectMany(a => a.PackagesData.Where(b => b.Quantity != 0).Select(b => new { Stuff = a, BatchNumber = (DBRepository.StuffListModel)null, Package = b }))
+            var _saleOrderStuffs = AllStuffsData.Where(a => !a.HasBatchNumbers).SelectMany(a => a.PackagesData.Where(b => b.Quantity != 0).Select(b => new { Stuff = a, BatchNumber = (DBRepository.StuffListModel)null, Package = b }))
                 .Union(AllStuffsData.Where(a => a.HasBatchNumbers).SelectMany(a => a.StuffRow_BatchNumberRows.SelectMany(b => b.PackagesData.Where(c => c.Quantity != 0).Select(c => new { Stuff = a, BatchNumber = b, Package = c }))))
                 .Select((a, index) => new
                 {
@@ -371,40 +389,42 @@ namespace Kara
                     PackagePrice = a.Stuff._UnitPrice.Value * a.Package.Package.Coefficient
                 }).Where(a => a.Quantity != 0).ToList();
 
-            var MinSaleConflicts = _SaleOrderStuffs.GroupBy(a => a.StuffData).Where(a => a.Sum(b => b.Quantity * b.PackageData.Coefficient) < a.Key.MinForSale).ToArray();
-            if (MinSaleConflicts.Any())
-                throw new Exception("کالا" + (MinSaleConflicts.Count() > 1 ? "ها" : "") + "ی زیر کمتر از حداقل تعیین شده در سیستم سفارش داده شده اند:\n" +
-                    MinSaleConflicts.Select(a => a.Key.Name + " (حداقل سفارش: " + a.Key.MinForSale + " " + a.Key.Packages.Single(b => b.Coefficient == 1).Name + ")").Aggregate((sum, x) => sum + "\n" + x));
+            var minSaleConflicts = _saleOrderStuffs.GroupBy(a => a.StuffData).Where(a => a.Sum(b => b.Quantity * b.PackageData.Coefficient) < a.Key.MinForSale).ToArray();
+            if (minSaleConflicts.Any())
+                throw new Exception("کالا" + (minSaleConflicts.Count() > 1 ? "ها" : "") + "ی زیر کمتر از حداقل تعیین شده در سیستم سفارش داده شده اند:\n" +
+                    minSaleConflicts.Select(a => a.Key.Name + " (حداقل سفارش: " + a.Key.MinForSale + " " + a.Key.Packages.Single(b => b.Coefficient == 1).Name + ")").Aggregate((sum, x) => sum + "\n" + x));
 
-            var SaleCoefficientConflicts = _SaleOrderStuffs.Where(a => a.StuffData.SaleCoefficient != 0 && a.StuffData.SaleCoefficient != 1).GroupBy(a => a.StuffData).Where(a => a.Sum(b => b.Quantity * b.PackageData.Coefficient) % a.Key.SaleCoefficient != 0).ToArray();
-            if (SaleCoefficientConflicts.Any())
-                throw new Exception("تعداد سفارش کالا" + (SaleCoefficientConflicts.Count() > 1 ? "ها" : "") + "ی زیر با ضریب فروش تعیین شده در سیستم مغایرت دارد:\n" +
-                    SaleCoefficientConflicts.Select(a => a.Key.Name + " (ضریب فروش: " + a.Key.SaleCoefficient + " " + a.Key.Packages.Single(b => b.Coefficient == 1).Name + ")").Aggregate((sum, x) => sum + "\n" + x));
+            var saleCoefficientConflicts = _saleOrderStuffs.Where(a => a.StuffData.SaleCoefficient != 0 && a.StuffData.SaleCoefficient != 1).GroupBy(a => a.StuffData).Where(a => a.Sum(b => b.Quantity * b.PackageData.Coefficient) % a.Key.SaleCoefficient != 0).ToArray();
+            if (saleCoefficientConflicts.Any())
+                throw new Exception("تعداد سفارش کالا" + (saleCoefficientConflicts.Count() > 1 ? "ها" : "") + "ی زیر با ضریب فروش تعیین شده در سیستم مغایرت دارد:\n" +
+                    saleCoefficientConflicts.Select(a => a.Key.Name + " (ضریب فروش: " + a.Key.SaleCoefficient + " " + a.Key.Packages.Single(b => b.Coefficient == 1).Name + ")").Aggregate((sum, x) => sum + "\n" + x));
 
-            var SaleOrderStuffs = _SaleOrderStuffs.Select(a => new SaleOrderStuff()
+            var saleOrderStuffs = _saleOrderStuffs.Select(a => new SaleOrderStuff()
             {
-                Id = a.Id ==string.Empty || a.Id==null ? Guid.NewGuid() : a.Id.Replace("|","").ToSafeGuid(),
-                OrderId = SaleOrder.Id,
-                SaleOrder = SaleOrder,
+                //1400/06/19 replaced to solve duplicate article ids in saving ...
+
+                Id = Guid.NewGuid(),  //a.Id ==string.Empty || a.Id==null ? Guid.NewGuid() : a.Id.Replace("|","").ToSafeGuid(),
+                OrderId = saleOrder.Id,
+                SaleOrder = saleOrder,
                 ArticleIndex = a.ArticleIndex,
                 PackageId = a.PackageData.Id,
                 BatchNumberId = a.BatchNumberData != null ? a.BatchNumberData.BatchNumberId : new Nullable<Guid>(),
                 Quantity = a.Quantity,
                 SalePrice = a.PackagePrice,
                 DiscountPercent = 0,
-                VATPercent = SaleOrder.Partner.CalculateVATForThisPerson && a.PackageData.Stuff.HasVAT ? App.VATPercent.Value : 0,
+                VATPercent = saleOrder.Partner.CalculateVATForThisPerson && a.PackageData.Stuff.HasVAT ? App.VATPercent.Value : 0,
                 FreeProduct = false,
                 FreeProduct_UnitPrice = null
             }).ToArray();
 
-            var SaleOrderCashDiscounts = new CashDiscount[] { };
+            var saleOrderCashDiscounts = new CashDiscount[] { };
 
-            SaleOrder.SaleOrderStuffs = SaleOrderStuffs;
-            SaleOrder.CashDiscounts = SaleOrderCashDiscounts;
+            saleOrder.SaleOrderStuffs = saleOrderStuffs;
+            saleOrder.CashDiscounts = saleOrderCashDiscounts;
             
-            SaleOrder = App.DB.CalculateProporatedDiscount(SaleOrder);
+            saleOrder = App.DB.CalculateProporatedDiscount(saleOrder);
 
-            return SaleOrder;
+            return saleOrder;
         }
 
         private void PartnerSelected()
@@ -412,90 +432,92 @@ namespace Kara
             PartnerLabel.Text = SelectedPartner == null ? "مشتری" :
                 !string.IsNullOrEmpty(SelectedPartner.LegalName) ? (SelectedPartner.LegalName + (!string.IsNullOrEmpty(SelectedPartner.Name) ? (" (" + SelectedPartner.Name + ")") : "")) : (SelectedPartner.Name);
             FillStuffs("", EditingSaleOrderId, true);
-            OrderInsertForm.SelectedPartner = SelectedPartner;
+            _orderInsertForm.SelectedPartner = SelectedPartner;
         }
-        
-        class QuantityEditingStuffModel
-        {
-            DBRepository.StuffListModel StuffModel;
 
-            private decimal _Quantity;
+        private class QuantityEditingStuffModel
+        {
+            private readonly DBRepository.StuffListModel _stuffModel;
+
+            private decimal _quantity;
             public decimal Quantity
             {
-                get { return _Quantity; }
+                get { return _quantity; }
                 set
                 {
-                    if (_Quantity != value)
+                    if (_quantity != value)
                     {
-                        if (StuffModel != null)
+                        if (_stuffModel != null)
                         {
-                            StuffModel.Quantity = value;
-                            _Quantity = StuffModel.Quantity;
+                            _stuffModel.Quantity = value;
+                            _quantity = _stuffModel.Quantity;
                         }
                     }
                 }
             }
 
-            public QuantityEditingStuffModel(DBRepository.StuffListModel StuffModel, decimal _Quantity)
+            public QuantityEditingStuffModel(DBRepository.StuffListModel StuffModel, decimal quantity)
             {
-                this.StuffModel = StuffModel;
-                this._Quantity = _Quantity;
+                _stuffModel = StuffModel;
+                _quantity = quantity;
             }
         }
-        QuantityEditingStuffModel KeyboardObject;
-        Guid[] _FocusedQuantityTextBoxId = null;
-        Guid[] FocusedQuantityTextBoxId
+
+        private QuantityEditingStuffModel _keyboardObject;
+        private Guid[] _focusedQuantityTextBoxId = null;
+
+        private Guid[] FocusedQuantityTextBoxId
         {
-            get { return _FocusedQuantityTextBoxId; }
+            get { return _focusedQuantityTextBoxId; }
             set
             {
-                if (_FocusedQuantityTextBoxId != value)
+                if (_focusedQuantityTextBoxId != value)
                 {
-                    if (_FocusedQuantityTextBoxId != null)
+                    if (_focusedQuantityTextBoxId != null)
                     {
-                        var StuffId = _FocusedQuantityTextBoxId[0];
-                        var BatchNumberId = _FocusedQuantityTextBoxId.Length == 2 ? _FocusedQuantityTextBoxId[1] : new Nullable<Guid>();
+                        var stuffId = _focusedQuantityTextBoxId[0];
+                        var batchNumberId = _focusedQuantityTextBoxId.Length == 2 ? _focusedQuantityTextBoxId[1] : new Nullable<Guid>();
                         if (AllStuffsData != null)
                         {
-                            var StuffModel = AllStuffsData.SingleOrDefault(a => a.StuffId == StuffId);
-                            if (StuffModel != null)
+                            var stuffModel = AllStuffsData.SingleOrDefault(a => a.StuffId == stuffId);
+                            if (stuffModel != null)
                             {
-                                if (BatchNumberId.HasValue)
-                                    StuffModel = StuffModel.StuffRow_BatchNumberRows.SingleOrDefault(a => a.BatchNumberId == BatchNumberId);
-                                if (BatchNumberId.HasValue || !StuffModel.HasBatchNumbers)
-                                    StuffModel.QuantityFocused = false;
+                                if (batchNumberId.HasValue)
+                                    stuffModel = stuffModel.StuffRow_BatchNumberRows.SingleOrDefault(a => a.BatchNumberId == batchNumberId);
+                                if (batchNumberId.HasValue || !stuffModel.HasBatchNumbers)
+                                    stuffModel.QuantityFocused = false;
                             }
                         }
                     }
-                    _FocusedQuantityTextBoxId = value;
-                    if (_FocusedQuantityTextBoxId != null)
+                    _focusedQuantityTextBoxId = value;
+                    if (_focusedQuantityTextBoxId != null)
                     {
-                        var StuffId = _FocusedQuantityTextBoxId[0];
-                        var BatchNumberId = _FocusedQuantityTextBoxId.Length == 2 ? _FocusedQuantityTextBoxId[1] : new Nullable<Guid>();
+                        var stuffId = _focusedQuantityTextBoxId[0];
+                        var batchNumberId = _focusedQuantityTextBoxId.Length == 2 ? _focusedQuantityTextBoxId[1] : new Nullable<Guid>();
                         if (AllStuffsData != null)
                         {
-                            var StuffModel = AllStuffsData.SingleOrDefault(a => a.StuffId == StuffId);
-                            if (StuffModel != null)
+                            var stuffModel = AllStuffsData.SingleOrDefault(a => a.StuffId == stuffId);
+                            if (stuffModel != null)
                             {
-                                if (BatchNumberId.HasValue)
-                                    StuffModel = StuffModel.StuffRow_BatchNumberRows.SingleOrDefault(a => a.BatchNumberId == BatchNumberId);
-                                if (BatchNumberId.HasValue || !StuffModel.HasBatchNumbers)
-                                    StuffModel.QuantityFocused = true;
+                                if (batchNumberId.HasValue)
+                                    stuffModel = stuffModel.StuffRow_BatchNumberRows.SingleOrDefault(a => a.BatchNumberId == batchNumberId);
+                                if (batchNumberId.HasValue || !stuffModel.HasBatchNumbers)
+                                    stuffModel.QuantityFocused = true;
                             }
-                            if (StuffModel != null)
+                            if (stuffModel != null)
                             {
-                                KeyboardObject = new QuantityEditingStuffModel(StuffModel, StuffModel.Quantity);
-                                QuantityKeyboard.SetObject(KeyboardObject, a => a.Quantity);
-                                QuantityKeyboard.Show();
+                                _keyboardObject = new QuantityEditingStuffModel(stuffModel, stuffModel.Quantity);
+                                _quantityKeyboard.SetObject(_keyboardObject, a => a.Quantity);
+                                _quantityKeyboard.Show();
                             }
                             else
-                                QuantityKeyboard.Hide();
+                                _quantityKeyboard.Hide();
                         }
                         else
-                            QuantityKeyboard.Hide();
+                            _quantityKeyboard.Hide();
                     }
                     else
-                        QuantityKeyboard.Hide();
+                        _quantityKeyboard.Hide();
                 }
             }
         }
@@ -505,14 +527,14 @@ namespace Kara
             FocusedQuantityTextBoxId = null;
             if (AllStuffsData != null)
             {
-                var StuffModel = AllStuffsData.SingleOrDefault(a => a.StuffId == StuffId && !a.BatchNumberId.HasValue);
-                if (StuffModel != null)
+                var stuffModel = AllStuffsData.SingleOrDefault(a => a.StuffId == StuffId && !a.BatchNumberId.HasValue);
+                if (stuffModel != null)
                 {
-                    if (StuffModel.PackagesData.Count() > 1)
+                    if (stuffModel.PackagesData.Count() > 1)
                     {
-                        var CurrentPackageIndex = StuffModel.PackagesData.Select((a, index) => new { a, index }).Single(a => StuffModel.SelectedPackage.Id == a.a.Package.Id).index;
-                        var NewPackageIndex = CurrentPackageIndex == StuffModel.PackagesData.Length - 1 ? 0 : CurrentPackageIndex + 1;
-                        StuffModel.SelectedPackage = StuffModel.PackagesData[NewPackageIndex].Package;
+                        var currentPackageIndex = stuffModel.PackagesData.Select((a, index) => new { a, index }).Single(a => stuffModel.SelectedPackage.Id == a.a.Package.Id).index;
+                        var newPackageIndex = currentPackageIndex == stuffModel.PackagesData.Length - 1 ? 0 : currentPackageIndex + 1;
+                        stuffModel.SelectedPackage = stuffModel.PackagesData[newPackageIndex].Package;
                     }
                 }
             }
@@ -523,13 +545,13 @@ namespace Kara
             FocusedQuantityTextBoxId = null;
             if (AllStuffsData != null)
             {
-                var StuffModel = AllStuffsData.SingleOrDefault(a => a.StuffId == StuffId);
-                if (StuffModel != null)
+                var stuffModel = AllStuffsData.SingleOrDefault(a => a.StuffId == StuffId);
+                if (stuffModel != null)
                 {
                     if (BatchNumberId.HasValue)
-                        StuffModel = StuffModel.StuffRow_BatchNumberRows.SingleOrDefault(a => a.BatchNumberId == BatchNumberId);
-                    if (BatchNumberId.HasValue || !StuffModel.HasBatchNumbers)
-                        StuffModel.Quantity++;
+                        stuffModel = stuffModel.StuffRow_BatchNumberRows.SingleOrDefault(a => a.BatchNumberId == BatchNumberId);
+                    if (BatchNumberId.HasValue || !stuffModel.HasBatchNumbers)
+                        stuffModel.Quantity++;
                 }
             }
         }
@@ -538,13 +560,13 @@ namespace Kara
             FocusedQuantityTextBoxId = null;
             if (AllStuffsData != null)
             {
-                var StuffModel = AllStuffsData.SingleOrDefault(a => a.StuffId == StuffId);
-                if (StuffModel != null)
+                var stuffModel = AllStuffsData.SingleOrDefault(a => a.StuffId == StuffId);
+                if (stuffModel != null)
                 {
                     if (BatchNumberId.HasValue)
-                        StuffModel = StuffModel.StuffRow_BatchNumberRows.SingleOrDefault(a => a.BatchNumberId == BatchNumberId);
-                    if (BatchNumberId.HasValue || !StuffModel.HasBatchNumbers)
-                        StuffModel.Quantity = StuffModel.Quantity > 0 ? StuffModel.Quantity - 1 : 0;
+                        stuffModel = stuffModel.StuffRow_BatchNumberRows.SingleOrDefault(a => a.BatchNumberId == BatchNumberId);
+                    if (BatchNumberId.HasValue || !stuffModel.HasBatchNumbers)
+                        stuffModel.Quantity = stuffModel.Quantity > 0 ? stuffModel.Quantity - 1 : 0;
                 }
                 CheckToBackToOrderInsertFormIfStuffsEmpty();
             }
@@ -558,31 +580,31 @@ namespace Kara
 
         private void StuffItems_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
-            _FocusedQuantityTextBoxId = null;
+            _focusedQuantityTextBoxId = null;
             ((ListView)sender).SelectedItem = null;
         }
 
-        Guid LastSizeAllocationId;
+        private Guid _lastSizeAllocationId;
         protected override async void OnSizeAllocated(double width, double height)
         {
             base.OnSizeAllocated(width, height);
 
-            Guid ThisSizeAllocationId = Guid.NewGuid();
-            LastSizeAllocationId = ThisSizeAllocationId;
+            Guid thisSizeAllocationId = Guid.NewGuid();
+            _lastSizeAllocationId = thisSizeAllocationId;
             await Task.Delay(100);
-            if (LastSizeAllocationId == ThisSizeAllocationId)
+            if (_lastSizeAllocationId == thisSizeAllocationId)
                 sizeChanged(width, height);
         }
 
-        double LastWidth, LastHeight;
+        private double _lastWidth, _lastHeight;
         public void sizeChanged(double width, double height)
         {
-            if (LastWidth != width || LastHeight != height)
+            if (_lastWidth != width || _lastHeight != height)
             {
-                LastWidth = width;
-                LastHeight = height;
+                _lastWidth = width;
+                _lastHeight = height;
 
-                QuantityKeyboard.OrientationChanged(width > height);
+                _quantityKeyboard.OrientationChanged(width > height);
             }
         }
 
@@ -593,37 +615,37 @@ namespace Kara
             await Task.Delay(100);
             if (AllStuffsData == null || RefreshStuffsData)
             {
-                var StuffsResult = await App.DB.GetAllStuffsListAsync(SelectedPartner != null ? SelectedPartner.Id : new Guid?(), EditingOrderId, true, WarehouseId);
-                if (!StuffsResult.Success)
+                var stuffsResult = await App.DB.GetAllStuffsListAsync(SelectedPartner != null ? SelectedPartner.Id : new Guid?(), EditingOrderId, true, _warehouseId);
+                if (!stuffsResult.Success)
                 {
-                    App.ShowError("خطا", "در نمایش لیست کالاها خطایی رخ داد.\n" + StuffsResult.Message, "خوب");
+                    App.ShowError("خطا", "در نمایش لیست کالاها خطایی رخ داد.\n" + stuffsResult.Message, "خوب");
                     StuffItems.IsRefreshing = false;
                     return;
                 }
-                var NewStuffsData = StuffsResult.Data[0];
+                var newStuffsData = stuffsResult.Data[0];
                 
                 if (AllStuffsData != null)
                 {
                     try
                     {
-                        foreach (var stuffInList in NewStuffsData)
+                        foreach (var stuffInList in newStuffsData)
                         {
-                            var CurrentStuffInList = AllStuffsData.SingleOrDefault(a => a.StuffData.Id == stuffInList.StuffId);
-                            if (CurrentStuffInList != null)
+                            var currentStuffInList = AllStuffsData.SingleOrDefault(a => a.StuffData.Id == stuffInList.StuffId);
+                            if (currentStuffInList != null)
                             {
-                                foreach (var p in CurrentStuffInList.PackagesData)
+                                foreach (var p in currentStuffInList.PackagesData)
                                 {
                                     stuffInList.SelectedPackage = p.Package;
                                     stuffInList.Quantity = p.Quantity;
                                     foreach (var batchNumberInList in stuffInList.StuffRow_BatchNumberRows)
                                     {
-                                        var CurrentBatchNumberInList = CurrentStuffInList.StuffRow_BatchNumberRows.SingleOrDefault(a => a.BatchNumberId == batchNumberInList.BatchNumberId);
-                                        if (CurrentBatchNumberInList != null)
-                                            batchNumberInList.Quantity = CurrentBatchNumberInList.PackagesData.Single(a => a.Package.Id == p.Package.Id).Quantity;
+                                        var currentBatchNumberInList = currentStuffInList.StuffRow_BatchNumberRows.SingleOrDefault(a => a.BatchNumberId == batchNumberInList.BatchNumberId);
+                                        if (currentBatchNumberInList != null)
+                                            batchNumberInList.Quantity = currentBatchNumberInList.PackagesData.Single(a => a.Package.Id == p.Package.Id).Quantity;
                                     }
                                 }
-                                stuffInList.SelectedPackage = CurrentStuffInList.SelectedPackage;
-                                stuffInList.Selected = CurrentStuffInList.Selected;
+                                stuffInList.SelectedPackage = currentStuffInList.SelectedPackage;
+                                stuffInList.Selected = currentStuffInList.Selected;
                             }
                         }
                     }
@@ -632,9 +654,9 @@ namespace Kara
                     }
                 }
                 
-                AllStuffsData = NewStuffsData;
-                OrderInsertForm.AllStuffsData = NewStuffsData;
-                OrderInsertForm.FillStuffs();
+                AllStuffsData = newStuffsData;
+                _orderInsertForm.AllStuffsData = newStuffsData;
+                _orderInsertForm.FillStuffs();
             }
 
             //if (EditingOrder != null && !EditingOrderStuffsInitialized)
@@ -661,29 +683,29 @@ namespace Kara
             //    EditingOrderStuffsInitialized = true;
             //}
 
-            var FilteredStuffs = await App.DB.FilterStuffsAsync(AllStuffsData, Filter);
+            var filteredStuffs = await App.DB.FilterStuffsAsync(AllStuffsData, Filter);
             
-            FilteredStuffs = FilteredStuffs.Where(a => a.TotalStuffQuantity > 0).ToList();
+            filteredStuffs = filteredStuffs.Where(a => a.TotalStuffQuantity > 0).ToList();
 
             
             try
             {
-                var StuffsListTemp = FilteredStuffs.ToList();
+                var stuffsListTemp = filteredStuffs.ToList();
 
-                foreach (var item in StuffsListTemp)
+                foreach (var item in stuffsListTemp)
                     item.SelectedPackage = item.PackagesData.OrderByDescending(a => item.HasBatchNumbers ? item.StuffRow_BatchNumberRows.Sum(b => b.PackagesData.Single(c => c.Package.Id == a.Package.Id).Quantity * b.PackagesData.Single(c => c.Package.Id == a.Package.Id).Package.Coefficient) : (a.Quantity * a.Package.Coefficient)).First().Package;
 
-                var BatchNumbers = StuffsListTemp.Where(a => !a.IsGroup).SelectMany(a => a.StuffRow_BatchNumberRows).ToList();
+                var batchNumbers = stuffsListTemp.Where(a => !a.IsGroup).SelectMany(a => a.StuffRow_BatchNumberRows).ToList();
 
-                StuffsListTemp.AddRange(BatchNumbers);
+                stuffsListTemp.AddRange(batchNumbers);
 
-                var StuffsListOrderDic = StuffsListTemp.Where(a => !a.BatchNumberId.HasValue).Select((a, index) => new { a, index }).ToDictionary(a => a.a.StuffId, a => a.index);
-                foreach (var item in StuffsListTemp)
-                    item.OddRow = StuffsListOrderDic[item.StuffId] % 2 == 1;
+                var stuffsListOrderDic = stuffsListTemp.Where(a => !a.BatchNumberId.HasValue).Select((a, index) => new { a, index }).ToDictionary(a => a.a.StuffId, a => a.index);
+                foreach (var item in stuffsListTemp)
+                    item.OddRow = stuffsListOrderDic[item.StuffId] % 2 == 1;
 
-                StuffsListTemp = StuffsListTemp.OrderBy(a => StuffsListOrderDic[a.StuffId]).ThenBy(a => a.BatchNumberId.HasValue).ToList();
+                stuffsListTemp = stuffsListTemp.OrderBy(a => stuffsListOrderDic[a.StuffId]).ThenBy(a => a.BatchNumberId.HasValue).ToList();
 
-                _StuffsList = new ObservableCollection<DBRepository.StuffListModel>(StuffsListTemp);
+                _stuffsList = new ObservableCollection<DBRepository.StuffListModel>(stuffsListTemp);
             }
             catch (Exception err)
             {
@@ -691,7 +713,7 @@ namespace Kara
             }
             
             StuffItems.ItemsSource = null;
-            StuffItems.ItemsSource = _StuffsList;
+            StuffItems.ItemsSource = _stuffsList;
 
             StuffItems.IsRefreshing = false;
         }

@@ -247,14 +247,19 @@ namespace Kara.Assets
         bool AllowOptionalDiscountRules_MultiSelection;
         OrderModel Order;
         Dictionary<int, Dictionary<string, List<RuleModel>>> DiscountRules;
-        
-        public DiscountCalculator(string SystemName, bool AllowOptionalDiscountRules_MultiSelection, Dictionary<Guid, Stuff> AllSystemStuffs, OrderModel Order, Dictionary<int, Dictionary<string, List<RuleModel>>> DiscountRules)
+        private readonly List<KeyValuePair<Guid, RuleModel>> _userSelectedOptionalDiscounts;
+
+        public DiscountCalculator(string SystemName, bool AllowOptionalDiscountRules_MultiSelection,
+            Dictionary<Guid, Stuff> AllSystemStuffs, OrderModel Order,
+            Dictionary<int, Dictionary<string, List<RuleModel>>> DiscountRules,
+            List<KeyValuePair<Guid, RuleModel>> userSelectedOptionalDiscounts)
         {
             this.SystemName = SystemName;
             this.AllSystemStuffs = AllSystemStuffs;
             this.AllowOptionalDiscountRules_MultiSelection = AllowOptionalDiscountRules_MultiSelection;
             this.Order = Order;
             this.DiscountRules = DiscountRules;
+            _userSelectedOptionalDiscounts = userSelectedOptionalDiscounts;
         }
         
         //TODO
@@ -429,16 +434,41 @@ namespace Kara.Assets
                             }
                             ChoosedOptions.Add(Priority, ThisPriorityChoosedOptions);
                         }
-                        
-                        var ChoosedRules2 = new List<KeyValuePair<string, List<RuleModel>>>();
-                        for (var j = 0; j < ThisPriorityChoosedOptions.Count; j++)
-                            if (ThisPriorityChoosedOptions[j].Value)
-                                ChoosedRules2.Add(ThisPriorityChoosedOptions[j].Key);
 
-                        var effect = "";
-                        for (var l = 0; l < ChoosedRules2.Count; l++)
+                        if (App.AllowOptionalDiscountRules.Value && _userSelectedOptionalDiscounts!=null)
+                        {
+                            var userChosenValues = new List<KeyValuePair<string, List<RuleModel>>>();
+                            
+                            if(ThisPriorityChoosedOptions.Count==1)
+                                userChosenValues.Add(ThisPriorityChoosedOptions[0].Key);
+                            else
+                            for (var j = 0; j < ThisPriorityChoosedOptions.Count; j++)
+                            {
+                                foreach (KeyValuePair<Guid, RuleModel> userSelectedOptionalDiscount in _userSelectedOptionalDiscounts)
+                                {
+                                    if (ThisPriorityChoosedOptions[j].Key.Value.Select(v=>v.RuleId).Contains(userSelectedOptionalDiscount.Value.RuleId))
+                                        userChosenValues.Add(ThisPriorityChoosedOptions[j].Key);
+                                }
+                            }
+
+                            var effect = "";
+                            for (var l = 0; l < userChosenValues.Count; l++)
+                            for (var j = 0; j < userChosenValues[l].Value.Count; j++)
+                                CalculateRuleOnOrder(Order, userChosenValues[l].Value[j], out effect);
+                        }
+                        else
+                        {
+                            var ChoosedRules2 = new List<KeyValuePair<string, List<RuleModel>>>();
+                            for (var j = 0; j < ThisPriorityChoosedOptions.Count; j++)
+                                if (ThisPriorityChoosedOptions[j].Value)
+                                    ChoosedRules2.Add(ThisPriorityChoosedOptions[j].Key);
+
+                            var effect = "";
+                            for (var l = 0; l < ChoosedRules2.Count; l++)
                             for (var j = 0; j < ChoosedRules2[l].Value.Count; j++)
                                 CalculateRuleOnOrder(Order, ChoosedRules2[l].Value[j], out effect);
+                        }
+                        
                     }
                 }
                 catch (Exception err)
@@ -1809,7 +1839,7 @@ namespace Kara.Assets
             return 0;
         }
 
-        private bool CheckRuleConditions(RuleModel Rule, OrderModel Order, int? RowIndex)
+        public bool CheckRuleConditions(RuleModel Rule, OrderModel Order, int? RowIndex)
         {
             if (!(Rule.BeginDate.Date <= Order.OrderInsertDate.Date && Order.OrderInsertDate.Date <= Rule.EndDate.Date))
                 return false;

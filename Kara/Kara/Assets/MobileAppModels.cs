@@ -99,6 +99,7 @@ namespace Kara.Assets
         public decimal DayStartTime { get; set; }
         public decimal DayEndTime { get; set; }
         public bool AllowOptionalDiscountRules_MultiSelection { get; set; }
+        public bool AllowOptionalDiscountRules { get; set; }
         public string CompanyNameForPrint { get; set; }
         public string CompanyLogoForPrint { get; set; }
         public string PrintTitle { get; set; }

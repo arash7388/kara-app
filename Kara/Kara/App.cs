@@ -207,6 +207,7 @@ namespace Kara
         public static SettingField<bool> UseBatchNumberAndExpirationDate = new SettingField<bool>("UseBatchNumberAndExpirationDate", false);
         public static SettingField<bool> UseVisitProgram = new SettingField<bool>("UseVisitProgram", false);
         public static SettingField<bool> AllowOptionalDiscountRules_MultiSelection = new SettingField<bool>("AllowOptionalDiscountRules_MultiSelection", false);
+        public static SettingField<bool> AllowOptionalDiscountRules = new SettingField<bool>("AllowOptionalDiscountRules", false);//استفاده از فرمول های تخفیف انتخابی با اولویت های یکسان
         public static SettingField<string> SystemName = new SettingField<string>("SystemName", "");
         public static SettingField<TimeSpan?> VisitorBeginWorkTime = new SettingField<TimeSpan?>("VisitorBeginWorkTime", null);
         public static SettingField<TimeSpan?> VisitorEndWorkTime = new SettingField<TimeSpan?>("VisitorEndWorkTime", null);
@@ -633,7 +634,7 @@ namespace Kara
                 var result = await CalculatePrices(SaleOrderData, UnitPrices);
                 if (!result.Success)
                     return result;
-                result = await CalculateDiscounts(SaleOrderData, UnitPrices);
+                result = await CalculateDiscounts(SaleOrderData, UnitPrices,null);
                 if (!result.Success)
                     return result;
                 var result2 = await SaveSaleOrder(SaleOrderData);
@@ -663,7 +664,8 @@ namespace Kara
             });
         }
 
-        public static async Task<ResultSuccess> CalculateDiscounts(SaleOrder SaleOrder, Dictionary<Guid, decimal> UnitPrices)
+        public static async Task<ResultSuccess> CalculateDiscounts(SaleOrder SaleOrder,
+            Dictionary<Guid, decimal> UnitPrices, List<KeyValuePair<Guid, RuleModel>> userSelectedOptionalDiscounts)
         {
             return await await Task.Factory.StartNew(async () =>
             {
@@ -722,7 +724,10 @@ namespace Kara
                     if (DiscountRules == null)
                         return new ResultSuccess(false, "خطایی در محاسبه تخفیفات رخ داده است. لطفا با پشتیبانی نرم افزار تماس بگیرید.");
 
-                    var DiscountCalculator = new DiscountCalculator(App.SystemName.Value, App.AllowOptionalDiscountRules_MultiSelection.Value, AllSystemStuffs, SaleOrderModel, DiscountRules);
+
+                    var DiscountCalculator = new DiscountCalculator(App.SystemName.Value, App.AllowOptionalDiscountRules_MultiSelection.Value, AllSystemStuffs, SaleOrderModel, DiscountRules, userSelectedOptionalDiscounts);
+
+               
                     SaleOrderModel = DiscountCalculator.ClaculateOrderDiscounts();
 
                     SaleOrder.SettlementDay = SaleOrderModel.SettlementDay;

@@ -1353,36 +1353,59 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
             public int BatchNumberRowHeight { get { return BatchNumberId.HasValue ? 35 : 0; } }
             public ImageSource GroupButtonIcon { get { return IsGroup ? IsGroupOpen ? "UpArrow.png" : "DownArrow.png" : null; } }
             bool PointJustEntered;
+
+            //private decimal _quantity;
             public decimal Quantity
             {
                 get
                 {
-                    return HasBatchNumbers ? StuffRow_BatchNumberRows.Sum(a => a.Quantity) : PackagesData == null ? 0 : PackagesData.Single(a => a.Package.Id == SelectedPackage.Id).Quantity;
+                    //if (!ForTotalSaleOrderEditing)
+                       return HasBatchNumbers ? StuffRow_BatchNumberRows.Sum(a => a.Quantity) : PackagesData == null ? 0 : PackagesData.Single(a => a.Package.Id == SelectedPackage.Id).Quantity;
+
+                    //return _quantity;
                 }
                 set
                 {
-                    if (PackagesData != null && !HasBatchNumbers)
-                    {
-                        var NewValue = value;
-                        PointJustEntered = (double)(value % 1) == (double)0.354168413153848456;
-                        if (PointJustEntered)
-                            NewValue = Math.Floor(NewValue);
-                        var ValueChange = NewValue - PackagesData.Single(a => a.Package.Id == SelectedPackage.Id).Quantity;
-                        if (ValueChange * SelectedPackage.Coefficient > RemainedStock && !App.CheckForNegativeStocksOnOrderInsertion.Value)
-                            ValueChange = RemainedStock / SelectedPackage.Coefficient;
-
-                        ValueChange = Convert.ToDecimal((Math.Floor(ValueChange / SelectedPackage.PossibleQuantityCoefficient) * SelectedPackage.PossibleQuantityCoefficient).ToString("##############0.###"));
-
-                        PackagesData.Single(a => a.Package.Id == SelectedPackage.Id).Quantity += ValueChange;
-                        if (PackagesData.Single(a => a.Package.Id == SelectedPackage.Id).Quantity < 0)
-                            PackagesData.Single(a => a.Package.Id == SelectedPackage.Id).Quantity = 0;
-
-                        ChangeProperties();
-                        if (BatchNumberId.HasValue)
-                            BatchNumberRow_StuffParentRow.ChangeProperties();
-                    }
+                    //if (!ForTotalSaleOrderEditing)
+                        SetQuantity(value);
+                    //else
+                       // _quantity = value;
                 }
             }
+
+            public bool ForTotalSaleOrderEditing { get; set; }
+            private void SetQuantity(decimal value)
+            {
+
+                if (PackagesData != null && !HasBatchNumbers)
+                {
+                    var NewValue = value;
+                    PointJustEntered = (double) (value % 1) == (double) 0.354168413153848456;
+                    if (PointJustEntered)
+                        NewValue = Math.Floor(NewValue);
+                    var ValueChange = NewValue - PackagesData.Single(a => a.Package.Id == SelectedPackage.Id).Quantity;
+
+                    if (ValueChange * SelectedPackage.Coefficient > RemainedStock &&
+                        !App.CheckForNegativeStocksOnOrderInsertion.Value)
+                        ValueChange = RemainedStock / SelectedPackage.Coefficient;
+
+                    ValueChange =
+                        Convert.ToDecimal(
+                            (Math.Floor(ValueChange / SelectedPackage.PossibleQuantityCoefficient) *
+                             SelectedPackage.PossibleQuantityCoefficient).ToString("##############0.###"));
+
+                    PackagesData.Single(a => a.Package.Id == SelectedPackage.Id).Quantity += ValueChange;
+                    if (PackagesData.Single(a => a.Package.Id == SelectedPackage.Id).Quantity < 0)
+                        PackagesData.Single(a => a.Package.Id == SelectedPackage.Id).Quantity = 0;
+
+                    ChangeProperties();
+                    if (BatchNumberId.HasValue)
+                        BatchNumberRow_StuffParentRow.ChangeProperties();
+
+                    //_quantity = value;
+                }
+            }
+
             private bool _QuantityFocused;
             public bool QuantityFocused
             {
@@ -1498,8 +1521,41 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
             }
             public decimal? _Price { get { return TotalStuffQuantity * _UnitPrice; } }
             public string Price { get { return _Price.HasValue ? _Price.Value.ToString("###,###,###,###,###,###,##0.").ToPersianDigits() : "---"; } }
-            private decimal RemainedStock { get { return HasBatchNumbers ? StuffRow_BatchNumberRows.Sum(a => a.RemainedStock) : (_UnitStock - (PackagesData == null ? 0 : PackagesData.Sum(a => a.Quantity * a.Package.Coefficient))); } }
-            public string Stock { get { return (Math.Floor(RemainedStock / (SelectedPackage == null ? 1 : SelectedPackage.Coefficient)).ToString("###,###,###,##0.")).ToPersianDigits(); } }
+
+            //private decimal _remainedStock;
+            public decimal RemainedStock
+            {
+                get
+                {
+                    if (HasBatchNumbers)
+                        return StuffRow_BatchNumberRows.Sum(a => a.RemainedStock);
+                    else
+                        return _UnitStock - (PackagesData?.Sum(a => a.Quantity * a.Package.Coefficient) ?? 0);
+                }
+                //set
+                //{
+                //    _remainedStock = value;
+                //}
+            }
+
+            //private string _stock;
+            public string Stock 
+            {
+                get
+                {
+                    //if (!ForTotalSaleOrderEditing)
+                        //_stock = (Math.Floor(RemainedStock / (SelectedPackage == null ? 1 : SelectedPackage.Coefficient)).ToString("###,###,###,##0.")).ToPersianDigits();
+                    
+                    //return _stock.ToPersianDigits();
+                    return (Math.Floor(RemainedStock / (SelectedPackage?.Coefficient ?? 1)).ToString("###,###,###,##0.")).ToPersianDigits();
+                }
+                //set
+                //{
+                //    if (ForTotalSaleOrderEditing)
+                //        _stock = value;
+                //}
+            }
+
             public bool HasBatchNumbers { get { return StuffRow_BatchNumberRows != null && StuffRow_BatchNumberRows.Any(); } }
             private bool _OddRow;
             public bool OddRow { get { return _OddRow; } set { _OddRow = value; OnPropertyChanged("RowColor"); } }
@@ -1855,7 +1911,7 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
 
                     _AllStuffsDataForReversion = StuffsWithData;
                     _AllStuffGroupsData = StuffsGroups.Any(a => a.GroupId != Guid.Empty) ? StuffsGroups.GroupBy(a => new { a.GroupId, a.GroupCode, a.GroupName }).OrderBy(a => a.Key.GroupCode).Select((a, index) => new StuffListModel(null) { StuffId = a.Key.GroupId, GroupCode = a.Key.GroupCode, GroupName = a.Key.GroupName, IsGroup = true, IsGroupOpen = false, GroupNumber = index + 1 }).ToList() : null;
-                    
+
                     return new ResultSuccess(true, "");
                 }
                 catch (Exception err)
@@ -1864,7 +1920,117 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
                 }
             });
         }
-        public async Task<ResultSuccess<List<StuffListModel>[]>> GetAllStuffsListAsync(Guid? PartnerId, Guid? EditingOrderId, bool WithoutGroups, Guid? WarehouseId)
+
+        public async Task GetZeroStockStuffAndAddToSourceAsync(Guid? PartnerId,
+            Guid? EditingOrderId, bool WithoutGroups, Guid? WarehouseId, Guid stuffId, SaleOrder EditingOrder,
+            List<StuffListModel> LastStuffsGroups,
+            List<StuffListModel> AllStuffsData,  List<StuffListModel> AllStuffGroupsData,
+            Picker GallaryStuffGroupPicker,
+            ObservableCollection<StuffListModel> _StuffsList,string Filter)
+        {
+            //get a single stuff
+            var result = await DoGetAllStuffsListAsync(PartnerId, EditingOrderId, WithoutGroups, WarehouseId, stuffId);
+
+            var NewStuffsData = result.Data[0];
+            var NewStuffGroupsData = result.Data[1];
+
+            AllStuffGroupsData = NewStuffGroupsData;
+            
+            var EditingSaleOrderStuffs = EditingOrder.SaleOrderStuffs.Where(a => !a.FreeProduct);
+
+            foreach (var saleOrderStuff in EditingSaleOrderStuffs)
+            {
+                DBRepository.StuffListModel StuffInList = NewStuffsData.SingleOrDefault(a => a.StuffId == saleOrderStuff.Package.StuffId);
+                
+                if (StuffInList != null)
+                {
+                    StuffInList.ForTotalSaleOrderEditing = true;
+
+                    if (StuffInList.HasBatchNumbers)
+                        StuffInList = StuffInList.StuffRow_BatchNumberRows.SingleOrDefault(a => a.BatchNumberId == saleOrderStuff.BatchNumberId.GetValueOrDefault(Guid.Empty));
+                    if (StuffInList != null)
+                    {
+                        if (StuffInList.BatchNumberId.HasValue)
+                            StuffInList.BatchNumberRow_StuffParentRow.SelectedPackage = saleOrderStuff.Package;
+                        else
+                            StuffInList.SelectedPackage = saleOrderStuff.Package;
+
+                        var selectedPackageId = StuffInList.SelectedPackage.Id;
+
+                        if (StuffInList.PackagesData != null)
+                            StuffInList.PackagesData.FirstOrDefault(p => p.Package.Id == selectedPackageId).Quantity = saleOrderStuff.Quantity;
+                        StuffInList._UnitStock = saleOrderStuff.Quantity;
+                    }
+
+                    StuffInList.ForTotalSaleOrderEditing = false;
+
+                    StuffInList.ArticleId = saleOrderStuff.Id;
+                }
+            }
+
+            foreach (var item in NewStuffsData)
+                if (item.TotalStuffQuantity > 0)
+                    item.SelectedInGallaryMode = true;
+
+            var FilteredStuffs = await App.DB.FilterStuffsAsync(NewStuffsData, Filter);
+
+            if (EditingOrder != null)
+                FilteredStuffs = FilteredStuffs.OrderBy(a => a.Quantity == 0).ToList();
+
+            var StuffsWithGroupsData = FilteredStuffs.ToList();
+            
+            if (AllStuffGroupsData != null)
+            {
+                var StuffCounts = from g in AllStuffGroupsData
+                                  from c in FilteredStuffs.GroupBy(a => a.GroupCode).Select(a => new { GroupCode = a.Key, Count = a.Count() }).ToList().Where(a => a.GroupCode == g.GroupCode)
+                                  select new { g, c };
+
+                foreach (var item in StuffCounts)
+                    item.g.GroupStuffsCount = item.c.Count;
+
+                LastStuffsGroups = StuffCounts.Select(a => a.g).ToList();
+
+                StuffsWithGroupsData.AddRange(LastStuffsGroups);
+                StuffsWithGroupsData = StuffsWithGroupsData.Select((a, index) => new { a, index }).OrderBy(a => a.a.GroupCode).ThenBy(a => !a.a.IsGroup).ThenBy(a => a.index).Select(a => a.a).ToList();
+
+                StuffsWithGroupsData = StuffsWithGroupsData.Where(a => a.IsGroup || LastStuffsGroups.Any(b => b.GroupCode == a.GroupCode && b.IsGroup && b.IsGroupOpen)).ToList();
+
+                GallaryStuffGroupPicker.Items.Clear();
+                foreach (var item in LastStuffsGroups)
+                    GallaryStuffGroupPicker.Items.Add(item.DisplayGroupName);
+            }
+
+            try
+            {
+                var StuffsListTemp = StuffsWithGroupsData.ToList();
+
+                //todo 1400/11/04 check with not null batch numbers
+
+                var BatchNumbers = StuffsListTemp.Where(a => !a.IsGroup).SelectMany(a => a.StuffRow_BatchNumberRows).ToList();
+
+                StuffsListTemp.AddRange(BatchNumbers);
+
+                var toBeInsertedStuff = StuffsListTemp.FirstOrDefault();
+                if (toBeInsertedStuff != null)
+                {
+                    toBeInsertedStuff.OddRow = _StuffsList.Count % 2 == 0;
+                    _StuffsList.Add(toBeInsertedStuff);
+                    AllStuffsData.Add(toBeInsertedStuff);
+                }
+            }
+            catch (Exception err)
+            {
+
+            }
+        }
+
+        public async Task<ResultSuccess<List<StuffListModel>[]>> GetAllStuffsListAsync(Guid? PartnerId,
+            Guid? EditingOrderId, bool WithoutGroups, Guid? WarehouseId)
+        {
+            return await DoGetAllStuffsListAsync(PartnerId, EditingOrderId, WithoutGroups, WarehouseId);
+        }
+
+        private async Task<ResultSuccess<List<StuffListModel>[]>> DoGetAllStuffsListAsync(Guid? PartnerId, Guid? EditingOrderId, bool WithoutGroups, Guid? WarehouseId, Guid? stuffId = null)
         {
             return await Task.Run(async () =>
             {
@@ -1952,7 +2118,9 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
                     foreach (var item in StuffsArray)
                         item.Model._UnitStock = StocksDictionary[item.Id];// StocksDictionary.ContainsKey(item.Id) ? StocksDictionary[item.Id] : 0;
 
-                    if (!App.ShowNotAvailableStuffsOnOrderInsertion.Value)
+                    if (stuffId != null)
+                        AllStuffsData = AllStuffsData.Where(a => a.StuffData.Id == stuffId).ToList();
+                    else if (!App.ShowNotAvailableStuffsOnOrderInsertion.Value)
                         AllStuffsData = AllStuffsData.Where(a => a._UnitStock > 0).ToList();
 
                     foreach (var item in AllStuffsData)
@@ -2966,6 +3134,15 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
 
             return SaleOrder;
         }
+
+
+    }
+
+    public class StockHelper
+    {
+        public Guid StuffId { get; set; }
+        public Guid BatchNumberId { get; set; }
+        public decimal stock { get; set; }
     }
 }
 

@@ -10,6 +10,9 @@ using Xamarin.Forms;
 using Kara.CustomRenderer;
 using Kara.Helpers;
 using System.IO;
+using Android.Views;
+using TextAlignment = Xamarin.Forms.TextAlignment;
+using View = Xamarin.Forms.View;
 
 namespace Kara
 {
@@ -23,7 +26,8 @@ namespace Kara
         private OrderInsertForm OrderInsertForm;
         private OrderBeforePreviewForm OrderBeforePreviewForm;
         private bool SaveOption;
-        
+        private List<KeyValuePair<Guid, RuleModel>> _userSelectedOptionalRules = new List<KeyValuePair<Guid, RuleModel>>();
+
         public OrderPreviewForm(SaleOrder SaleOrder, InsertedInformations_Orders OrdersForm, PartnerListForm PartnerListForm, OrderInsertForm OrderInsertForm, OrderBeforePreviewForm OrderBeforePreviewForm, bool SaveOption)
         {
             InitializeComponent();
@@ -138,7 +142,130 @@ namespace Kara
         {
             base.OnAppearing();
 
-            if(ShowPreviewOnAppearing)
+            //if(ShowPreviewOnAppearing)
+            //{
+            //    await Task.Delay(10);
+
+            //    if (!PreviewCreated)
+            //    {
+            //        await ShowOrder(!SaveOption);
+            //        PreviewCreated = true;
+            //    }
+
+            //    await LayoutPrint(false);
+            //    PrintPreview.WidthRequest = Math.Max(this.Width, 100);
+
+            //    var temp = PrintPreview.Content;
+            //    PrintPreview.Content = null;
+            //    PrintPreview.Content = temp;
+            //}
+
+            if (App.AllowOptionalDiscountRules.Value)
+            {
+                var AllSystemStuffs = (await App.DB.GetStuffsAsync()).Data.ToDictionary(a => a.Id);
+
+                var DiscountRules = await App.DB.GetDiscountRulesAsync();
+                int SettlementDay = SaleOrder.SettlementType.Day;
+
+                OrderModel SaleOrderModel = new OrderModel()
+                {
+                    SettlementTypeId = SaleOrder.SettlementTypeId,
+                    SettlementDay = SettlementDay,
+                    VisitorId = App.UserPersonnelId.Value,
+                    OrderInsertDate = SaleOrder.InsertDateTime,
+                    Partner = SaleOrder.Partner,
+                    Articles = SaleOrder.SaleOrderStuffs.Select(a => new ArticleModel()
+                    {
+                        Id = a.Id,
+                        Stuff = a.Package.Stuff,
+                        Package = a.Package,
+                        BatchNumber = a.BatchNumber,
+                        Quantity = a.Quantity,
+                        UnitPrice = a.SalePrice / a.Package.Coefficient
+                    }).ToArray()
+                };
+
+                var DiscountCalculator = new DiscountCalculator(App.SystemName.Value, App.AllowOptionalDiscountRules_MultiSelection.Value, AllSystemStuffs, SaleOrderModel, DiscountRules,null);
+
+                var equalPriorities = new List<Tuple<int,double, Guid, string>>();
+
+                foreach (KeyValuePair<int, Dictionary<string, List<RuleModel>>> discountRule in DiscountRules)
+                {
+                    foreach (var rule in discountRule.Value)
+                    {
+                        for (var k = 0; k < rule.Value.Count; k++)
+                        {
+                            for (int x = 0; x < SaleOrderModel.Articles.Length; x++)
+                            {
+                                if (DiscountCalculator.CheckRuleConditions(rule.Value[k], SaleOrderModel, x))
+                                {
+                                    Dictionary<string, List<RuleModel>> discountRuleValue = discountRule.Value;
+
+                                    var rules = discountRuleValue.Values.ToList();
+                                    var r = rules[0];
+
+                                    if (rules.Count(e => e[0].Priority == rule.Value[k].Priority) > 1)
+                                    {
+                                        var result = $"Row:{x + 1},Pr:{rule.Value[k].Priority},id:{rule.Value[k].RuleId},desc:{rule.Value[k].RuleDescription}" + Environment.NewLine;
+                                        equalPriorities.Add(new Tuple<int, double, Guid, string>(x, rule.Value[k].Priority,rule.Value[k].RuleId, rule.Value[k].RuleDescription));
+                                    }
+                                }
+
+                            }
+                        }
+                    }
+                }
+
+                List<int> distinctRows = new List<int>();
+
+
+                foreach (Tuple<int,double, Guid, string> tuple in equalPriorities)
+                {
+                    if(!distinctRows.Any(a=>a==tuple.Item1))
+                       distinctRows.Add(tuple.Item1);
+                }
+
+                List<KeyValuePair<int, List<RuleModel>>> eachRowRules = new List<KeyValuePair<int, List<RuleModel>>>(); 
+
+                foreach (int row in distinctRows)
+                {
+                    eachRowRules.Add( new KeyValuePair<int, List<RuleModel>>
+                        (row, equalPriorities.Where(a=>a.Item1==row).Select(x=>new RuleModel()
+                        {
+                            Priority = x.Item2,RuleId = x.Item3,RuleDescription = x.Item4
+                        }).ToList()));
+                }
+
+                foreach (KeyValuePair<int, List<RuleModel>> keyValuePair in eachRowRules)
+                {
+                    var options = keyValuePair.Value.Select(x => x.RuleDescription).ToList();
+
+                    SaleOrderStuff stuff = this.SaleOrder.SaleOrderStuffs[keyValuePair.Key];
+
+                    var rowStuffName = (
+                        stuff.Package.Stuff.Name 
+                        //+ (stuff.BatchNumberId.HasValue
+                        //    ? ("\nسری ساخت: " + stuff.BatchNumber.BatchNumber + "، تاریخ انقضاء: " +
+                        //       (stuff.BatchNumber.ExpirationDatePresentation == (int) DatePresentation.Shamsi
+                        //           ? stuff.BatchNumber.ExpirationDate.ToShortStringForDate()
+                        //           : stuff.BatchNumber.ExpirationDate.ToString("yyyy/MM/dd")))
+                        //    : "") +
+                        //(stuff.StuffSettlementDay.HasValue
+                        //    ? (" (" + stuff.StuffSettlementDay.Value.ToString() + " روزه)")
+                        //    : "")
+                    ).ToPersianDigits();
+
+                    var answer = await DisplayActionSheet($"تعیین تخفیف {rowStuffName}", "بستن", "", options.ToArray());
+                    
+                    var selectedRule = keyValuePair.Value.FirstOrDefault(r => r.RuleDescription == answer);
+
+                    _userSelectedOptionalRules.Add(new KeyValuePair<Guid, RuleModel>(stuff.Id, selectedRule));
+                }
+
+                //await CaclculateDiscounts(_userSelectedOptionalRules);
+            }
+
+            if (ShowPreviewOnAppearing)
             {
                 await Task.Delay(10);
 
@@ -242,6 +369,8 @@ namespace Kara
         List<KeyValuePair<Label, double>> LabelFontSizes;
         List<Label> BodyFirstRowLabels;
         Grid ArticlesGrid;
+
+
         public async Task ShowOrder(bool WithoutCalculation)
         {
             WaitToggle(false);
@@ -259,7 +388,7 @@ namespace Kara
                         return;
                     }
 
-                    var result = await CaclculateDiscounts();
+                    var result = await CaclculateDiscounts(_userSelectedOptionalRules);
                     if (!result.Success)
                     {
                         App.ShowError("خطا", result.Message, "خوب");
@@ -1293,9 +1422,9 @@ namespace Kara
             return result;
         }
 
-        public async Task<ResultSuccess> CaclculateDiscounts()
+        public async Task<ResultSuccess> CaclculateDiscounts(List<KeyValuePair<Guid, RuleModel>> userSelectedOptionalDiscounts)
         {
-            return await App.CalculateDiscounts(SaleOrder, OrderBeforePreviewForm.AllStuffsData.ToDictionary(a => a.StuffId, a => a._UnitPrice.GetValueOrDefault(0)));
+            return await App.CalculateDiscounts(SaleOrder, OrderBeforePreviewForm.AllStuffsData.ToDictionary(a => a.StuffId, a => a._UnitPrice.GetValueOrDefault(0)), userSelectedOptionalDiscounts);
         }
 
         public async Task<ResultSuccess> CaclculateVATs()

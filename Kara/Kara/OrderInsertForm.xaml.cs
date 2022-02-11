@@ -823,7 +823,7 @@ namespace Kara
                 await Task.Delay(1000);
                 //App.UniversalLineInApp = 875234106;
                 if (LastSearchWhenTypingId == thisTextSearchId)
-                    await FillStuffs(args.NewTextValue, null, false, false);
+                    await FillStuffs(args.NewTextValue, SaleOrder, false, false);
                 App.UniversalLineInApp = 875234107;
             };
             StuffsSearchBar.SearchButtonPressed += async (sender, args) =>
@@ -1774,9 +1774,12 @@ namespace Kara
                     if (WithRefreshingAnimation) StuffItems.IsRefreshing = false;
                     return;
                 }
+                
                 var NewStuffsData = StuffsResult.Data[0];
                 var NewStuffGroupsData = StuffsResult.Data[1];
 
+
+                
                 if (AllStuffsData != null)
                 {
                     try
@@ -1885,11 +1888,48 @@ namespace Kara
             }
             catch (Exception err)
             {
-                var wefwef = err;
+
             }
 
+            //editing order from tour form 
+
+            if (FromTour)
+            {
+                var stuffIds = _StuffsList.Select(a => new{Id = a.Id.Replace("|",""),Code=a.StuffData.Code}).ToList();
+
+                foreach (SaleOrderStuff row in EditingOrder.SaleOrderStuffs)
+                {
+                    var existingStuffId = stuffIds.FirstOrDefault(a =>a.Id==row.Package.StuffId.ToString());
+
+                    if (existingStuffId == null) //when stock is zero
+                    {
+                        await App.DB.GetZeroStockStuffAndAddToSourceAsync(
+                            SelectedPartner != null ? SelectedPartner.Id : new Nullable<Guid>(),
+                            EditingOrder != null ? EditingOrder.Id : new Nullable<Guid>(), false, WarehouseId,
+                            row.Package.StuffId, EditingOrder, LastStuffsGroups, 
+                            AllStuffsData,
+                            AllStuffGroupsData, 
+                            GallaryStuffGroupPicker,
+                            _StuffsList,
+                            Filter);
+                    }
+                    //else
+                    //{
+                    //    var thisStuff = _StuffsList.FirstOrDefault(a => a.StuffId.ToString() == existingStuffId.Id);
+
+                    //    if (thisStuff != null)
+                    //    {
+                    //        var selectedPackageId = thisStuff.SelectedPackage.Id;
+
+                    //        thisStuff.PackagesData.FirstOrDefault(p => p.Package.Id== selectedPackageId).Quantity += row.Quantity;
+                    //        thisStuff._UnitStock += row.Quantity;
+                    //    }
+                    //}
+                }
+            }
+            
             StuffItems.ItemsSource = null;
-            StuffItems.ItemsSource = _StuffsList;
+            StuffItems.ItemsSource = _StuffsList.OrderBy(a=>a.Quantity==0).ToList();
 
             if (WithRefreshingAnimation) StuffItems.IsRefreshing = false;
 
