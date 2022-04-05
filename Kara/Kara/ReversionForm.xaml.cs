@@ -1501,7 +1501,11 @@ namespace Kara
                     if (BatchNumberId.HasValue)
                         StuffModel = StuffModel.StuffRow_BatchNumberRows.SingleOrDefault(a => a.BatchNumberId == BatchNumberId);
                     if (BatchNumberId.HasValue || !StuffModel.HasBatchNumbers)
+                    {
+                        StuffModel.ForSaleReversion = true;
                         StuffModel.Quantity++;
+                    }
+
                     if (InsertOrderForm_ShowGallaryMode.Value && StuffModel.HasBatchNumbers)
                     {
                         GallaryStuffBatchNumbersListContainer.IsVisible = true;
@@ -1818,6 +1822,7 @@ namespace Kara
                                 }
                                 stuffInList.SelectedPackage = CurrentStuffInList.SelectedPackage;
                                 stuffInList.Selected = CurrentStuffInList.Selected;
+                                stuffInList._UnitStock = 999999;
                             }
                         }
                     }

@@ -14,7 +14,7 @@ namespace Kara
 {
     public partial class OrderBeforePreviewForm : GradientContentPage
     {
-        private ObservableCollection<DBRepository.StuffListModel> _stuffsList = null;
+        private ObservableCollection<DBRepository.StuffListModel> _stuffsList;
         private Partner _selectedPartner;
         public Partner SelectedPartner
         {
@@ -35,6 +35,7 @@ namespace Kara
         private Guid? _settlementTypeId;
         private readonly MyKeyboard<QuantityEditingStuffModel, decimal> _quantityKeyboard;
         private readonly Guid? _warehouseId;
+        private ObservableCollection<DBRepository.StuffListModel> _stuffList;
         private DtoReversionReason[] _reversionReasons = null;
 
         public OrderBeforePreviewForm
@@ -49,13 +50,15 @@ namespace Kara
             OrderInsertForm OrderInsertForm,
             bool CanChangePartner,
             Guid? WarehouseId,
-            bool fromTour=false
+            bool fromTour=false,
+            ObservableCollection<DBRepository.StuffListModel> StuffList= null
         )
         {
             InitializeComponent();
 
             _saleOrder = SaleOrder;
             _warehouseId = WarehouseId;
+            _stuffList = StuffList;
             _orderInsertForm = OrderInsertForm;
 
             EditingSaleOrderId = SaleOrder != null ? SaleOrder.Id : new Nullable<Guid>();
@@ -185,7 +188,9 @@ namespace Kara
                 FillReversionReasons();
             }
 
-            
+            StuffItems.ItemsSource = null;
+            StuffItems.ItemsSource = StuffList;
+            StuffItems.IsRefreshing = false;
         }
 
         protected async override void OnAppearing()
@@ -275,7 +280,7 @@ namespace Kara
                     OrderId = (Guid)EditingSaleOrderId,
                     UserId = App.UserId.Value,
                     Description = _editingSaleOrder?.Description.ToSafeString()=="" ? "***" : DescriptionEditor.Text,
-                    Stuffs = _stuffsList.Where(a => a.Quantity > 0).Select(a => new DtoEditStuffMobile
+                    Stuffs = _stuffList.Where(a => a.Quantity > 0).Select(a => new DtoEditStuffMobile
                     {
                         ArticleId = _editingSaleOrder?.SaleOrderStuffs?.SingleOrDefault(x=>x.Package.StuffId==a.StuffId)?.ArticleId,
                         StuffId = a.StuffId.ToSafeGuid(),
@@ -431,8 +436,12 @@ namespace Kara
         {
             PartnerLabel.Text = SelectedPartner == null ? "مشتری" :
                 !string.IsNullOrEmpty(SelectedPartner.LegalName) ? (SelectedPartner.LegalName + (!string.IsNullOrEmpty(SelectedPartner.Name) ? (" (" + SelectedPartner.Name + ")") : "")) : (SelectedPartner.Name);
-            FillStuffs("", EditingSaleOrderId, true);
-            _orderInsertForm.SelectedPartner = SelectedPartner;
+
+            //commented 1400/12/08 
+            //FillStuffs("", EditingSaleOrderId, true);
+
+            //temp comment 1400/12/08 why changing partner here?! 
+            //_orderInsertForm.SelectedPartner = SelectedPartner;
         }
 
         private class QuantityEditingStuffModel
@@ -611,19 +620,34 @@ namespace Kara
         public List<DBRepository.StuffListModel> AllStuffsData;
         private async Task FillStuffs(string Filter, Guid? EditingOrderId, bool RefreshStuffsData)
         {
+            StuffItems.ItemsSource = null;
+            StuffItems.ItemsSource = _stuffsList;
+            StuffItems.IsRefreshing = false;
+
+            //commented
+            //1400/12/08 since it comes from OrderInsert, we have stuff data, so it doesnt need to compute anything again
+            
+            //await OldFillStuffs(Filter, EditingOrderId, RefreshStuffsData);
+        }
+
+        private async Task OldFillStuffs(string Filter, Guid? EditingOrderId, bool RefreshStuffsData)
+        {
             StuffItems.IsRefreshing = true;
             await Task.Delay(100);
             if (AllStuffsData == null || RefreshStuffsData)
             {
-                var stuffsResult = await App.DB.GetAllStuffsListAsync(SelectedPartner != null ? SelectedPartner.Id : new Guid?(), EditingOrderId, true, _warehouseId);
+                var stuffsResult =
+                    await App.DB.GetAllStuffsListAsync(SelectedPartner != null ? SelectedPartner.Id : new Guid?(),
+                        EditingOrderId, true, _warehouseId);
                 if (!stuffsResult.Success)
                 {
                     App.ShowError("خطا", "در نمایش لیست کالاها خطایی رخ داد.\n" + stuffsResult.Message, "خوب");
                     StuffItems.IsRefreshing = false;
                     return;
                 }
+
                 var newStuffsData = stuffsResult.Data[0];
-                
+
                 if (AllStuffsData != null)
                 {
                     try
@@ -639,11 +663,15 @@ namespace Kara
                                     stuffInList.Quantity = p.Quantity;
                                     foreach (var batchNumberInList in stuffInList.StuffRow_BatchNumberRows)
                                     {
-                                        var currentBatchNumberInList = currentStuffInList.StuffRow_BatchNumberRows.SingleOrDefault(a => a.BatchNumberId == batchNumberInList.BatchNumberId);
+                                        var currentBatchNumberInList =
+                                            currentStuffInList.StuffRow_BatchNumberRows.SingleOrDefault(a =>
+                                                a.BatchNumberId == batchNumberInList.BatchNumberId);
                                         if (currentBatchNumberInList != null)
-                                            batchNumberInList.Quantity = currentBatchNumberInList.PackagesData.Single(a => a.Package.Id == p.Package.Id).Quantity;
+                                            batchNumberInList.Quantity = currentBatchNumberInList.PackagesData
+                                                .Single(a => a.Package.Id == p.Package.Id).Quantity;
                                     }
                                 }
+
                                 stuffInList.SelectedPackage = currentStuffInList.SelectedPackage;
                                 stuffInList.Selected = currentStuffInList.Selected;
                             }
@@ -653,10 +681,10 @@ namespace Kara
                     {
                     }
                 }
-                
+
                 AllStuffsData = newStuffsData;
                 _orderInsertForm.AllStuffsData = newStuffsData;
-                _orderInsertForm.FillStuffs();
+                _orderInsertForm.FillStuffs(_saleOrder);
             }
 
             //if (EditingOrder != null && !EditingOrderStuffsInitialized)
@@ -684,26 +712,33 @@ namespace Kara
             //}
 
             var filteredStuffs = await App.DB.FilterStuffsAsync(AllStuffsData, Filter);
-            
+
             filteredStuffs = filteredStuffs.Where(a => a.TotalStuffQuantity > 0).ToList();
 
-            
+
             try
             {
                 var stuffsListTemp = filteredStuffs.ToList();
 
                 foreach (var item in stuffsListTemp)
-                    item.SelectedPackage = item.PackagesData.OrderByDescending(a => item.HasBatchNumbers ? item.StuffRow_BatchNumberRows.Sum(b => b.PackagesData.Single(c => c.Package.Id == a.Package.Id).Quantity * b.PackagesData.Single(c => c.Package.Id == a.Package.Id).Package.Coefficient) : (a.Quantity * a.Package.Coefficient)).First().Package;
+                    item.SelectedPackage = item.PackagesData.OrderByDescending(a =>
+                        item.HasBatchNumbers
+                            ? item.StuffRow_BatchNumberRows.Sum(b =>
+                                b.PackagesData.Single(c => c.Package.Id == a.Package.Id).Quantity * b.PackagesData
+                                    .Single(c => c.Package.Id == a.Package.Id).Package.Coefficient)
+                            : (a.Quantity * a.Package.Coefficient)).First().Package;
 
                 var batchNumbers = stuffsListTemp.Where(a => !a.IsGroup).SelectMany(a => a.StuffRow_BatchNumberRows).ToList();
 
                 stuffsListTemp.AddRange(batchNumbers);
 
-                var stuffsListOrderDic = stuffsListTemp.Where(a => !a.BatchNumberId.HasValue).Select((a, index) => new { a, index }).ToDictionary(a => a.a.StuffId, a => a.index);
+                var stuffsListOrderDic = stuffsListTemp.Where(a => !a.BatchNumberId.HasValue)
+                    .Select((a, index) => new {a, index}).ToDictionary(a => a.a.StuffId, a => a.index);
                 foreach (var item in stuffsListTemp)
                     item.OddRow = stuffsListOrderDic[item.StuffId] % 2 == 1;
 
-                stuffsListTemp = stuffsListTemp.OrderBy(a => stuffsListOrderDic[a.StuffId]).ThenBy(a => a.BatchNumberId.HasValue).ToList();
+                stuffsListTemp = stuffsListTemp.OrderBy(a => stuffsListOrderDic[a.StuffId])
+                    .ThenBy(a => a.BatchNumberId.HasValue).ToList();
 
                 _stuffsList = new ObservableCollection<DBRepository.StuffListModel>(stuffsListTemp);
             }
@@ -711,7 +746,7 @@ namespace Kara
             {
                 var wefwef = err;
             }
-            
+
             StuffItems.ItemsSource = null;
             StuffItems.ItemsSource = _stuffsList;
 

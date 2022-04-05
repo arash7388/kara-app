@@ -1354,33 +1354,46 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
             public ImageSource GroupButtonIcon { get { return IsGroup ? IsGroupOpen ? "UpArrow.png" : "DownArrow.png" : null; } }
             bool PointJustEntered;
 
-            //private decimal _quantity;
+            private decimal _quantity;
             public decimal Quantity
             {
                 get
                 {
-                    //if (!ForTotalSaleOrderEditing)
-                       return HasBatchNumbers ? StuffRow_BatchNumberRows.Sum(a => a.Quantity) : PackagesData == null ? 0 : PackagesData.Single(a => a.Package.Id == SelectedPackage.Id).Quantity;
+                    //if (!ForSaleReversion)
+                        return GetQuantity();
 
-                    //return _quantity;
+                    return _quantity;
                 }
                 set
                 {
-                    //if (!ForTotalSaleOrderEditing)
+                    //if (!ForSaleReversion)
                         SetQuantity(value);
                     //else
-                       // _quantity = value;
+                        //_quantity = value;
                 }
             }
 
+            private decimal GetQuantity()
+            {
+                return HasBatchNumbers ? StuffRow_BatchNumberRows.Sum(a => a.Quantity) : PackagesData == null ? 0 : PackagesData.Single(a => a.Package.Id == SelectedPackage.Id).Quantity;
+            }
+
             public bool ForTotalSaleOrderEditing { get; set; }
+            public bool ForSaleReversion { get; set; }
+
             private void SetQuantity(decimal value)
             {
 
                 if (PackagesData != null && !HasBatchNumbers)
                 {
+                    //if (ForSaleReversion)
+                    //{
+                    //    PackagesData.Single(a => a.Package.Id == SelectedPackage.Id).Quantity += value;
+                    //    return;
+                    //}
+
                     var NewValue = value;
-                    PointJustEntered = (double) (value % 1) == (double) 0.354168413153848456;
+                    PointJustEntered = (double)(value % 1) == (double)0.354168413153848456;
                     if (PointJustEntered)
                         NewValue = Math.Floor(NewValue);
                     var ValueChange = NewValue - PackagesData.Single(a => a.Package.Id == SelectedPackage.Id).Quantity;
@@ -1449,14 +1462,14 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
                 get { return !_UnitPrice.HasValue ? "" : (_UnitPrice.Value * (SelectedPackage == null ? 1 : SelectedPackage.Coefficient)).ToString("###,###,###,###,###,###,##0.").ToPersianDigits(); }
             }
 
-            public string _reversionFee;
+            private string _reversionFee;
             public string ReversionFee
             {
                 get { return _reversionFee.ToPersianDigits(); }
                 set { _reversionFee = value.ToLatinDigits(); }
             }
 
-            public string _reversionVATPercent;
+            private string _reversionVATPercent;
             public string ReversionVATPercent
             {
                 get { return _reversionVATPercent.ToPersianDigits(); }
@@ -1469,7 +1482,7 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
                 }
             }
 
-            public string _reversionVATAmount;
+            private string _reversionVATAmount;
             public string ReversionVATAmount
             {
                 get { return _reversionVATAmount.ToPersianDigits(); }
@@ -1477,7 +1490,7 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
                 { _reversionVATAmount = value.ToLatinDigits(); }
             }
 
-            public string _reversionDiscountPercent;
+            private string _reversionDiscountPercent;
             public string ReversionDiscountPercent
             {
                 get { return _reversionDiscountPercent.ToPersianDigits(); }
@@ -1490,7 +1503,7 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
                 }
             }
 
-            public bool _reversionIsFreeProduct;
+            private bool _reversionIsFreeProduct;
             public bool ReversionIsFreeProduct
             {
                 get { return _reversionIsFreeProduct; }
@@ -1513,48 +1526,47 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
             public StuffBatchNumber BatchNumberData { get; set; }
             public PackageQuantityModel[] PackagesData { get; set; }
             public decimal TotalStuffQuantity { get { return HasBatchNumbers ? StuffRow_BatchNumberRows.Sum(a => a.TotalStuffQuantity) : PackagesData != null ? PackagesData.Any() ? PackagesData.Sum(a => a.Quantity * a.Package.Coefficient) : 0 : 0; } }
+
             private decimal __UnitStock;
             public decimal _UnitStock
             {
-                get { return !HasBatchNumbers ? __UnitStock : StuffRow_BatchNumberRows.Any() ? StuffRow_BatchNumberRows.Sum(a => a._UnitStock) : 0; }
-                set { if (!HasBatchNumbers) __UnitStock = value; }
+                get
+                {
+                    return !HasBatchNumbers ? __UnitStock : StuffRow_BatchNumberRows.Any() ? StuffRow_BatchNumberRows.Sum(a => a._UnitStock) : 0;
+                }
+                set
+                {
+                    if (!HasBatchNumbers)
+                        __UnitStock = value ;
+                }
             }
-            public decimal? _Price { get { return TotalStuffQuantity * _UnitPrice; } }
-            public string Price { get { return _Price.HasValue ? _Price.Value.ToString("###,###,###,###,###,###,##0.").ToPersianDigits() : "---"; } }
 
-            //private decimal _remainedStock;
+            private decimal _remainedStock;
             public decimal RemainedStock
             {
                 get
                 {
                     if (HasBatchNumbers)
                         return StuffRow_BatchNumberRows.Sum(a => a.RemainedStock);
-                    else
-                        return _UnitStock - (PackagesData?.Sum(a => a.Quantity * a.Package.Coefficient) ?? 0);
+
+                    decimal res = _UnitStock - (PackagesData?.Sum(a => a.Quantity * a.Package.Coefficient) ?? 0);
+
+                    return res;
                 }
                 //set
                 //{
-                //    _remainedStock = value;
+                //    //_remainedStock = value;
                 //}
             }
 
-            //private string _stock;
-            public string Stock 
-            {
-                get
-                {
-                    //if (!ForTotalSaleOrderEditing)
-                        //_stock = (Math.Floor(RemainedStock / (SelectedPackage == null ? 1 : SelectedPackage.Coefficient)).ToString("###,###,###,##0.")).ToPersianDigits();
-                    
-                    //return _stock.ToPersianDigits();
-                    return (Math.Floor(RemainedStock / (SelectedPackage?.Coefficient ?? 1)).ToString("###,###,###,##0.")).ToPersianDigits();
-                }
-                //set
-                //{
-                //    if (ForTotalSaleOrderEditing)
-                //        _stock = value;
-                //}
-            }
+            public string Stock => Math.Floor(RemainedStock / (SelectedPackage?.Coefficient ?? 1)).ToString("###,###,###,##0.").ToPersianDigits();
+
+
+            public decimal? _Price => TotalStuffQuantity * _UnitPrice;
+            public string Price => _Price.HasValue ? _Price.Value.ToString("###,###,###,###,###,###,##0.").ToPersianDigits() : "---";
+
+
+
 
             public bool HasBatchNumbers { get { return StuffRow_BatchNumberRows != null && StuffRow_BatchNumberRows.Any(); } }
             private bool _OddRow;
@@ -1581,7 +1593,8 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
             public void OnPropertyChanged(string propertyName)
             {
                 var handler = PropertyChanged;
-                if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+                if (handler != null)
+                    handler(this, new PropertyChangedEventArgs(propertyName));
             }
 
             public Guid ArticleId { get; set; }
@@ -1924,9 +1937,9 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
         public async Task GetZeroStockStuffAndAddToSourceAsync(Guid? PartnerId,
             Guid? EditingOrderId, bool WithoutGroups, Guid? WarehouseId, Guid stuffId, SaleOrder EditingOrder,
             List<StuffListModel> LastStuffsGroups,
-            List<StuffListModel> AllStuffsData,  List<StuffListModel> AllStuffGroupsData,
+            List<StuffListModel> AllStuffsData, List<StuffListModel> AllStuffGroupsData,
             Picker GallaryStuffGroupPicker,
-            ObservableCollection<StuffListModel> _StuffsList,string Filter)
+            ObservableCollection<StuffListModel> _StuffsList, string Filter)
         {
             //get a single stuff
             var result = await DoGetAllStuffsListAsync(PartnerId, EditingOrderId, WithoutGroups, WarehouseId, stuffId);
@@ -1935,13 +1948,13 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
             var NewStuffGroupsData = result.Data[1];
 
             AllStuffGroupsData = NewStuffGroupsData;
-            
+
             var EditingSaleOrderStuffs = EditingOrder.SaleOrderStuffs.Where(a => !a.FreeProduct);
 
             foreach (var saleOrderStuff in EditingSaleOrderStuffs)
             {
                 DBRepository.StuffListModel StuffInList = NewStuffsData.SingleOrDefault(a => a.StuffId == saleOrderStuff.Package.StuffId);
-                
+
                 if (StuffInList != null)
                 {
                     StuffInList.ForTotalSaleOrderEditing = true;
@@ -1978,7 +1991,7 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
                 FilteredStuffs = FilteredStuffs.OrderBy(a => a.Quantity == 0).ToList();
 
             var StuffsWithGroupsData = FilteredStuffs.ToList();
-            
+
             if (AllStuffGroupsData != null)
             {
                 var StuffCounts = from g in AllStuffGroupsData

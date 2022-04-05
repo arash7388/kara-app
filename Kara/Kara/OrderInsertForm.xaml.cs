@@ -526,7 +526,7 @@ namespace Kara
     {
         public static SettingField<bool> InsertOrderForm_ShowGallaryMode = new SettingField<bool>("InsertOrderForm_ShowGallaryMode", false);
 
-        //public ObservableCollection<DBRepository.StuffListModel> _StuffsList;
+        public ObservableCollection<DBRepository.StuffListModel> _StuffsList;
         private Partner _BeforeSelectedPartner;
         private Partner _SelectedPartner;
         public Partner SelectedPartner
@@ -1298,7 +1298,8 @@ namespace Kara
         {
             FocusedQuantityTextBoxId = null;
 
-            var BewforePreviewForm = new OrderBeforePreviewForm(AllStuffsData, SelectedPartner, EditingSaleOrder, PartnerListForm, OrdersForm, SettlementTypeId, Description, this, PartnerChangeButton.IsEnabled, WarehouseId, FromTour)
+            var BewforePreviewForm = new OrderBeforePreviewForm(AllStuffsData, SelectedPartner, EditingSaleOrder, PartnerListForm, OrdersForm, SettlementTypeId, Description, this, PartnerChangeButton.IsEnabled, WarehouseId,
+                FromTour, new ObservableCollection<DBRepository.StuffListModel>(_StuffsList.Where(a => a.Quantity != 0).ToList()))
             {
                 StartColor = Color.FromHex("E6EBEF"),
                 EndColor = Color.FromHex("A6CFED")
@@ -1749,9 +1750,9 @@ namespace Kara
         public List<DBRepository.StuffListModel> AllStuffGroupsData;
         List<DBRepository.StuffListModel> LastStuffsGroups;
 
-        public async Task FillStuffs()
+        public async Task FillStuffs(SaleOrder EditingOrder = null)
         {
-            await FillStuffs(StuffsSearchBar.Text, null, false, false);
+            await FillStuffs(StuffsSearchBar.Text, EditingOrder, false, false);
         }
 
         bool EditingOrderStuffsInitialized = false;
@@ -1774,12 +1775,12 @@ namespace Kara
                     if (WithRefreshingAnimation) StuffItems.IsRefreshing = false;
                     return;
                 }
-                
+
                 var NewStuffsData = StuffsResult.Data[0];
                 var NewStuffGroupsData = StuffsResult.Data[1];
 
 
-                
+
                 if (AllStuffsData != null)
                 {
                     try
@@ -1816,10 +1817,12 @@ namespace Kara
 
             if (EditingOrder != null && !EditingOrderStuffsInitialized)
             {
+
                 var EditingSaleOrderStuffs = EditingOrder.SaleOrderStuffs.Where(a => !a.FreeProduct);
                 foreach (var saleOrderStuff in EditingSaleOrderStuffs)
                 {
                     DBRepository.StuffListModel StuffInList = AllStuffsData.SingleOrDefault(a => a.StuffId == saleOrderStuff.Package.StuffId);
+
                     if (StuffInList != null)
                     {
                         if (StuffInList.HasBatchNumbers)
@@ -1831,6 +1834,14 @@ namespace Kara
                             else
                                 StuffInList.SelectedPackage = saleOrderStuff.Package;
                             StuffInList.Quantity = saleOrderStuff.Quantity;
+
+                            var selectedPackageId = StuffInList.SelectedPackage.Id;
+
+                            if (StuffInList.PackagesData != null)
+                                StuffInList.PackagesData.FirstOrDefault(p => p.Package.Id == selectedPackageId).Quantity = saleOrderStuff.Quantity;
+
+                            //in edit mode stock should be increased
+                            StuffInList._UnitStock += saleOrderStuff.Quantity;
                         }
 
                         StuffInList.ArticleId = saleOrderStuff.Id;
@@ -1869,7 +1880,7 @@ namespace Kara
                     GallaryStuffGroupPicker.Items.Add(item.DisplayGroupName);
             }
 
-            ObservableCollection<DBRepository.StuffListModel> _StuffsList = null;
+            //ObservableCollection<DBRepository.StuffListModel> _StuffsList = null;
             try
             {
                 var StuffsListTemp = StuffsWithGroupsData.ToList();
@@ -1895,20 +1906,20 @@ namespace Kara
 
             if (FromTour)
             {
-                var stuffIds = _StuffsList.Select(a => new{Id = a.Id.Replace("|",""),Code=a.StuffData.Code}).ToList();
+                var stuffIds = _StuffsList.Select(a => new { Id = a.Id.Replace("|", ""), Code = a.StuffData.Code }).ToList();
 
                 foreach (SaleOrderStuff row in EditingOrder.SaleOrderStuffs)
                 {
-                    var existingStuffId = stuffIds.FirstOrDefault(a =>a.Id==row.Package.StuffId.ToString());
+                    var existingStuffId = stuffIds.FirstOrDefault(a => a.Id == row.Package.StuffId.ToString());
 
                     if (existingStuffId == null) //when stock is zero
                     {
                         await App.DB.GetZeroStockStuffAndAddToSourceAsync(
                             SelectedPartner != null ? SelectedPartner.Id : new Nullable<Guid>(),
                             EditingOrder != null ? EditingOrder.Id : new Nullable<Guid>(), false, WarehouseId,
-                            row.Package.StuffId, EditingOrder, LastStuffsGroups, 
+                            row.Package.StuffId, EditingOrder, LastStuffsGroups,
                             AllStuffsData,
-                            AllStuffGroupsData, 
+                            AllStuffGroupsData,
                             GallaryStuffGroupPicker,
                             _StuffsList,
                             Filter);
@@ -1927,9 +1938,10 @@ namespace Kara
                     //}
                 }
             }
-            
+
+
             StuffItems.ItemsSource = null;
-            StuffItems.ItemsSource = _StuffsList.OrderBy(a=>a.Quantity==0).ToList();
+            StuffItems.ItemsSource = _StuffsList.OrderBy(a => a.Quantity == 0).ToList();
 
             if (WithRefreshingAnimation) StuffItems.IsRefreshing = false;
 
