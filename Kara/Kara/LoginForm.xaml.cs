@@ -18,7 +18,7 @@ namespace Kara
         private Image UsernameIcon = new EntryCompanionIcon() { Source = "username.png" };
         private Entry Password = new MyEntry() { HorizontalTextAlignment = TextAlignment.End, Placeholder = "کلمه عبور", IsPassword = true, LeftRounded = true };
         private Image PasswordIcon = new EntryCompanionIcon() { Source = "password.png" };
-        private Button LoginButton = new RoundButton() { Text = "ورود", FontAttributes = FontAttributes.Bold ,BackgroundColor = Color.Black };
+        private Button LoginButton = new RoundButton() { Text = "ورود", FontAttributes = FontAttributes.Bold, BackgroundColor = Color.Black };
         private Button UniqueIdButton = new RoundButton() { Text = "شناسه سیستمی", FontAttributes = FontAttributes.Bold };
         private ActivityIndicator BusyIndicator = new ActivityIndicator() { VerticalOptions = LayoutOptions.Center, HorizontalOptions = LayoutOptions.Center, HeightRequest = 30, Color = Color.FromHex("E6EBEF"), IsRunning = false };
         private Label LoginErrorText = new Label() { TextColor = Color.FromHex("f33"), HorizontalTextAlignment = TextAlignment.Center };
@@ -42,7 +42,7 @@ namespace Kara
         {
             string deviceIdentifier = DependencyService.Get<IDevice>().GetIdentifier();
             var s = await DisplayActionSheet("", "انصراف", deviceIdentifier + " : شناسه سیستمی", "کپی");
-            
+
             if (s == "کپی")
             {
                 await Clipboard.SetTextAsync(deviceIdentifier);
@@ -97,7 +97,7 @@ namespace Kara
 
                     LoginLayoutGrid.Children.Add(ServerAddress, 1, 1);
                     Grid.SetColumnSpan(ServerAddress, 2);
-                                        
+
                     LoginLayoutGrid.Children.Add(ServerAddressIcon, 3, 1);
 
                     LoginLayoutGrid.Children.Add(Username, 1, 2);
@@ -162,41 +162,74 @@ namespace Kara
                 var getSettingTask = Kara.Assets.Connectivity.GetAndroidAppSettings(Username.Text, Password.Text);
                 await getSettingTask;
 
-                App.UseVisitorsNadroidApplication.Value = getSettingTask.Result.Data.UseVisitorsNadroidApplication;
-                App.UseCollectorAndroidApplication.Value = getSettingTask.Result.Data.UseCollectorAndroidApplication;
-                App.UseDistributerAndroidApplication.Value = getSettingTask.Result.Data.UseDistributerAndroidApplication;
+                //App.UseVisitorsNadroidApplication.Value = getSettingTask.Result.Data.UseVisitorsNadroidApplication;
+                //App.UseCollectorAndroidApplication.Value = getSettingTask.Result.Data.UseCollectorAndroidApplication;
+                //App.UseDistributerAndroidApplication.Value = getSettingTask.Result.Data.UseDistributerAndroidApplication;
 
-                var lic = await Kara.Assets.Connectivity.CheckLicense(DependencyService.Get<IDevice>().GetIdentifier());
+                //check max concurrent number of users considering their access to V,T,D
+                //if number does not exceed, devId should be added to LoggedInAndroidUsers
+                var result = await Kara.Assets.Connectivity.CheckLicense(DependencyService.Get<IDevice>().GetIdentifier());
 
-                //temppppppppppppp
-                var checkLic = true;
 
-                if (checkLic)
+                if (!result.HasVisitorLic && !result.HasTahsildarLic && !result.HasDistributerLic)
                 {
-                    if (App.UseVisitorsNadroidApplication.Value)
-                        if (!lic.HasVisitorLic)
-                        {
-                            App.ShowError("خطا", "شما لایسنس استفاده از نسخه ویزیتور را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
-                            return;
-                        }
-
-                    if (App.UseCollectorAndroidApplication.Value)
-                        if (!lic.HasTahsildarLic)
-                        {
-                            App.ShowError("خطا", "شما لایسنس استفاده از نسخه تحصیلدار را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
-                            return;
-                        }
-
-                    if (App.UseDistributerAndroidApplication.Value)
-                        if (!lic.HasDistributerLic)
-                        {
-                            App.ShowError("خطا", "شما لایسنس استفاده از نسخه موزع را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
-                            return;
-                        }
+                    App.ShowError("خطا", "شما هیچ یک از مجوزهای استفاده از برنامه اندروید را ندارید", "بستن");
+                    return;
                 }
 
+                App.UseVisitorsNadroidApplication.Value = result.HasVisitorLic;
+                App.UseCollectorAndroidApplication.Value = result.HasTahsildarLic;
+                App.UseDistributerAndroidApplication.Value = result.HasDistributerLic;
+
+
+                //if (checkLic)
+                //{
+                //    if (!App.UseVisitorsNadroidApplication.Value)
+                //    {
+                //        App.ShowError("خطا", "شما لایسنس استفاده از نسخه ویزیتور را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
+                //        return;
+                //    }
+
+                //    if (!App.UseCollectorAndroidApplication.Value)
+                //    {
+                //        App.ShowError("خطا", "شما لایسنس استفاده از نسخه تحصیلدار را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
+                //        return;
+                //    }
+
+                //    if (!App.UseDistributerAndroidApplication.Value)
+                //    {
+                //        App.ShowError("خطا", "شما لایسنس استفاده از نسخه موزع را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
+                //        return;
+                //    }
+                //}
+
+                //commented on 1401/2/1 (old approach)
+                //if (checkLic)
+                //{
+                //    if (App.UseVisitorsNadroidApplication.Value)
+                //        if (!lic.HasVisitorLic)
+                //        {
+                //            App.ShowError("خطا", "شما لایسنس استفاده از نسخه ویزیتور را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
+                //            return;
+                //        }
+
+                //    if (App.UseCollectorAndroidApplication.Value)
+                //        if (!lic.HasTahsildarLic)
+                //        {
+                //            App.ShowError("خطا", "شما لایسنس استفاده از نسخه تحصیلدار را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
+                //            return;
+                //        }
+
+                //    if (App.UseDistributerAndroidApplication.Value)
+                //        if (!lic.HasDistributerLic)
+                //        {
+                //            App.ShowError("خطا", "شما لایسنس استفاده از نسخه موزع را ندارید. لطفا با پشتیبانی تماس بگیرید", "بستن");
+                //            return;
+                //        }
+                //}
+
                 var locationTask = App.CheckGps();
-                
+
                 var tasks = new Task[] { locationTask, loginTask, getSettingTask };
                 await locationTask;
                 Task.WaitAll(tasks);
@@ -205,7 +238,7 @@ namespace Kara
                 {
                     return;
                 }
-                
+
                 App.UserId.Value = loginResult.Data.UserId;
                 App.Username.Value = Username.Text;
                 App.Password.Value = Password.Text;
@@ -237,7 +270,7 @@ namespace Kara
             {
                 throw;
             }
-            finally 
+            finally
             {
                 BusyIndicator.IsRunning = false;
             }

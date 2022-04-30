@@ -456,12 +456,13 @@ namespace Kara.Assets
             }
         }
 
+
         public static async Task<LicHelper> CheckLicense(string uniqueIdentifier)
         {
             try
             {
-                var url = ServerRoot + $"CheckLicense?deviceUniqueIdentifier={uniqueIdentifier}";
-                                                
+                var url = ServerRoot + $"CheckLicenseWithCount?deviceUniqueIdentifier={uniqueIdentifier}&Username={App.Username.Value}&Password={App.Password.Value}";
+
                 var client = new System.Net.Http.HttpClient();
 
                 HttpResponseMessage response = await client.GetAsync(url);
@@ -481,6 +482,32 @@ namespace Kara.Assets
                 return null;
             }
         }
+
+        //public static async Task<ResultSuccess> CheckLicense(string uniqueIdentifier)
+        //{
+        //    try
+        //    {
+        //        var url = ServerRoot + $"CheckLicenseWithCount?deviceUniqueIdentifier={uniqueIdentifier}";
+
+        //        var client = new System.Net.Http.HttpClient();
+
+        //        HttpResponseMessage response = await client.GetAsync(url);
+
+        //        ResultSuccess resultDeserialized = null;
+
+        //        if (response.IsSuccessStatusCode)
+        //        {
+        //            string content = await response.Content.ReadAsStringAsync();
+        //            resultDeserialized = JsonConvert.DeserializeObject<ResultSuccess>(content);
+        //        }
+
+        //        return resultDeserialized;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return null;
+        //    }
+        //}
 
         public static async Task<List<KeyValuePair<Guid,decimal>>> GetLastBuyPrice(List<Guid> stuffIds)
         {

@@ -4,5 +4,7 @@
              xmlns:local="clr-namespace:Kara.CustomRenderer"
              x:Class="Kara.MainMenu">
   <Grid x:Name="MainMenuGrid" Padding="5,0" RowSpacing="1" ColumnSpacing="1" >
-  </Grid>
+    </Grid>
+
+
 </local:GradientContentPage>
