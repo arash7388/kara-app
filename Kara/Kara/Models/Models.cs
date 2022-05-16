@@ -376,6 +376,8 @@ namespace Kara.Models
         public StuffBasket[] Baskets { get { if (_Baskets == null) _Baskets = App.DB.GetStuffBaskets(Id); return _Baskets; } }
         public int SaleCoefficient { get; set; }
         public int MinForSale { get; set; }
+        public bool EnableStuffTaxValue { get; set; }
+        public decimal StuffTaxValue { get; set; }
     }
 
     [Table("PriceListVersion")]

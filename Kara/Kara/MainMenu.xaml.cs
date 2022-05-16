@@ -212,7 +212,7 @@ namespace Kara
                     _firstTime = false;
                     MessagingCenter.Send(this, "MainMenuOpened");
 
-                    var result = await Kara.Assets.Connectivity.CheckLicense(DependencyService.Get<IDevice>().GetIdentifier());
+                    var result = await Kara.Assets.Connectivity.CheckLicense(DependencyService.Get<IDevice>().GetIdentifier(),App.Username.Value,App.Password.Value);
 
                     await Task.Delay(10);
 

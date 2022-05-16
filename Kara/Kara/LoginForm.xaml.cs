@@ -168,7 +168,7 @@ namespace Kara
 
                 //check max concurrent number of users considering their access to V,T,D
                 //if number does not exceed, devId should be added to LoggedInAndroidUsers
-                var result = await Kara.Assets.Connectivity.CheckLicense(DependencyService.Get<IDevice>().GetIdentifier());
+                var result = await Kara.Assets.Connectivity.CheckLicense(DependencyService.Get<IDevice>().GetIdentifier(),Username.Text,Password.Text);
 
 
                 if (!result.HasVisitorLic && !result.HasTahsildarLic && !result.HasDistributerLic)

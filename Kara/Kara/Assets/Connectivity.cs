@@ -457,11 +457,11 @@ namespace Kara.Assets
         }
 
 
-        public static async Task<LicHelper> CheckLicense(string uniqueIdentifier)
+        public static async Task<LicHelper> CheckLicense(string uniqueIdentifier,string userName,string password)
         {
             try
             {
-                var url = ServerRoot + $"CheckLicenseWithCount?deviceUniqueIdentifier={uniqueIdentifier}&Username={App.Username.Value}&Password={App.Password.Value}";
+                var url = ServerRoot + $"CheckLicenseWithCount?deviceUniqueIdentifier={uniqueIdentifier}&Username={userName}&Password={password}";
 
                 var client = new System.Net.Http.HttpClient();
 

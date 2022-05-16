@@ -2100,6 +2100,8 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
                                         stock.BatchNumberId,
                                         stock = stock.Stock - (ordered != null ? ordered.Quantity : 0)
                                     };
+                    //temppp
+                    //AllStocks = AllStocks.Skip(AllStocks.Count()-20).Take(19).ToList();
 
                     var Today = DateTime.Now.Date;
                     List<PriceListStuff> PriceListStuffs = new List<PriceListStuff>();
@@ -2127,9 +2129,27 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
                         Id = a.StuffId.ToString() + "|" + a.BatchNumberId.GetValueOrDefault(Guid.Empty).ToString(),
                         Model = a
                     }).ToArray();
+
+                    //temp arash 140102026
+                    //var d = from a in AllStocks
+                    //    group a by a.StuffId
+                    //    into grp
+                    //    where grp.Count() > 1
+                    //    select grp.Key;
+
+                    //var xx = d.FirstOrDefault();
+
+                    //var d2 = AllStocks.GroupBy(a => new{a.StuffId,a.BatchNumberId}).Where(g => g.Count() > 1).ToList();
+
+
+                    //temp arash 140102026
+                    //AllStocks = AllStocks.Where(a => !d.Contains(a.StuffId)).ToList();
+
                     var StocksDictionary = AllStocks.ToDictionary(a => a.StuffId.ToString() + "|" + a.BatchNumberId.ToString(), a => a.stock);
+                    
+                    
                     foreach (var item in StuffsArray)
-                        item.Model._UnitStock = StocksDictionary[item.Id];// StocksDictionary.ContainsKey(item.Id) ? StocksDictionary[item.Id] : 0;
+                        item.Model._UnitStock =  StocksDictionary.ContainsKey(item.Id) ? StocksDictionary[item.Id] : 0; //StocksDictionary[item.Id]; //changed by arash
 
                     if (stuffId != null)
                         AllStuffsData = AllStuffsData.Where(a => a.StuffData.Id == stuffId).ToList();
