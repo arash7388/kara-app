@@ -219,7 +219,14 @@ namespace Kara
                     if (!result.HasVisitorLic && !result.HasTahsildarLic && !result.HasDistributerLic)
                     {
                         App.ShowError("خطا", "شما هیچ یک از مجوزهای استفاده از برنامه اندروید را ندارید", "بستن");
-                        return;
+                        App.UserId.Value = Guid.Empty;
+                        var LoginForm = new LoginForm()
+                        {
+                            StartColor = Color.FromHex("E6EBEF"),
+                            EndColor = Color.FromHex("A6CFED")
+                        };
+                        await Navigation.PushAsync(LoginForm);
+                        this.Navigation.RemovePage(this);
                     }
 
                     if (App.UseVisitorsNadroidApplication.Value != result.HasVisitorLic ||

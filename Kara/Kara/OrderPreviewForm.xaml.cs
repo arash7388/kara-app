@@ -669,8 +669,10 @@ namespace Kara
                     var AllEquivalnetPackageNames = _SaleOrderStuffs.Where(a => a.Package.Coefficient != 1).Select(a => a.Package.Stuff.Packages.Single(b => b.Coefficient == 1).Name).Distinct();
 
                     var ColumnCount = 4 +
+                         (SaleOrder.StuffsVATSum != 0 ? 1 : 0)  + //for VAT 1401/02/30
                         (AnyRowDiscount ? 2 : 0) +
                         (!AllRowsAreUnitPackage ? 1 : 0);
+
                     for (int i = 0; i < ColumnCount; i++)
                         ArticlesGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
 
@@ -753,6 +755,41 @@ namespace Kara
                     LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesHeader_Fee, 1));
                     ArticlesGrid.Children.Add(ArticlesHeader_Fee, col, row);
                     col--;
+
+                    //var RowVATPercent = new MyLabel()
+                    //{
+                    //    Padding = new Thickness(10, 0),
+                    //    BackgroundColor = DARKGRAY,
+                    //    TextColor = BLACK,
+                    //    LineBreakMode = LineBreakMode.NoWrap,
+                    //    Text = "م.ا.ا%",
+                    //    HorizontalOptions = LayoutOptions.FillAndExpand,
+                    //    HorizontalTextAlignment = TextAlignment.Center,
+                    //    VerticalTextAlignment = TextAlignment.Center,
+                    //    FontAttributes = FontAttributes.Bold
+                    //};
+                    //LabelFontSizes.Add(new KeyValuePair<Label, double>(RowVATPercent, 1));
+                    //ArticlesGrid.Children.Add(RowVATPercent, col, row);
+                    //col--;
+
+                    if (SaleOrder.StuffsVATSum != 0)
+                    {
+                        var RowVATAmount = new MyLabel()
+                        {
+                            Padding = new Thickness(10, 0),
+                            BackgroundColor = DARKGRAY,
+                            TextColor = BLACK,
+                            LineBreakMode = LineBreakMode.NoWrap,
+                            Text = "م.ا.ا",
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            HorizontalTextAlignment = TextAlignment.Center,
+                            VerticalTextAlignment = TextAlignment.Center,
+                            FontAttributes = FontAttributes.Bold
+                        };
+                        LabelFontSizes.Add(new KeyValuePair<Label, double>(RowVATAmount, 1));
+                        ArticlesGrid.Children.Add(RowVATAmount, col, row);
+                        col--;
+                    }
 
                     var ArticlesHeader_Price = new MyLabel()
                     {
@@ -905,6 +942,43 @@ namespace Kara
                         col--;
                         if (i == 0) BodyFirstRowLabels.Add(ArticlesBody_Fee);
 
+
+                        //var VatPercent = new MyLabel()
+                        //{
+                        //    Padding = new Thickness(10, 0),
+                        //    BackgroundColor = BG,
+                        //    TextColor = BLACK,
+                        //    HorizontalOptions = LayoutOptions.FillAndExpand,
+                        //    VerticalOptions = LayoutOptions.FillAndExpand,
+                        //    HorizontalTextAlignment = TextAlignment.End,
+                        //    VerticalTextAlignment = TextAlignment.Center,
+                        //    LineBreakMode = LineBreakMode.NoWrap,
+                        //    Text =_SaleOrderStuffs[i].VATPercent.ToString().ToPersianDigits()
+                        //};
+                        //LabelFontSizes.Add(new KeyValuePair<Label, double>(VatPercent, 1));
+                        //ArticlesGrid.Children.Add(VatPercent, col, row + 1);
+                        //col--;
+
+                        if(SaleOrder.StuffsVATSum != 0)
+                        {
+                            var VatAmount = new MyLabel()
+                            {
+                                Padding = new Thickness(10, 0),
+                                BackgroundColor = BG,
+                                TextColor = BLACK,
+                                HorizontalOptions = LayoutOptions.FillAndExpand,
+                                VerticalOptions = LayoutOptions.FillAndExpand,
+                                HorizontalTextAlignment = TextAlignment.End,
+                                VerticalTextAlignment = TextAlignment.Center,
+                                LineBreakMode = LineBreakMode.NoWrap,
+                                Text = _SaleOrderStuffs[i].VATAmount.ToString("###,###,###,###,###,###,##0.").ToPersianDigits()
+                            };
+                            LabelFontSizes.Add(new KeyValuePair<Label, double>(VatAmount, 1));
+                            ArticlesGrid.Children.Add(VatAmount, col, row + 1);
+                            col--;
+                        }
+
+                        
                         var ArticlesBody_Price = new MyLabel()
                         {
                             Padding = new Thickness(10, 0),
@@ -964,7 +1038,7 @@ namespace Kara
                     }
 
                     row += 2;
-                    col = ColumnCount - 3 - (AllRowsAreUnitPackage ? 0 : 1);
+                    col = ColumnCount - 3 - (AllRowsAreUnitPackage ? 0 : 1) - (SaleOrder.StuffsVATSum == 0 ? 0 : 1);
                     var ArticlesFooter_Sum = new MyLabel()
                     {
                         Padding = new Thickness(10, 0),
@@ -1128,13 +1202,19 @@ namespace Kara
                             TextColor = BLACK,
                             HorizontalOptions = LayoutOptions.FillAndExpand,
                             LineBreakMode = LineBreakMode.WordWrap,
-                            Text = "مالیات ا.ا.(" + App.VATPercent.Value.ToString("##0.##").Replace(".", "/").ToPersianDigits() + "%)" + (VATExceptions.Any() ? "*" : "") + ":",
+
+                            //1401/02/30 now it has different amount of vats
+                            //Text = "مالیات ا.ا.(" + App.VATPercent.Value.ToString("##0.##").Replace(".", "/").ToPersianDigits() + "%)" + (VATExceptions.Any() ? "*" : "") + ":",
+                            
+                            Text = "مالیات ا.ا." + (VATExceptions.Any() ? "*" : "") + ":",
                             HorizontalTextAlignment = TextAlignment.Start,
                             VerticalTextAlignment = TextAlignment.Center,
                             FontAttributes = FontAttributes.Bold
                         };
+
                         LabelFontSizes.Add(new KeyValuePair<Label, double>(SaleOrder_VATAmount_Label, 1));
                         ArticlesGrid.Children.Add(SaleOrder_VATAmount_Label, 1, row);
+
                         Grid.SetColumnSpan(SaleOrder_VATAmount_Label, ColumnCount - 1);
 
                         row++;
@@ -1436,7 +1516,9 @@ namespace Kara
                     var VATPercent = App.VATPercent.Value;
                     var CalculateVATForThisPerson = SaleOrder.Partner.CalculateVATForThisPerson;
                     foreach (var item in SaleOrder.SaleOrderStuffs)
-                        item.VATPercent = CalculateVATForThisPerson && item.Package.Stuff.HasVAT ? VATPercent : 0;
+                        //Arash 1401/02/30
+                        //item.VATPercent = CalculateVATForThisPerson && item.Package.Stuff.HasVAT ? VATPercent : 0;
+                        item.VATPercent = CalculateVATForThisPerson && item.Package.Stuff.EnableStuffTaxValue ? item.Package.Stuff.StuffTaxValue :  item.Package.Stuff.HasVAT ? VATPercent : 0;
 
                     return new ResultSuccess();
                 }

@@ -2421,6 +2421,20 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
         }
         public SettlementType[] GetSettlementTypes()
         {
+            //temp arashhhhhhhhhhhhhh
+            //1401/02
+            //var s = new SettlementType()
+            //{
+            //    Day = 1,
+            //    Enabled = true,
+            //    Id = Guid.Parse("00000000-0000-0000-0000-000000000001"),
+            //    Name = "نقد"
+            //};
+
+             //InsertOrUpdateRecordAsync(s);
+            //////////////////////////////
+
+            
             return conn.Table<SettlementType>().Where(a => a.Enabled).ToArray();
         }
         public SaleOrderStuff[] GetSaleOrderStuffs(Guid OrderId)

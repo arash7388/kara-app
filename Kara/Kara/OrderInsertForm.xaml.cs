@@ -1761,6 +1761,11 @@ namespace Kara
             if (!WarehouseId.HasValue && App.DefineWarehouseForSaleAndBuy.Value)
                 return;
 
+
+            //arash temp 1401/02/30
+
+            //WarehouseId =  Guid.Parse("9A59137C-C906-4266-8BD7-1EBA75517606");
+
             if (WithRefreshingAnimation)
                 StuffItems.IsRefreshing = true;
 
@@ -1779,8 +1784,7 @@ namespace Kara
                 var NewStuffsData = StuffsResult.Data[0];
                 var NewStuffGroupsData = StuffsResult.Data[1];
 
-
-
+                
                 if (AllStuffsData != null)
                 {
                     try

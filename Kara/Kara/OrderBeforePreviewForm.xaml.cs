@@ -417,7 +417,9 @@ namespace Kara
                 Quantity = a.Quantity,
                 SalePrice = a.PackagePrice,
                 DiscountPercent = 0,
-                VATPercent = saleOrder.Partner.CalculateVATForThisPerson && a.PackageData.Stuff.HasVAT ? App.VATPercent.Value : 0,
+                //VATPercent = saleOrder.Partner.CalculateVATForThisPerson && a.PackageData.Stuff.HasVAT ? App.VATPercent.Value : 0,
+                //Arash 1401/02/30
+                VATPercent = saleOrder.Partner.CalculateVATForThisPerson && a.PackageData.Stuff.EnableStuffTaxValue ? a.PackageData.Stuff.StuffTaxValue : a.PackageData.Stuff.HasVAT  ? App.VATPercent.Value : 0,
                 FreeProduct = false,
                 FreeProduct_UnitPrice = null
             }).ToArray();
