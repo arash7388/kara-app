@@ -2431,7 +2431,7 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
             //    Name = "نقد"
             //};
 
-            InsertOrUpdateRecordAsync(s);
+            //InsertOrUpdateRecordAsync(s);
             //////////////////////////////
 
 
