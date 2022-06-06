@@ -233,7 +233,7 @@ namespace Kara
 
             foreach (UnSettledOrderModel item in selectedItems)
             {
-                if (decimal.TryParse(item.Price.ToLatinDigits(), out decimal d))
+                if (decimal.TryParse(item.Remainder.ToLatinDigits(), out decimal d))
                     sumSelected += d;
             }
 

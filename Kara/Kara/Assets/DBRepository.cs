@@ -2132,14 +2132,14 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
 
                     //temp arash 140102026
                     //var d = from a in AllStocks
-                    //    group a by a.StuffId
+                    //        group a by a.StuffId
                     //    into grp
-                    //    where grp.Count() > 1
-                    //    select grp.Key;
+                    //        where grp.Count() > 1
+                    //        select grp.Key;
 
                     //var xx = d.FirstOrDefault();
 
-                    //var d2 = AllStocks.GroupBy(a => new{a.StuffId,a.BatchNumberId}).Where(g => g.Count() > 1).ToList();
+                    //var d2 = AllStocks.GroupBy(a => new { a.StuffId, a.BatchNumberId }).Where(g => g.Count() > 1).ToList();
 
 
                     //temp arash 140102026
@@ -2431,10 +2431,10 @@ Selected ? "#A4DEF5" : HasOrder ? "#B7E5BF" : HasFailedVisit ? "#E5B7BF" : "#DCE
             //    Name = "نقد"
             //};
 
-             //InsertOrUpdateRecordAsync(s);
+            InsertOrUpdateRecordAsync(s);
             //////////////////////////////
 
-            
+
             return conn.Table<SettlementType>().Where(a => a.Enabled).ToArray();
         }
         public SaleOrderStuff[] GetSaleOrderStuffs(Guid OrderId)

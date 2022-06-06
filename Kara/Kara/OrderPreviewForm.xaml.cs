@@ -756,41 +756,6 @@ namespace Kara
                     ArticlesGrid.Children.Add(ArticlesHeader_Fee, col, row);
                     col--;
 
-                    //var RowVATPercent = new MyLabel()
-                    //{
-                    //    Padding = new Thickness(10, 0),
-                    //    BackgroundColor = DARKGRAY,
-                    //    TextColor = BLACK,
-                    //    LineBreakMode = LineBreakMode.NoWrap,
-                    //    Text = "م.ا.ا%",
-                    //    HorizontalOptions = LayoutOptions.FillAndExpand,
-                    //    HorizontalTextAlignment = TextAlignment.Center,
-                    //    VerticalTextAlignment = TextAlignment.Center,
-                    //    FontAttributes = FontAttributes.Bold
-                    //};
-                    //LabelFontSizes.Add(new KeyValuePair<Label, double>(RowVATPercent, 1));
-                    //ArticlesGrid.Children.Add(RowVATPercent, col, row);
-                    //col--;
-
-                    if (SaleOrder.StuffsVATSum != 0)
-                    {
-                        var RowVATAmount = new MyLabel()
-                        {
-                            Padding = new Thickness(10, 0),
-                            BackgroundColor = DARKGRAY,
-                            TextColor = BLACK,
-                            LineBreakMode = LineBreakMode.NoWrap,
-                            Text = "م.ا.ا",
-                            HorizontalOptions = LayoutOptions.FillAndExpand,
-                            HorizontalTextAlignment = TextAlignment.Center,
-                            VerticalTextAlignment = TextAlignment.Center,
-                            FontAttributes = FontAttributes.Bold
-                        };
-                        LabelFontSizes.Add(new KeyValuePair<Label, double>(RowVATAmount, 1));
-                        ArticlesGrid.Children.Add(RowVATAmount, col, row);
-                        col--;
-                    }
-
                     var ArticlesHeader_Price = new MyLabel()
                     {
                         Padding = new Thickness(10, 0),
@@ -838,6 +803,25 @@ namespace Kara
                         };
                         LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesHeader_FinalPrice, 1));
                         ArticlesGrid.Children.Add(ArticlesHeader_FinalPrice, col, row);
+                    }
+
+                    if (SaleOrder.StuffsVATSum != 0)
+                    {
+                        var RowVATAmount = new MyLabel()
+                        {
+                            Padding = new Thickness(10, 0),
+                            BackgroundColor = DARKGRAY,
+                            TextColor = BLACK,
+                            LineBreakMode = LineBreakMode.NoWrap,
+                            Text = "م.ا.ا",
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            HorizontalTextAlignment = TextAlignment.Center,
+                            VerticalTextAlignment = TextAlignment.Center,
+                            FontAttributes = FontAttributes.Bold
+                        };
+                        LabelFontSizes.Add(new KeyValuePair<Label, double>(RowVATAmount, 1));
+                        ArticlesGrid.Children.Add(RowVATAmount, col, row);
+                        col--;
                     }
 
                     row--;
