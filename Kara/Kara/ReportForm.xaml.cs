@@ -34,7 +34,7 @@ namespace Kara
             DateTime BDate = (ThisMonthDateString + "01").PersianDateStringToDate();
             DateTime EDate = DateTime.Today;
             
-            var BDateLabel = new Label() { Text = "از تاریخ: ", HorizontalOptions = LayoutOptions.EndAndExpand };
+            var BDateLabel = new Label() { Text = "از تاریخ پیش فاکتور: ", HorizontalOptions = LayoutOptions.EndAndExpand };
             BDatePicker = new PersianDatePicker(PopUpDialog) { Value = BDate, HorizontalOptions = LayoutOptions.EndAndExpand };
             var BDateGrid = new MenuModel()
             {
@@ -53,7 +53,7 @@ namespace Kara
             BDateGrid.FilterItemGrid.Children.Add(BDatePicker, 0, 0);
             BDateGrid.FilterItemGrid.Children.Add(BDateLabel, 1, 0);
 
-            var EDateLabel = new Label() { Text = "تا تاریخ: ", HorizontalOptions = LayoutOptions.EndAndExpand };
+            var EDateLabel = new Label() { Text = "تا تاریخ پیش فاکتور:", HorizontalOptions = LayoutOptions.EndAndExpand };
             EDatePicker = new PersianDatePicker(PopUpDialog) { Value = EDate, HorizontalOptions = LayoutOptions.EndAndExpand };
             var EDateGrid = new MenuModel()
             {

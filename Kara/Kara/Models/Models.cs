@@ -166,6 +166,8 @@ namespace Kara.Models
         public DateTime? ChangeDate { get; set; }
         public bool? Sent { get; set; }
         public Guid CreditId { get; set; }
+        public string NationalCode { get; set; }
+
         [Ignore]
         private DynamicGroup[] _Groups { get; set; }
         [Ignore]
@@ -369,7 +371,11 @@ namespace Kara.Models
         [Ignore]
         private Package[] _Packages { get; set; }
         [Ignore]
-        public Package[] Packages { get { if (_Packages == null) _Packages = App.DB.GetStuffPackages(Id); return _Packages; } }
+        public Package[] Packages
+        {
+            get { if (_Packages == null) _Packages = App.DB.GetStuffPackages(Id); return _Packages; }
+            set { _Packages = value; }
+        }
         [Ignore]
         private StuffBasket[] _Baskets { get; set; }
         [Ignore]
@@ -451,6 +457,7 @@ namespace Kara.Models
         public bool DefaultPackage { get; set; }
         public bool Enabled { get; set; }
         public decimal PossibleQuantityCoefficient { get; set; }
+        public bool? IsTpUnit { get; set; }
     }
 
     [Table("StuffBasket")]
@@ -789,7 +796,19 @@ namespace Kara.Models
         [Ignore]
         public Package _Package { get; set; }
         [Ignore]
-        public Package Package { get { if (_Package == null) _Package = App.DB.GetPackage(PackageId); return _Package; } }
+        public Package Package 
+        { 
+            get 
+            { 
+                if (_Package == null) 
+                    _Package = App.DB.GetPackage(PackageId); 
+                return _Package; 
+            }
+            set
+            {
+                _Package = value;
+            }
+        }
         public decimal Quantity { get; set; }
         [Ignore]
         public decimal StuffQuantity { get { return Quantity * Package.Coefficient; } }

@@ -538,6 +538,8 @@ namespace Kara.Assets
             public bool HasVisitorLic { get; set; }
             public bool HasTahsildarLic { get; set; }
             public bool HasDistributerLic { get; set; }
+            public bool IsSuccess { get; set; }
+            public string ErrorMessage { get; set; }
         }
 
         public class ReturnOrderCompletelyDto
@@ -1233,6 +1235,7 @@ namespace Kara.Assets
                         new KeyValuePair<string, string>("Id", Partner.Id.ToString().ToLatinDigits()),
                         new KeyValuePair<string, string>("FirstName", Partner.FirstName.ToLatinDigits()),
                         new KeyValuePair<string, string>("LastName", Partner.LastName.ToLatinDigits()),
+                        new KeyValuePair<string, string>("NationalCode", Partner.NationalCode.ToLatinDigits()),
                         new KeyValuePair<string, string>("LegalName", Partner.LegalName.ToLatinDigits()),
                         new KeyValuePair<string, string>("ZoneId", Partner.ZoneId.ToString()),
                         new KeyValuePair<string, string>("Phone1", Partner.Phone1.ToLatinDigits()),

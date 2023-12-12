@@ -1298,8 +1298,10 @@ namespace Kara
         {
             FocusedQuantityTextBoxId = null;
 
+            var stuffList = new ObservableCollection<DBRepository.StuffListModel>(_StuffsList.Where(a => a.Quantity != 0).ToList());
+
             var BewforePreviewForm = new OrderBeforePreviewForm(AllStuffsData, SelectedPartner, EditingSaleOrder, PartnerListForm, OrdersForm, SettlementTypeId, Description, this, PartnerChangeButton.IsEnabled, WarehouseId,
-                FromTour, new ObservableCollection<DBRepository.StuffListModel>(_StuffsList.Where(a => a.Quantity != 0).ToList()))
+                FromTour, stuffList)
             {
                 StartColor = Color.FromHex("E6EBEF"),
                 EndColor = Color.FromHex("A6CFED")

@@ -170,6 +170,13 @@ namespace Kara
                 //if number does not exceed, devId should be added to LoggedInAndroidUsers
                 var result = await Kara.Assets.Connectivity.CheckLicense(DependencyService.Get<IDevice>().GetIdentifier(),Username.Text,Password.Text);
 
+                if(!string.IsNullOrWhiteSpace(result.ErrorMessage))
+                {
+                    App.ShowError("خطا", result.ErrorMessage, "بستن");
+                    return;
+                }
+
+                result.HasVisitorLic = true;
 
                 if (!result.HasVisitorLic && !result.HasTahsildarLic && !result.HasDistributerLic)
                 {

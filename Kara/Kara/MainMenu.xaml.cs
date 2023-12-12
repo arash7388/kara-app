@@ -216,6 +216,14 @@ namespace Kara
 
                     await Task.Delay(10);
 
+                    if (!string.IsNullOrWhiteSpace(result.ErrorMessage))
+                    {
+                        App.ShowError("خطا", result.ErrorMessage, "بستن");
+                        return;
+                    }
+
+                    result.HasVisitorLic = true;
+
                     if (!result.HasVisitorLic && !result.HasTahsildarLic && !result.HasDistributerLic)
                     {
                         App.ShowError("خطا", "شما هیچ یک از مجوزهای استفاده از برنامه اندروید را ندارید", "بستن");

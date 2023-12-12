@@ -664,9 +664,11 @@ namespace Kara
                         ArticlesGrid.RowDefinitions.Add(new RowDefinition() { Height = GridLength.Auto });
 
                     var AnyRowDiscount = _SaleOrderStuffs.Any(a => a.DiscountPercent != 0 || a.CashDiscountPercent != 0);
-                    var AllRowsAreUnitPackage = _SaleOrderStuffs.All(a => a.Package.Coefficient == 1);
+                    var AllRowsAreUnitPackage = _SaleOrderStuffs.All(a => a.Package.Coefficient == 1 && !a.Package.IsTpUnit.GetValueOrDefault(false) && a.Package.Enabled);
                     var AllPackageNames = _SaleOrderStuffs.Select(a => a.Package.Name).Distinct();
-                    var AllEquivalnetPackageNames = _SaleOrderStuffs.Where(a => a.Package.Coefficient != 1).Select(a => a.Package.Stuff.Packages.Single(b => b.Coefficient == 1).Name).Distinct();
+                    var pps = _SaleOrderStuffs.Where(a => a.Package.Coefficient != 1 && !a.Package.IsTpUnit.GetValueOrDefault(false));
+
+                    var AllEquivalnetPackageNames = pps.Select(a => a.Package.Stuff.Packages.FirstOrDefault(b => b.Coefficient == 1 && !b.IsTpUnit.GetValueOrDefault(false) && a.Package.Enabled).Name).Distinct();
 
                     var ColumnCount = 4 +
                          (SaleOrder.StuffsVATSum != 0 ? 1 : 0)  + //for VAT 1401/02/30
@@ -756,22 +758,6 @@ namespace Kara
                     ArticlesGrid.Children.Add(ArticlesHeader_Fee, col, row);
                     col--;
 
-                    var ArticlesHeader_Price = new MyLabel()
-                    {
-                        Padding = new Thickness(10, 0),
-                        BackgroundColor = DARKGRAY,
-                        TextColor = BLACK,
-                        LineBreakMode = LineBreakMode.NoWrap,
-                        Text = "مبلغ",
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        HorizontalTextAlignment = TextAlignment.Center,
-                        VerticalTextAlignment = TextAlignment.Center,
-                        FontAttributes = FontAttributes.Bold
-                    };
-                    LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesHeader_Price, 1));
-                    ArticlesGrid.Children.Add(ArticlesHeader_Price, col, row);
-                    col--;
-
                     if (AnyRowDiscount)
                     {
                         var ArticlesHeader_Discount = new MyLabel()
@@ -823,6 +809,24 @@ namespace Kara
                         ArticlesGrid.Children.Add(RowVATAmount, col, row);
                         col--;
                     }
+
+                    var ArticlesHeader_Price = new MyLabel()
+                    {
+                        Padding = new Thickness(10, 0),
+                        BackgroundColor = DARKGRAY,
+                        TextColor = BLACK,
+                        LineBreakMode = LineBreakMode.NoWrap,
+                        Text = "مبلغ",
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        HorizontalTextAlignment = TextAlignment.Center,
+                        VerticalTextAlignment = TextAlignment.Center,
+                        FontAttributes = FontAttributes.Bold
+                    };
+                    LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesHeader_Price, 1));
+                    ArticlesGrid.Children.Add(ArticlesHeader_Price, col, row);
+                    col--;
+
+                    
 
                     row--;
                     var VATExceptions = new List<int>();
@@ -891,6 +895,9 @@ namespace Kara
 
                         if (!AllRowsAreUnitPackage)
                         {
+                            var coeff1s = _SaleOrderStuffs[i].Package.Stuff.Packages.Where(a => a.Coefficient == 1).ToList();
+                            var us = coeff1s.Select(k => new { Id = k.Id.ToSafeString(), k.Name,k.IsTpUnit }).ToList();
+
                             var ArticlesBody_Equivalent = new MyLabel()
                             {
                                 Padding = new Thickness(10, 0),
@@ -901,7 +908,7 @@ namespace Kara
                                 HorizontalTextAlignment = TextAlignment.End,
                                 VerticalTextAlignment = TextAlignment.Center,
                                 LineBreakMode = LineBreakMode.NoWrap,
-                                Text = (_SaleOrderStuffs[i].StuffQuantity.ToString("###,###,###,##0.###").Replace(".", "/") + (AllEquivalnetPackageNames.Count() == 1 ? "" : (" " + _SaleOrderStuffs[i].Package.Stuff.Packages.Single(a => a.Coefficient == 1).Name))).ToPersianDigits()
+                                Text = (_SaleOrderStuffs[i].StuffQuantity.ToString("###,###,###,##0.###").Replace(".", "/") + (AllEquivalnetPackageNames.Count() == 1 ? "" : (" " + _SaleOrderStuffs[i].Package.Stuff.Packages.Single(a => a.Coefficient == 1 && !a.IsTpUnit.GetValueOrDefault(false) && a.Enabled).Name))).ToPersianDigits()
                             };
                             LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesBody_Equivalent, 1));
                             ArticlesGrid.Children.Add(ArticlesBody_Equivalent, col, row + 1);

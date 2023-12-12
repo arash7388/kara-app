@@ -31,14 +31,17 @@ namespace Kara
             Credit_Label,
             IsPartnerLegal_Label,
             CalculateVATForThisPerson_Label,
-            PartnerGroup_Label;
+            PartnerGroup_Label,
+            NationalCode_Label;
         Entry FirstName,
             LastName,
             LegalName,
             Phone1,
             Phone2,
             Cell,
-            Fax;
+            Fax,
+            NationalCode;
+
         PlaceholderEditor Address;
         Switch IsPartnerLegal, CalculateVATForThisPerson;
         Picker CityPicker, ZonePicker, RoutePicker, CreditPicker;
@@ -76,6 +79,7 @@ namespace Kara
             Route_Label = new Label() { Text = "مسیر:  ", LineBreakMode = LineBreakMode.NoWrap, HorizontalTextAlignment = TextAlignment.End, VerticalTextAlignment = TextAlignment.Center, HorizontalOptions = LayoutOptions.FillAndExpand };
             FirstName_Label = new Label() { Text = "نام:  ", LineBreakMode = LineBreakMode.NoWrap, HorizontalTextAlignment = TextAlignment.End, VerticalTextAlignment = TextAlignment.Center, HorizontalOptions = LayoutOptions.FillAndExpand };
             LastName_Label = new Label() { Text = "نام خانوادگی:  ", LineBreakMode = LineBreakMode.NoWrap, HorizontalTextAlignment = TextAlignment.End, VerticalTextAlignment = TextAlignment.Center, HorizontalOptions = LayoutOptions.FillAndExpand };
+            NationalCode_Label = new Label() { Text = "کد ملی:  ", LineBreakMode = LineBreakMode.NoWrap, HorizontalTextAlignment = TextAlignment.End, VerticalTextAlignment = TextAlignment.Center, HorizontalOptions = LayoutOptions.FillAndExpand };
             LegalName_Label = new Label() { Text = "نام حقوقی:  ", LineBreakMode = LineBreakMode.NoWrap, HorizontalTextAlignment = TextAlignment.End, VerticalTextAlignment = TextAlignment.Center, HorizontalOptions = LayoutOptions.FillAndExpand };
             Phone1_Label = new Label() { Text = "تلفن 1:  ", LineBreakMode = LineBreakMode.NoWrap, HorizontalTextAlignment = TextAlignment.End, VerticalTextAlignment = TextAlignment.Center, HorizontalOptions = LayoutOptions.FillAndExpand };
             Phone2_Label = new Label() { Text = "تلفن 2:  ", LineBreakMode = LineBreakMode.NoWrap, HorizontalTextAlignment = TextAlignment.End, VerticalTextAlignment = TextAlignment.Center, HorizontalOptions = LayoutOptions.FillAndExpand };
@@ -103,6 +107,7 @@ namespace Kara
 
             FirstName = new MyEntry() { Text = EditingPartner != null ? EditingPartner.FirstName : "", HorizontalTextAlignment = TextAlignment.End, HorizontalOptions = LayoutOptions.FillAndExpand, RightRounded = true, LeftRounded = true, Padding = new Thickness(30, 10) };
             LastName = new MyEntry() { Text = EditingPartner != null ? EditingPartner.LastName : "", HorizontalTextAlignment = TextAlignment.End, HorizontalOptions = LayoutOptions.FillAndExpand, RightRounded = true, LeftRounded = true, Padding = new Thickness(30, 10) };
+            NationalCode = new MyEntry() { Text = EditingPartner != null ? EditingPartner.NationalCode : "", HorizontalTextAlignment = TextAlignment.End, HorizontalOptions = LayoutOptions.FillAndExpand, RightRounded = true, LeftRounded = true, Padding = new Thickness(30, 10) };
             LegalName = new MyEntry() { Text = EditingPartner != null ? EditingPartner.LegalName : "", HorizontalTextAlignment = TextAlignment.End, HorizontalOptions = LayoutOptions.FillAndExpand, RightRounded = true, LeftRounded = true, Padding = new Thickness(30, 10) };
             Phone1 = new MyEntry() { Text = EditingPartner != null ? EditingPartner.Phone1 : "", HorizontalTextAlignment = TextAlignment.End, HorizontalOptions = LayoutOptions.FillAndExpand, RightRounded = true, LeftRounded = true, Padding = new Thickness(30, 10), Keyboard = Keyboard.Telephone };
             Phone2 = new MyEntry() { Text = EditingPartner != null ? EditingPartner.Phone2 : "", HorizontalTextAlignment = TextAlignment.End, HorizontalOptions = LayoutOptions.FillAndExpand, RightRounded = true, LeftRounded = true, Padding = new Thickness(30, 10), Keyboard = Keyboard.Telephone };
@@ -156,227 +161,251 @@ namespace Kara
         double LastWidth, LastHeight;
         public void sizeChanged(double width, double height)
         {
-            if (LastWidth != width || LastHeight != height)
+            try
             {
-                LastWidth = width;
-                LastHeight = height;
 
-                if (LastWidth > LastHeight)
+
+                if (LastWidth != width || LastHeight != height)
                 {
-                    PartnerDataLayoutGrid.RowDefinitions = new RowDefinitionCollection();
-                    for (int i = 0; i < 9; i++)
-                        PartnerDataLayoutGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(i == 8 ? 1 : 40, i == 8 ? GridUnitType.Auto : GridUnitType.Absolute) });
+                    LastWidth = width;
+                    LastHeight = height;
 
-                    PartnerDataLayoutGrid.ColumnDefinitions = new ColumnDefinitionCollection();
-                    PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(40, GridUnitType.Absolute) });
-                    PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(99, GridUnitType.Star) });
-                    PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
-                    PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(10, GridUnitType.Absolute) });
-                    PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(40, GridUnitType.Absolute) });
-                    PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(99, GridUnitType.Star) });
-                    PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
-
-                    PartnerDataLayoutGrid.Children.Clear();
-
-                    var RowIndex = 0;
-                    PartnerDataLayoutGrid.Children.Add(City_Label, 6, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(City, 5, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(CityPicker, 4, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(CityChangeButton, 4, RowIndex);
-
-                    PartnerDataLayoutGrid.Children.Add(FirstName_Label, 2, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(FirstName, 0, RowIndex);
-                    Grid.SetColumnSpan(FirstName, 2);
-
-                    RowIndex++;
-                    PartnerDataLayoutGrid.Children.Add(Zone_Label, 6, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(Zone, 5, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(ZonePicker, 4, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(ZoneChangeButton, 4, RowIndex);
-
-                    PartnerDataLayoutGrid.Children.Add(LastName_Label, 2, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(LastName, 0, RowIndex);
-                    Grid.SetColumnSpan(LastName, 2);
-
-                    RowIndex++;
-                    PartnerDataLayoutGrid.Children.Add(Route_Label, 6, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(Route, 5, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(RoutePicker, 4, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(RouteChangeButton, 4, RowIndex);
-
-                    PartnerDataLayoutGrid.Children.Add(LegalName_Label, 2, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(LegalName, 0, RowIndex);
-                    Grid.SetColumnSpan(LegalName, 2);
-
-                    RowIndex++;
-                    PartnerDataLayoutGrid.Children.Add(Phone1_Label, 6, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(Phone1, 4, RowIndex);
-                    Grid.SetColumnSpan(Phone1, 2);
-
-                    PartnerDataLayoutGrid.Children.Add(Phone2_Label, 2, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(Phone2, 0, RowIndex);
-                    Grid.SetColumnSpan(Phone2, 2);
-
-                    RowIndex++;
-                    PartnerDataLayoutGrid.Children.Add(Cell_Label, 6, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(Cell, 4, RowIndex);
-                    Grid.SetColumnSpan(Cell, 2);
-
-                    PartnerDataLayoutGrid.Children.Add(Fax_Label, 2, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(Fax, 0, RowIndex);
-                    Grid.SetColumnSpan(Fax, 2);
-
-                    RowIndex++;
-                    PartnerDataLayoutGrid.Children.Add(Address_Label, 6, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(Address, 0, RowIndex);
-                    Grid.SetColumnSpan(Address, 6);
-
-                    RowIndex++;
-                    PartnerDataLayoutGrid.Children.Add(Credit_Label, 6, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(Credit, 5, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(CreditPicker, 4, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(CreditChangeButton, 4, RowIndex);
-
-                    RowIndex++;
-                    var IsPartnerLegalStack = new StackLayout()
+                    if (LastWidth > LastHeight)
                     {
-                        Orientation = StackOrientation.Horizontal,
-                        Children = { IsPartnerLegal_Label, IsPartnerLegal }
-                    };
-                    PartnerDataLayoutGrid.Children.Add(IsPartnerLegalStack, 4, RowIndex);
-                    Grid.SetColumnSpan(IsPartnerLegalStack, 3);
+                        PartnerDataLayoutGrid.RowDefinitions = new RowDefinitionCollection();
+                        for (int i = 0; i < 10; i++)
+                            PartnerDataLayoutGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(i == 9 ? 1 : 40, i == 9 ? GridUnitType.Auto : GridUnitType.Absolute) });
 
-                    var CalculateVATForThisPersonStack = new StackLayout()
-                    {
-                        Orientation = StackOrientation.Horizontal,
-                        Children = { CalculateVATForThisPerson_Label, CalculateVATForThisPerson }
-                    };
-                    PartnerDataLayoutGrid.Children.Add(CalculateVATForThisPersonStack, 0, RowIndex);
-                    Grid.SetColumnSpan(CalculateVATForThisPersonStack, 3);
+                        PartnerDataLayoutGrid.ColumnDefinitions = new ColumnDefinitionCollection();
+                        PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(40, GridUnitType.Absolute) });
+                        PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(99, GridUnitType.Star) });
+                        PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
+                        PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(10, GridUnitType.Absolute) });
+                        PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(40, GridUnitType.Absolute) });
+                        PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(99, GridUnitType.Star) });
+                        PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
 
-                    RowIndex++;
-                    PartnerDataLayoutGrid.Children.Add(PartnerGroup_Label, 6, RowIndex);
-                    var PartnerGroupsStack = new StackLayout() { Orientation = StackOrientation.Vertical };
-                    for (int i = 0; i < PartnerGroups.Length; i++)
-                    {
-                        PartnerGroupsStack.Children.Add(new StackLayout()
+                        PartnerDataLayoutGrid.Children.Clear();
+
+                        var RowIndex = 0;
+                        PartnerDataLayoutGrid.Children.Add(City_Label, 6, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(City, 5, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(CityPicker, 4, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(CityChangeButton, 4, RowIndex);
+
+                        PartnerDataLayoutGrid.Children.Add(FirstName_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(FirstName, 0, RowIndex);
+                        Grid.SetColumnSpan(FirstName, 2);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(Zone_Label, 6, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(Zone, 5, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(ZonePicker, 4, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(ZoneChangeButton, 4, RowIndex);
+
+                        PartnerDataLayoutGrid.Children.Add(LastName_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(LastName, 0, RowIndex);
+                        Grid.SetColumnSpan(LastName, 2);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(NationalCode_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(NationalCode, 0, RowIndex);
+                        Grid.SetColumnSpan(NationalCode, 2);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(NationalCode_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(NationalCode, 0, RowIndex);
+                        Grid.SetColumnSpan(NationalCode, 2);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(Route_Label, 6, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(Route, 5, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(RoutePicker, 4, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(RouteChangeButton, 4, RowIndex);
+
+                        PartnerDataLayoutGrid.Children.Add(LegalName_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(LegalName, 0, RowIndex);
+                        Grid.SetColumnSpan(LegalName, 2);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(Phone1_Label, 6, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(Phone1, 4, RowIndex);
+                        Grid.SetColumnSpan(Phone1, 2);
+
+                        PartnerDataLayoutGrid.Children.Add(Phone2_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(Phone2, 0, RowIndex);
+                        Grid.SetColumnSpan(Phone2, 2);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(Cell_Label, 6, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(Cell, 4, RowIndex);
+                        Grid.SetColumnSpan(Cell, 2);
+
+                        PartnerDataLayoutGrid.Children.Add(Fax_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(Fax, 0, RowIndex);
+                        Grid.SetColumnSpan(Fax, 2);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(Address_Label, 6, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(Address, 0, RowIndex);
+                        Grid.SetColumnSpan(Address, 6);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(Credit_Label, 6, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(Credit, 5, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(CreditPicker, 4, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(CreditChangeButton, 4, RowIndex);
+
+                        RowIndex++;
+                        var IsPartnerLegalStack = new StackLayout()
                         {
                             Orientation = StackOrientation.Horizontal,
-                            Children = { PartnerGroupSwitchs[i].Key, PartnerGroupSwitchs[i].Value }
-                        });
-                    }
-                    PartnerDataLayoutGrid.Children.Add(PartnerGroupsStack, 0, RowIndex);
-                    Grid.SetColumnSpan(PartnerGroupsStack, 6);
-                }
-                else
-                {
-                    PartnerDataLayoutGrid.RowDefinitions = new RowDefinitionCollection();
-                    for (int i = 0; i < 15; i++)
-                        PartnerDataLayoutGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(i == 10 ? 80 : i == 14 ? 1 : 40, i == 14 ? GridUnitType.Auto : GridUnitType.Absolute) });
+                            Children = { IsPartnerLegal_Label, IsPartnerLegal }
+                        };
+                        PartnerDataLayoutGrid.Children.Add(IsPartnerLegalStack, 4, RowIndex);
+                        Grid.SetColumnSpan(IsPartnerLegalStack, 3);
 
-                    PartnerDataLayoutGrid.ColumnDefinitions = new ColumnDefinitionCollection();
-                    PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(40, GridUnitType.Absolute) });
-                    PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(99, GridUnitType.Star) });
-                    PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
-
-                    PartnerDataLayoutGrid.Children.Clear();
-
-                    var RowIndex = 0;
-                    PartnerDataLayoutGrid.Children.Add(City_Label, 2, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(City, 1, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(CityPicker, 0, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(CityChangeButton, 0, RowIndex);
-
-                    RowIndex++;
-                    PartnerDataLayoutGrid.Children.Add(Zone_Label, 2, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(Zone, 1, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(ZonePicker, 0, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(ZoneChangeButton, 0, RowIndex);
-
-                    RowIndex++;
-                    PartnerDataLayoutGrid.Children.Add(Route_Label, 2, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(Route, 1, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(RoutePicker, 0, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(RouteChangeButton, 0, RowIndex);
-
-                    RowIndex++;
-                    PartnerDataLayoutGrid.Children.Add(FirstName_Label, 2, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(FirstName, 0, RowIndex);
-                    Grid.SetColumnSpan(FirstName, 2);
-
-                    RowIndex++;
-                    PartnerDataLayoutGrid.Children.Add(LastName_Label, 2, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(LastName, 0, RowIndex);
-                    Grid.SetColumnSpan(LastName, 2);
-
-                    RowIndex++;
-                    PartnerDataLayoutGrid.Children.Add(LegalName_Label, 2, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(LegalName, 0, RowIndex);
-                    Grid.SetColumnSpan(LegalName, 2);
-
-                    RowIndex++;
-                    PartnerDataLayoutGrid.Children.Add(Phone1_Label, 2, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(Phone1, 0, RowIndex);
-                    Grid.SetColumnSpan(Phone1, 2);
-
-                    RowIndex++;
-                    PartnerDataLayoutGrid.Children.Add(Phone2_Label, 2, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(Phone2, 0, RowIndex);
-                    Grid.SetColumnSpan(Phone2, 2);
-
-                    RowIndex++;
-                    PartnerDataLayoutGrid.Children.Add(Cell_Label, 2, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(Cell, 0, RowIndex);
-                    Grid.SetColumnSpan(Cell, 2);
-
-                    RowIndex++;
-                    PartnerDataLayoutGrid.Children.Add(Fax_Label, 2, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(Fax, 0, RowIndex);
-                    Grid.SetColumnSpan(Fax, 2);
-
-                    RowIndex++;
-                    PartnerDataLayoutGrid.Children.Add(Address_Label, 2, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(Address, 0, RowIndex);
-                    Grid.SetColumnSpan(Address, 2);
-
-                    RowIndex++;
-                    PartnerDataLayoutGrid.Children.Add(Credit_Label, 2, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(Credit, 1, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(CreditPicker, 0, RowIndex);
-                    PartnerDataLayoutGrid.Children.Add(CreditChangeButton, 0, RowIndex);
-
-                    RowIndex++;
-                    var IsPartnerLegalStack = new StackLayout()
-                    {
-                        Orientation = StackOrientation.Horizontal,
-                        Children = { IsPartnerLegal_Label, IsPartnerLegal }
-                    };
-                    PartnerDataLayoutGrid.Children.Add(IsPartnerLegalStack, 0, RowIndex);
-                    Grid.SetColumnSpan(IsPartnerLegalStack, 3);
-
-                    RowIndex++;
-                    var CalculateVATForThisPersonStack = new StackLayout()
-                    {
-                        Orientation = StackOrientation.Horizontal,
-                        Children = { CalculateVATForThisPerson_Label, CalculateVATForThisPerson }
-                    };
-                    PartnerDataLayoutGrid.Children.Add(CalculateVATForThisPersonStack, 0, RowIndex);
-                    Grid.SetColumnSpan(CalculateVATForThisPersonStack, 3);
-
-                    RowIndex++;
-                    PartnerDataLayoutGrid.Children.Add(PartnerGroup_Label, 2, RowIndex);
-                    var PartnerGroupsStack = new StackLayout() { Orientation = StackOrientation.Vertical };
-                    for (int i = 0; i < PartnerGroups.Length; i++)
-                    {
-                        PartnerGroupsStack.Children.Add(new StackLayout()
+                        var CalculateVATForThisPersonStack = new StackLayout()
                         {
                             Orientation = StackOrientation.Horizontal,
-                            Children = { PartnerGroupSwitchs[i].Key, PartnerGroupSwitchs[i].Value }
-                        });
+                            Children = { CalculateVATForThisPerson_Label, CalculateVATForThisPerson }
+                        };
+                        PartnerDataLayoutGrid.Children.Add(CalculateVATForThisPersonStack, 0, RowIndex);
+                        Grid.SetColumnSpan(CalculateVATForThisPersonStack, 3);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(PartnerGroup_Label, 6, RowIndex);
+                        var PartnerGroupsStack = new StackLayout() { Orientation = StackOrientation.Vertical };
+                        for (int i = 0; i < PartnerGroups.Length; i++)
+                        {
+                            PartnerGroupsStack.Children.Add(new StackLayout()
+                            {
+                                Orientation = StackOrientation.Horizontal,
+                                Children = { PartnerGroupSwitchs[i].Key, PartnerGroupSwitchs[i].Value }
+                            });
+                        }
+                        PartnerDataLayoutGrid.Children.Add(PartnerGroupsStack, 0, RowIndex);
+                        Grid.SetColumnSpan(PartnerGroupsStack, 6);
                     }
-                    PartnerDataLayoutGrid.Children.Add(PartnerGroupsStack, 0, RowIndex);
-                    Grid.SetColumnSpan(PartnerGroupsStack, 2);
+                    else
+                    {
+                        PartnerDataLayoutGrid.RowDefinitions = new RowDefinitionCollection();
+                        for (int i = 0; i < 16; i++)
+                            PartnerDataLayoutGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(i == 10 ? 80 : i == 15 ? 1 : 40, i == 15 ? GridUnitType.Auto : GridUnitType.Absolute) });
+
+                        PartnerDataLayoutGrid.ColumnDefinitions = new ColumnDefinitionCollection();
+                        PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(40, GridUnitType.Absolute) });
+                        PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(99, GridUnitType.Star) });
+                        PartnerDataLayoutGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
+
+                        PartnerDataLayoutGrid.Children.Clear();
+
+                        var RowIndex = 0;
+                        PartnerDataLayoutGrid.Children.Add(City_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(City, 1, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(CityPicker, 0, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(CityChangeButton, 0, RowIndex);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(Zone_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(Zone, 1, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(ZonePicker, 0, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(ZoneChangeButton, 0, RowIndex);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(Route_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(Route, 1, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(RoutePicker, 0, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(RouteChangeButton, 0, RowIndex);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(FirstName_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(FirstName, 0, RowIndex);
+                        Grid.SetColumnSpan(FirstName, 2);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(LastName_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(LastName, 0, RowIndex);
+                        Grid.SetColumnSpan(LastName, 2);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(NationalCode_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(NationalCode, 0, RowIndex);
+                        Grid.SetColumnSpan(NationalCode, 2);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(LegalName_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(LegalName, 0, RowIndex);
+                        Grid.SetColumnSpan(LegalName, 2);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(Phone1_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(Phone1, 0, RowIndex);
+                        Grid.SetColumnSpan(Phone1, 2);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(Phone2_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(Phone2, 0, RowIndex);
+                        Grid.SetColumnSpan(Phone2, 2);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(Cell_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(Cell, 0, RowIndex);
+                        Grid.SetColumnSpan(Cell, 2);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(Fax_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(Fax, 0, RowIndex);
+                        Grid.SetColumnSpan(Fax, 2);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(Address_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(Address, 0, RowIndex);
+                        Grid.SetColumnSpan(Address, 2);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(Credit_Label, 2, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(Credit, 1, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(CreditPicker, 0, RowIndex);
+                        PartnerDataLayoutGrid.Children.Add(CreditChangeButton, 0, RowIndex);
+
+                        RowIndex++;
+                        var IsPartnerLegalStack = new StackLayout()
+                        {
+                            Orientation = StackOrientation.Horizontal,
+                            Children = { IsPartnerLegal_Label, IsPartnerLegal }
+                        };
+                        PartnerDataLayoutGrid.Children.Add(IsPartnerLegalStack, 0, RowIndex);
+                        Grid.SetColumnSpan(IsPartnerLegalStack, 3);
+
+                        RowIndex++;
+                        var CalculateVATForThisPersonStack = new StackLayout()
+                        {
+                            Orientation = StackOrientation.Horizontal,
+                            Children = { CalculateVATForThisPerson_Label, CalculateVATForThisPerson }
+                        };
+                        PartnerDataLayoutGrid.Children.Add(CalculateVATForThisPersonStack, 0, RowIndex);
+                        Grid.SetColumnSpan(CalculateVATForThisPersonStack, 3);
+
+                        RowIndex++;
+                        PartnerDataLayoutGrid.Children.Add(PartnerGroup_Label, 2, RowIndex);
+                        var PartnerGroupsStack = new StackLayout() { Orientation = StackOrientation.Vertical };
+                        for (int i = 0; i < PartnerGroups.Length; i++)
+                        {
+                            PartnerGroupsStack.Children.Add(new StackLayout()
+                            {
+                                Orientation = StackOrientation.Horizontal,
+                                Children = { PartnerGroupSwitchs[i].Key, PartnerGroupSwitchs[i].Value }
+                            });
+                        }
+                        PartnerDataLayoutGrid.Children.Add(PartnerGroupsStack, 0, RowIndex);
+                        Grid.SetColumnSpan(PartnerGroupsStack, 2);
+                    }
                 }
+            }
+            catch (Exception e)
+            {
+                throw;
             }
         }
 
@@ -606,7 +635,8 @@ namespace Kara
                         Enabled = true,
                         ChangeDate = DateTime.Now,
                         Sent = false,
-                        CreditId = Credits[CreditPicker.SelectedIndex].Id
+                        CreditId = Credits[CreditPicker.SelectedIndex].Id,
+                        NationalCode = NationalCode.Text
                     };
 
                     DynamicGroups = PartnerGroupSwitchs.Select((a, index) => new { a, index }).ToArray().Where(a => a.a.Value.IsToggled).Select(a => new DynamicGroupPartner()
@@ -637,6 +667,7 @@ namespace Kara
                 {
                     EditingPartner.FirstName = FirstName.Text;
                     EditingPartner.LastName = LastName.Text;
+                    EditingPartner.NationalCode = NationalCode.Text;
                     EditingPartner.Name = FirstName.Text + " " + LastName.Text;
                     EditingPartner.LegalName = LegalName.Text;
                     EditingPartner.ZoneId = Route.Id;

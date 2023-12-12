@@ -397,12 +397,12 @@ namespace Kara
             var minSaleConflicts = _saleOrderStuffs.GroupBy(a => a.StuffData).Where(a => a.Sum(b => b.Quantity * b.PackageData.Coefficient) < a.Key.MinForSale).ToArray();
             if (minSaleConflicts.Any())
                 throw new Exception("کالا" + (minSaleConflicts.Count() > 1 ? "ها" : "") + "ی زیر کمتر از حداقل تعیین شده در سیستم سفارش داده شده اند:\n" +
-                    minSaleConflicts.Select(a => a.Key.Name + " (حداقل سفارش: " + a.Key.MinForSale + " " + a.Key.Packages.Single(b => b.Coefficient == 1).Name + ")").Aggregate((sum, x) => sum + "\n" + x));
+                    minSaleConflicts.Select(a => a.Key.Name + " (حداقل سفارش: " + a.Key.MinForSale + " " + a.Key.Packages.Single(b => b.Coefficient == 1 && !b.IsTpUnit.GetValueOrDefault(false) && b.Enabled).Name + ")").Aggregate((sum, x) => sum + "\n" + x));
 
             var saleCoefficientConflicts = _saleOrderStuffs.Where(a => a.StuffData.SaleCoefficient != 0 && a.StuffData.SaleCoefficient != 1).GroupBy(a => a.StuffData).Where(a => a.Sum(b => b.Quantity * b.PackageData.Coefficient) % a.Key.SaleCoefficient != 0).ToArray();
             if (saleCoefficientConflicts.Any())
                 throw new Exception("تعداد سفارش کالا" + (saleCoefficientConflicts.Count() > 1 ? "ها" : "") + "ی زیر با ضریب فروش تعیین شده در سیستم مغایرت دارد:\n" +
-                    saleCoefficientConflicts.Select(a => a.Key.Name + " (ضریب فروش: " + a.Key.SaleCoefficient + " " + a.Key.Packages.Single(b => b.Coefficient == 1).Name + ")").Aggregate((sum, x) => sum + "\n" + x));
+                    saleCoefficientConflicts.Select(a => a.Key.Name + " (ضریب فروش: " + a.Key.SaleCoefficient + " " + a.Key.Packages.Single(b => b.Coefficient == 1 && !b.IsTpUnit.GetValueOrDefault(false) && b.Enabled).Name + ")").Aggregate((sum, x) => sum + "\n" + x));
 
             var saleOrderStuffs = _saleOrderStuffs.Select(a => new SaleOrderStuff()
             {
