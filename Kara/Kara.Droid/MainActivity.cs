@@ -39,6 +39,10 @@ namespace Kara.Droid
 
         protected override void OnCreate(Bundle bundle)
         {
+            try
+            {
+
+            
             AppCenter.Start("da02ffa0-e4a9-4292-8423-aee119dd51b4",typeof(Analytics), typeof(Crashes));
 
             DeviceInformation = $"Model :{DeviceInfo.Model}, VersionString:{DeviceInfo.VersionString},Platform:{DeviceInfo.Platform},Version:{DeviceInfo.Version} , Idiom:{DeviceInfo.Idiom}";
@@ -107,6 +111,12 @@ namespace Kara.Droid
             if (!CheckPermissionGranted(Manifest.Permission.ReadPhoneState))
             {
                 RequestPhonePermission();
+            }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
             }
         }
 

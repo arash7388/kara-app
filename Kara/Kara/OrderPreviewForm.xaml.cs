@@ -185,9 +185,9 @@ namespace Kara
                     }).ToArray()
                 };
 
-                var DiscountCalculator = new DiscountCalculator(App.SystemName.Value, App.AllowOptionalDiscountRules_MultiSelection.Value, AllSystemStuffs, SaleOrderModel, DiscountRules,null);
+                var DiscountCalculator = new DiscountCalculator(App.SystemName.Value, App.AllowOptionalDiscountRules_MultiSelection.Value, AllSystemStuffs, SaleOrderModel, DiscountRules, null);
 
-                var equalPriorities = new List<Tuple<int,double, Guid, string>>();
+                var equalPriorities = new List<Tuple<int, double, Guid, string>>();
 
                 foreach (KeyValuePair<int, Dictionary<string, List<RuleModel>>> discountRule in DiscountRules)
                 {
@@ -207,7 +207,7 @@ namespace Kara
                                     if (rules.Count(e => e[0].Priority == rule.Value[k].Priority) > 1)
                                     {
                                         var result = $"Row:{x + 1},Pr:{rule.Value[k].Priority},id:{rule.Value[k].RuleId},desc:{rule.Value[k].RuleDescription}" + Environment.NewLine;
-                                        equalPriorities.Add(new Tuple<int, double, Guid, string>(x, rule.Value[k].Priority,rule.Value[k].RuleId, rule.Value[k].RuleDescription));
+                                        equalPriorities.Add(new Tuple<int, double, Guid, string>(x, rule.Value[k].Priority, rule.Value[k].RuleId, rule.Value[k].RuleDescription));
                                     }
                                 }
 
@@ -219,20 +219,22 @@ namespace Kara
                 List<int> distinctRows = new List<int>();
 
 
-                foreach (Tuple<int,double, Guid, string> tuple in equalPriorities)
+                foreach (Tuple<int, double, Guid, string> tuple in equalPriorities)
                 {
-                    if(!distinctRows.Any(a=>a==tuple.Item1))
-                       distinctRows.Add(tuple.Item1);
+                    if (!distinctRows.Any(a => a == tuple.Item1))
+                        distinctRows.Add(tuple.Item1);
                 }
 
-                List<KeyValuePair<int, List<RuleModel>>> eachRowRules = new List<KeyValuePair<int, List<RuleModel>>>(); 
+                List<KeyValuePair<int, List<RuleModel>>> eachRowRules = new List<KeyValuePair<int, List<RuleModel>>>();
 
                 foreach (int row in distinctRows)
                 {
-                    eachRowRules.Add( new KeyValuePair<int, List<RuleModel>>
-                        (row, equalPriorities.Where(a=>a.Item1==row).Select(x=>new RuleModel()
+                    eachRowRules.Add(new KeyValuePair<int, List<RuleModel>>
+                        (row, equalPriorities.Where(a => a.Item1 == row).Select(x => new RuleModel()
                         {
-                            Priority = x.Item2,RuleId = x.Item3,RuleDescription = x.Item4
+                            Priority = x.Item2,
+                            RuleId = x.Item3,
+                            RuleDescription = x.Item4
                         }).ToList()));
                 }
 
@@ -243,20 +245,20 @@ namespace Kara
                     SaleOrderStuff stuff = this.SaleOrder.SaleOrderStuffs[keyValuePair.Key];
 
                     var rowStuffName = (
-                        stuff.Package.Stuff.Name 
-                        //+ (stuff.BatchNumberId.HasValue
-                        //    ? ("\nسری ساخت: " + stuff.BatchNumber.BatchNumber + "، تاریخ انقضاء: " +
-                        //       (stuff.BatchNumber.ExpirationDatePresentation == (int) DatePresentation.Shamsi
-                        //           ? stuff.BatchNumber.ExpirationDate.ToShortStringForDate()
-                        //           : stuff.BatchNumber.ExpirationDate.ToString("yyyy/MM/dd")))
-                        //    : "") +
-                        //(stuff.StuffSettlementDay.HasValue
-                        //    ? (" (" + stuff.StuffSettlementDay.Value.ToString() + " روزه)")
-                        //    : "")
+                        stuff.Package.Stuff.Name
+                    //+ (stuff.BatchNumberId.HasValue
+                    //    ? ("\nسری ساخت: " + stuff.BatchNumber.BatchNumber + "، تاریخ انقضاء: " +
+                    //       (stuff.BatchNumber.ExpirationDatePresentation == (int) DatePresentation.Shamsi
+                    //           ? stuff.BatchNumber.ExpirationDate.ToShortStringForDate()
+                    //           : stuff.BatchNumber.ExpirationDate.ToString("yyyy/MM/dd")))
+                    //    : "") +
+                    //(stuff.StuffSettlementDay.HasValue
+                    //    ? (" (" + stuff.StuffSettlementDay.Value.ToString() + " روزه)")
+                    //    : "")
                     ).ToPersianDigits();
 
                     var answer = await DisplayActionSheet($"تعیین تخفیف {rowStuffName}", "بستن", "", options.ToArray());
-                    
+
                     var selectedRule = keyValuePair.Value.FirstOrDefault(r => r.RuleDescription == answer);
 
                     _userSelectedOptionalRules.Add(new KeyValuePair<Guid, RuleModel>(stuff.Id, selectedRule));
@@ -375,6 +377,8 @@ namespace Kara
         {
             WaitToggle(false);
 
+            int ColumnCount = 0;
+
             try
             {
                 if (!WithoutCalculation)
@@ -406,8 +410,7 @@ namespace Kara
                         return;
                     }
                 }
-                
-                var _FontSizeForView = App.OrderPreviewFontSize.Value;
+
                 var _FontSizeForPrint = App.SelectedPrinter == null ? 10 : App.SelectedPrinter.FontSize;
 
                 Color WHITE = Color.White, BLACK = Color.Black, LIGHTGRAY = Color.FromHex("ccc"), DARKGRAY = Color.FromHex("ccc");
@@ -449,7 +452,7 @@ namespace Kara
                     HeaderGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
                     HeaderGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1.5, GridUnitType.Star) });
                     HeaderGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
-                    
+
                     var TempLabel1 = new MyLabel() { Padding = new Thickness(10, 0), TextColor = BLACK, Text = "" };
                     HeaderGrid.Children.Add(TempLabel1, 3, row);
                     if (TitleRow == 2)
@@ -520,7 +523,7 @@ namespace Kara
                     LabelFontSizes.Add(new KeyValuePair<Label, double>(PreCodeLabel, 1));
                     HeaderGrid.Children.Add(PreCodeLabel, 2, row);
                     Grid.SetColumnSpan(PreCodeLabel, 2);
-                    
+
                     var DateLabel = new MyLabel()
                     {
                         Padding = new Thickness(10, 0),
@@ -645,8 +648,8 @@ namespace Kara
                     LabelFontSizes.Add(new KeyValuePair<Label, double>(PartnerPhoneLabel2, 1));
                     HeaderGrid.Children.Add(PartnerPhoneLabel2, 0, row);
                     Grid.SetColumnSpan(PartnerPhoneLabel2, 3);
-                    
-                    
+
+
                     ArticlesGrid = new Grid()
                     {
                         Padding = 1,
@@ -670,8 +673,8 @@ namespace Kara
 
                     var AllEquivalnetPackageNames = pps.Select(a => a.Package.Stuff.Packages.FirstOrDefault(b => b.Coefficient == 1 && !b.IsTpUnit.GetValueOrDefault(false) && a.Package.Enabled).Name).Distinct();
 
-                    var ColumnCount = 4 +
-                         (SaleOrder.StuffsVATSum != 0 ? 1 : 0)  + //for VAT 1401/02/30
+                    ColumnCount = 4 +
+                         (SaleOrder.StuffsVATSum != 0 ? 1 : 0) + //for VAT 1401/02/30
                         (AnyRowDiscount ? 2 : 0) +
                         (!AllRowsAreUnitPackage ? 1 : 0);
 
@@ -758,6 +761,22 @@ namespace Kara
                     ArticlesGrid.Children.Add(ArticlesHeader_Fee, col, row);
                     col--;
 
+
+                    var ArticlesHeader_Price = new MyLabel()
+                    {
+                        Padding = new Thickness(10, 0),
+                        BackgroundColor = DARKGRAY,
+                        TextColor = BLACK,
+                        LineBreakMode = LineBreakMode.NoWrap,
+                        Text = "مبلغ",
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        HorizontalTextAlignment = TextAlignment.Center,
+                        VerticalTextAlignment = TextAlignment.Center,
+                        FontAttributes = FontAttributes.Bold
+                    };
+                    LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesHeader_Price, 1));
+                    ArticlesGrid.Children.Add(ArticlesHeader_Price, col, row);
+                    col--;
                     if (AnyRowDiscount)
                     {
                         var ArticlesHeader_Discount = new MyLabel()
@@ -775,21 +794,8 @@ namespace Kara
                         LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesHeader_Discount, 1));
                         ArticlesGrid.Children.Add(ArticlesHeader_Discount, col, row);
                         col--;
-                        var ArticlesHeader_FinalPrice = new MyLabel()
-                        {
-                            Padding = new Thickness(10, 0),
-                            BackgroundColor = DARKGRAY,
-                            TextColor = BLACK,
-                            LineBreakMode = LineBreakMode.NoWrap,
-                            Text = "مبلغ نهایی",
-                            HorizontalOptions = LayoutOptions.FillAndExpand,
-                            HorizontalTextAlignment = TextAlignment.Center,
-                            VerticalTextAlignment = TextAlignment.Center,
-                            FontAttributes = FontAttributes.Bold
-                        };
-                        LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesHeader_FinalPrice, 1));
-                        ArticlesGrid.Children.Add(ArticlesHeader_FinalPrice, col, row);
                     }
+
 
                     if (SaleOrder.StuffsVATSum != 0)
                     {
@@ -810,27 +816,28 @@ namespace Kara
                         col--;
                     }
 
-                    var ArticlesHeader_Price = new MyLabel()
+                    if (AnyRowDiscount)
                     {
-                        Padding = new Thickness(10, 0),
-                        BackgroundColor = DARKGRAY,
-                        TextColor = BLACK,
-                        LineBreakMode = LineBreakMode.NoWrap,
-                        Text = "مبلغ",
-                        HorizontalOptions = LayoutOptions.FillAndExpand,
-                        HorizontalTextAlignment = TextAlignment.Center,
-                        VerticalTextAlignment = TextAlignment.Center,
-                        FontAttributes = FontAttributes.Bold
-                    };
-                    LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesHeader_Price, 1));
-                    ArticlesGrid.Children.Add(ArticlesHeader_Price, col, row);
-                    col--;
-
-                    
+                        var ArticlesHeader_FinalPrice = new MyLabel()
+                        {
+                            Padding = new Thickness(10, 0),
+                            BackgroundColor = DARKGRAY,
+                            TextColor = BLACK,
+                            LineBreakMode = LineBreakMode.NoWrap,
+                            Text = "مبلغ نهایی",
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            HorizontalTextAlignment = TextAlignment.Center,
+                            VerticalTextAlignment = TextAlignment.Center,
+                            FontAttributes = FontAttributes.Bold
+                        };
+                        LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesHeader_FinalPrice, 1));
+                        ArticlesGrid.Children.Add(ArticlesHeader_FinalPrice, col, row);
+                        col--;
+                    }
 
                     row--;
                     var VATExceptions = new List<int>();
-                    
+
                     //_SaleOrderStuffs[0].DiscountPercent = decimal.Parse("1.1234");
 
                     for (int i = 0; i < _SaleOrderStuffs.Length; i++)
@@ -895,9 +902,6 @@ namespace Kara
 
                         if (!AllRowsAreUnitPackage)
                         {
-                            var coeff1s = _SaleOrderStuffs[i].Package.Stuff.Packages.Where(a => a.Coefficient == 1).ToList();
-                            var us = coeff1s.Select(k => new { Id = k.Id.ToSafeString(), k.Name,k.IsTpUnit }).ToList();
-
                             var ArticlesBody_Equivalent = new MyLabel()
                             {
                                 Padding = new Thickness(10, 0),
@@ -913,6 +917,7 @@ namespace Kara
                             LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesBody_Equivalent, 1));
                             ArticlesGrid.Children.Add(ArticlesBody_Equivalent, col, row + 1);
                             col--;
+
                             if (i == 0) BodyFirstRowLabels.Add(ArticlesBody_Equivalent);
                         }
 
@@ -933,42 +938,6 @@ namespace Kara
                         col--;
                         if (i == 0) BodyFirstRowLabels.Add(ArticlesBody_Fee);
 
-
-                        //var VatPercent = new MyLabel()
-                        //{
-                        //    Padding = new Thickness(10, 0),
-                        //    BackgroundColor = BG,
-                        //    TextColor = BLACK,
-                        //    HorizontalOptions = LayoutOptions.FillAndExpand,
-                        //    VerticalOptions = LayoutOptions.FillAndExpand,
-                        //    HorizontalTextAlignment = TextAlignment.End,
-                        //    VerticalTextAlignment = TextAlignment.Center,
-                        //    LineBreakMode = LineBreakMode.NoWrap,
-                        //    Text =_SaleOrderStuffs[i].VATPercent.ToString().ToPersianDigits()
-                        //};
-                        //LabelFontSizes.Add(new KeyValuePair<Label, double>(VatPercent, 1));
-                        //ArticlesGrid.Children.Add(VatPercent, col, row + 1);
-                        //col--;
-
-                        if(SaleOrder.StuffsVATSum != 0)
-                        {
-                            var VatAmount = new MyLabel()
-                            {
-                                Padding = new Thickness(10, 0),
-                                BackgroundColor = BG,
-                                TextColor = BLACK,
-                                HorizontalOptions = LayoutOptions.FillAndExpand,
-                                VerticalOptions = LayoutOptions.FillAndExpand,
-                                HorizontalTextAlignment = TextAlignment.End,
-                                VerticalTextAlignment = TextAlignment.Center,
-                                LineBreakMode = LineBreakMode.NoWrap,
-                                Text = _SaleOrderStuffs[i].VATAmount.ToString("###,###,###,###,###,###,##0.").ToPersianDigits()
-                            };
-                            LabelFontSizes.Add(new KeyValuePair<Label, double>(VatAmount, 1));
-                            ArticlesGrid.Children.Add(VatAmount, col, row + 1);
-                            col--;
-                        }
-
                         
                         var ArticlesBody_Price = new MyLabel()
                         {
@@ -987,6 +956,7 @@ namespace Kara
                         col--;
                         if (i == 0) BodyFirstRowLabels.Add(ArticlesBody_Price);
 
+
                         if (AnyRowDiscount)
                         {
                             var ArticlesBody_Discount = new MyLabel()
@@ -999,13 +969,53 @@ namespace Kara
                                 HorizontalTextAlignment = TextAlignment.End,
                                 VerticalTextAlignment = TextAlignment.Center,
                                 LineBreakMode = LineBreakMode.WordWrap,
-                                Text = _SaleOrderStuffs[i].FreeProduct ? "---" : (_SaleOrderStuffs[i].DiscountAmount + _SaleOrderStuffs[i].CashDiscountAmount != 0 ? (_SaleOrderStuffs[i].DiscountAmount + _SaleOrderStuffs[i].CashDiscountAmount).ToString("###,###,###,###,###,###,##0.") + "\n" + (_SaleOrderStuffs[i].DiscountPercent != 0 && _SaleOrderStuffs[i].CashDiscountPercent != 0 ? "(" : "") + (new decimal[] { _SaleOrderStuffs[i].DiscountPercent , _SaleOrderStuffs[i].CashDiscountPercent }.Where(a => a != 0).Select(a => a.ToString("##0.####").Replace(".", "/")).Aggregate((sum, x) => sum + " + " + x)) + (_SaleOrderStuffs[i].DiscountPercent != 0 && _SaleOrderStuffs[i].CashDiscountPercent != 0 ? ")" : "") + " %" : "0").ToPersianDigits()
+                                Text = _SaleOrderStuffs[i].FreeProduct ? "---" : (_SaleOrderStuffs[i].DiscountAmount + _SaleOrderStuffs[i].CashDiscountAmount != 0 ? (_SaleOrderStuffs[i].DiscountAmount + _SaleOrderStuffs[i].CashDiscountAmount).ToString("###,###,###,###,###,###,##0.") + "\n" + (_SaleOrderStuffs[i].DiscountPercent != 0 && _SaleOrderStuffs[i].CashDiscountPercent != 0 ? "(" : "") + (new decimal[] { _SaleOrderStuffs[i].DiscountPercent, _SaleOrderStuffs[i].CashDiscountPercent }.Where(a => a != 0).Select(a => a.ToString("##0.####").Replace(".", "/")).Aggregate((sum, x) => sum + " + " + x)) + (_SaleOrderStuffs[i].DiscountPercent != 0 && _SaleOrderStuffs[i].CashDiscountPercent != 0 ? ")" : "") + " %" : "0").ToPersianDigits()
                             };
                             LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesBody_Discount, 1));
                             ArticlesGrid.Children.Add(ArticlesBody_Discount, col, row + 1);
                             col--;
                             if (i == 0) BodyFirstRowLabels.Add(ArticlesBody_Discount);
 
+                            //var ArticlesBody_FinalPrice = new MyLabel()
+                            //{
+                            //    Padding = new Thickness(10, 0),
+                            //    BackgroundColor = BG,
+                            //    TextColor = BLACK,
+                            //    HorizontalOptions = LayoutOptions.FillAndExpand,
+                            //    VerticalOptions = LayoutOptions.FillAndExpand,
+                            //    HorizontalTextAlignment = TextAlignment.End,
+                            //    VerticalTextAlignment = TextAlignment.Center,
+                            //    LineBreakMode = LineBreakMode.NoWrap,
+                            //    Text = _SaleOrderStuffs[i].FreeProduct ? "---" : _SaleOrderStuffs[i].FinalPrice.ToString("###,###,###,###,###,###,##0.").ToPersianDigits()
+                            //};
+                            //LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesBody_FinalPrice, 1));
+                            //ArticlesGrid.Children.Add(ArticlesBody_FinalPrice, col, row + 1);
+                            //col--;
+                            //if (i == 0) BodyFirstRowLabels.Add(ArticlesBody_FinalPrice);
+                        }
+
+
+                        if (SaleOrder.StuffsVATSum != 0)
+                        {
+                            var VatAmount = new MyLabel()
+                            {
+                                Padding = new Thickness(10, 0),
+                                BackgroundColor = BG,
+                                TextColor = BLACK,
+                                HorizontalOptions = LayoutOptions.FillAndExpand,
+                                VerticalOptions = LayoutOptions.FillAndExpand,
+                                HorizontalTextAlignment = TextAlignment.End,
+                                VerticalTextAlignment = TextAlignment.Center,
+                                LineBreakMode = LineBreakMode.NoWrap,
+                                Text = _SaleOrderStuffs[i].VATAmount.ToString("###,###,###,###,###,###,##0.").ToPersianDigits()
+                            };
+                            LabelFontSizes.Add(new KeyValuePair<Label, double>(VatAmount, 1));
+                            ArticlesGrid.Children.Add(VatAmount, col, row + 1);
+                            col--;
+                        }
+
+                        if (AnyRowDiscount)
+                        {
                             var ArticlesBody_FinalPrice = new MyLabel()
                             {
                                 Padding = new Thickness(10, 0),
@@ -1029,7 +1039,7 @@ namespace Kara
                     }
 
                     row += 2;
-                    col = ColumnCount - 3 - (AllRowsAreUnitPackage ? 0 : 1) - (SaleOrder.StuffsVATSum == 0 ? 0 : 1);
+                    col = ColumnCount - 2 - (AllRowsAreUnitPackage ? 0 : 1) - (SaleOrder.StuffsVATSum == 0 ? 0 : 1);
                     var ArticlesFooter_Sum = new MyLabel()
                     {
                         Padding = new Thickness(10, 0),
@@ -1045,7 +1055,9 @@ namespace Kara
                     LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesFooter_Sum, 1));
                     ArticlesGrid.Children.Add(ArticlesFooter_Sum, col, row);
                     col--;
-                    Grid.SetColumnSpan(ArticlesFooter_Sum, 3 + (AllRowsAreUnitPackage ? 0 : 1));
+
+                    var colSpan = 3 + (AllRowsAreUnitPackage ? 0 : 1);
+                    Grid.SetColumnSpan(ArticlesFooter_Sum, colSpan);
 
                     var ThisIsFinalPrice = !AnyRowDiscount && SaleOrder.DiscountAmount == 0 && SaleOrder.StuffsVATSum == 0;
                     var ArticlesFooter_Price = new MyLabel()
@@ -1082,6 +1094,31 @@ namespace Kara
                         ArticlesGrid.Children.Add(ArticlesFooter_Discount, col, row);
                         col--;
 
+
+                    }
+
+                    if (SaleOrder.StuffsVATSum != 0)
+                    {
+                        var VatAmount = new MyLabel()
+                        {
+                            Padding = new Thickness(10, 0),
+                            BackgroundColor = DARKGRAY,
+                            TextColor = BLACK,
+                            HorizontalOptions = LayoutOptions.FillAndExpand,
+                            VerticalOptions = LayoutOptions.FillAndExpand,
+                            HorizontalTextAlignment = TextAlignment.End,
+                            VerticalTextAlignment = TextAlignment.Center,
+                            LineBreakMode = LineBreakMode.TailTruncation,
+                            Text = SaleOrder.StuffsVATSum.ToString("###,###,###,###,###,###,##0.").ToPersianDigits()
+                        };
+                        LabelFontSizes.Add(new KeyValuePair<Label, double>(VatAmount, 1));
+                        ArticlesGrid.Children.Add(VatAmount, col, row);
+                        col--;
+                    }
+                        
+
+                    if (AnyRowDiscount)
+                    {
                         ThisIsFinalPrice = SaleOrder.DiscountAmount == 0 && SaleOrder.StuffsVATSum == 0;
                         var ArticlesFooter_FinalPrice = new MyLabel()
                         {
@@ -1196,7 +1233,7 @@ namespace Kara
 
                             //1401/02/30 now it has different amount of vats
                             //Text = "مالیات ا.ا.(" + App.VATPercent.Value.ToString("##0.##").Replace(".", "/").ToPersianDigits() + "%)" + (VATExceptions.Any() ? "*" : "") + ":",
-                            
+
                             Text = "مالیات ا.ا." + (VATExceptions.Any() ? "*" : "") + ":",
                             HorizontalTextAlignment = TextAlignment.Start,
                             VerticalTextAlignment = TextAlignment.Center,
@@ -1335,8 +1372,10 @@ namespace Kara
                     return result;
                 });
 
+                var _FontSizeForView = ColumnCount <= 5 ? App.OrderPreviewFontSize.Value : 9;
+
                 foreach (var item in LabelFontSizes)
-                    item.Key.FontSize = item.Value * _FontSizeForView;
+                    item.Key.FontSize = item.Value * 0.8 * _FontSizeForView;
 
                 PrintPreview.Content = Content;
 
@@ -1470,20 +1509,20 @@ namespace Kara
                     rowNumber++;
                 }
 
-                if (resultMessage!="" && App.WarnIfSalePriceIsLessThanTheLastBuyPrice.Value == 2)
+                if (resultMessage != "" && App.WarnIfSalePriceIsLessThanTheLastBuyPrice.Value == 2)
                     return new ResultSuccess<SaleOrder>(false, resultMessage);
 
-                if (resultMessage != "" &&  App.WarnIfSalePriceIsLessThanTheLastBuyPrice.Value == 1)
+                if (resultMessage != "" && App.WarnIfSalePriceIsLessThanTheLastBuyPrice.Value == 1)
                 {
-                    var answer = await DisplayActionSheet(resultMessage, "بستن","", "ادامه", "انصراف");
-                    if(answer=="انصراف")
+                    var answer = await DisplayActionSheet(resultMessage, "بستن", "", "ادامه", "انصراف");
+                    if (answer == "انصراف")
                         return new ResultSuccess<SaleOrder>(false, "ثبت فاکتور کنسل شد");
                 }
             }
 
             var result = await App.SaveSaleOrder(SaleOrder);
 
-            if(result.Success)
+            if (result.Success)
             {
                 if (OrderInsertForm != null)
                     OrderInsertForm.EditingSaleOrder = SaleOrder;
@@ -1509,7 +1548,7 @@ namespace Kara
                     foreach (var item in SaleOrder.SaleOrderStuffs)
                         //Arash 1401/02/30
                         //item.VATPercent = CalculateVATForThisPerson && item.Package.Stuff.HasVAT ? VATPercent : 0;
-                        item.VATPercent = CalculateVATForThisPerson && item.Package.Stuff.EnableStuffTaxValue ? item.Package.Stuff.StuffTaxValue :  item.Package.Stuff.HasVAT ? VATPercent : 0;
+                        item.VATPercent = CalculateVATForThisPerson && item.Package.Stuff.EnableStuffTaxValue ? item.Package.Stuff.StuffTaxValue : item.Package.Stuff.HasVAT ? VATPercent : 0;
 
                     return new ResultSuccess();
                 }
