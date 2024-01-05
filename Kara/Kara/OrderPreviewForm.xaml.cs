@@ -678,8 +678,19 @@ namespace Kara
                         (AnyRowDiscount ? 2 : 0) +
                         (!AllRowsAreUnitPackage ? 1 : 0);
 
-                    for (int i = 0; i < ColumnCount; i++)
-                        ArticlesGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
+                    if (ColumnCount <= 6)
+                        for (int i = 0; i < ColumnCount; i++)
+                            ArticlesGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
+                    else
+                        for (int i = 0; i < ColumnCount; i++)
+                            if (i == 7)
+                                ArticlesGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0.5, GridUnitType.Star) });
+                            else if (i == 5 || i == 6)
+                                ArticlesGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+                            else if (i == 0)
+                                ArticlesGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(2, GridUnitType.Star) });
+                            else
+                                ArticlesGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1.7, GridUnitType.Star) });
 
                     row = 0;
                     var col = ColumnCount;
@@ -693,7 +704,7 @@ namespace Kara
                         HorizontalOptions = LayoutOptions.FillAndExpand,
                         HorizontalTextAlignment = TextAlignment.End
                     };
-                    LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesDescription, 0.9));
+                    LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesDescription, 1));
                     ArticlesGrid.Children.Add(ArticlesDescription, 0, row);
                     Grid.SetColumnSpan(ArticlesDescription, col);
                     col--;
@@ -722,7 +733,7 @@ namespace Kara
                         VerticalTextAlignment = TextAlignment.Center,
                         FontAttributes = FontAttributes.Bold
                     };
-                    LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesHeader_Quantity, 1));
+                    LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesHeader_Quantity, 0.8));
                     ArticlesGrid.Children.Add(ArticlesHeader_Quantity, col, row);
                     col--;
 
@@ -740,7 +751,7 @@ namespace Kara
                             VerticalTextAlignment = TextAlignment.Center,
                             FontAttributes = FontAttributes.Bold
                         };
-                        LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesHeader_Equivalent, 1));
+                        LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesHeader_Equivalent, 0.8));
                         ArticlesGrid.Children.Add(ArticlesHeader_Equivalent, col, row);
                         col--;
                     }
@@ -757,7 +768,7 @@ namespace Kara
                         VerticalTextAlignment = TextAlignment.Center,
                         FontAttributes = FontAttributes.Bold
                     };
-                    LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesHeader_Fee, 1));
+                    LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesHeader_Fee, 0.9));
                     ArticlesGrid.Children.Add(ArticlesHeader_Fee, col, row);
                     col--;
 
@@ -938,7 +949,7 @@ namespace Kara
                         col--;
                         if (i == 0) BodyFirstRowLabels.Add(ArticlesBody_Fee);
 
-                        
+
                         var ArticlesBody_Price = new MyLabel()
                         {
                             Padding = new Thickness(10, 0),
@@ -975,23 +986,6 @@ namespace Kara
                             ArticlesGrid.Children.Add(ArticlesBody_Discount, col, row + 1);
                             col--;
                             if (i == 0) BodyFirstRowLabels.Add(ArticlesBody_Discount);
-
-                            //var ArticlesBody_FinalPrice = new MyLabel()
-                            //{
-                            //    Padding = new Thickness(10, 0),
-                            //    BackgroundColor = BG,
-                            //    TextColor = BLACK,
-                            //    HorizontalOptions = LayoutOptions.FillAndExpand,
-                            //    VerticalOptions = LayoutOptions.FillAndExpand,
-                            //    HorizontalTextAlignment = TextAlignment.End,
-                            //    VerticalTextAlignment = TextAlignment.Center,
-                            //    LineBreakMode = LineBreakMode.NoWrap,
-                            //    Text = _SaleOrderStuffs[i].FreeProduct ? "---" : _SaleOrderStuffs[i].FinalPrice.ToString("###,###,###,###,###,###,##0.").ToPersianDigits()
-                            //};
-                            //LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesBody_FinalPrice, 1));
-                            //ArticlesGrid.Children.Add(ArticlesBody_FinalPrice, col, row + 1);
-                            //col--;
-                            //if (i == 0) BodyFirstRowLabels.Add(ArticlesBody_FinalPrice);
                         }
 
 
@@ -1115,7 +1109,7 @@ namespace Kara
                         ArticlesGrid.Children.Add(VatAmount, col, row);
                         col--;
                     }
-                        
+
 
                     if (AnyRowDiscount)
                     {
@@ -1317,6 +1311,18 @@ namespace Kara
                         Grid.SetColumnSpan(FooterCashDiscountStep, ColumnCount);
                     }
 
+                    var rStack = new StackLayout()
+                    {
+                        Orientation = StackOrientation.Vertical,
+                        Spacing = 0,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        BackgroundColor = Color.FromHex("123"),
+                        Children =
+                        {
+                            ArticlesGrid
+                        }
+                    };
+
                     var result = new StackLayout()
                     {
                         Orientation = StackOrientation.Vertical,
@@ -1326,7 +1332,7 @@ namespace Kara
                         Children =
                         {
                         HeaderGrid,
-                        ArticlesGrid
+                        rStack
                         }
                     };
 
@@ -1375,7 +1381,7 @@ namespace Kara
                 var _FontSizeForView = ColumnCount <= 5 ? App.OrderPreviewFontSize.Value : 9;
 
                 foreach (var item in LabelFontSizes)
-                    item.Key.FontSize = item.Value * 0.8 * _FontSizeForView;
+                    item.Key.FontSize = item.Value * 0.9 * _FontSizeForView;
 
                 PrintPreview.Content = Content;
 
@@ -1387,12 +1393,14 @@ namespace Kara
                     Width = a.Width
                 }).ToArray();
 
-                for (int i = 0; i < ColumnsWidth.Length; i++)
-                {
-                    var Width = ColumnsWidth[ColumnsWidth.Length - 1 - i].Width;
-                    Width = Width >= 1 ? Width : 1;
-                    ((Grid)(((StackLayout)PrintPreview.Content).Children[1])).ColumnDefinitions[i].Width = new GridLength(Width, GridUnitType.Star);
-                }
+                if (ColumnCount <= 6)
+                    for (int i = 0; i < ColumnsWidth.Length; i++)
+                    {
+                        var Width = ColumnsWidth[ColumnsWidth.Length - 1 - i].Width;
+                        Width = Width >= 1 ? Width : 1;
+                        //((Grid)(((StackLayout)PrintPreview.Content).Children[1])).ColumnDefinitions[i].Width = new GridLength(Width, GridUnitType.Star);
+                        ArticlesGrid.ColumnDefinitions[i].Width = new GridLength(Width, GridUnitType.Star);
+                    }
             }
             catch (Exception err)
             {
