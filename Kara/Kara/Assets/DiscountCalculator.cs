@@ -1826,14 +1826,14 @@ namespace Kara.Assets
             }   
 
             if (UnitId.HasValue)
-                return Stuff.Packages.SingleOrDefault(a => a.UnitId == UnitId);
+                return Stuff.Packages.SingleOrDefault(a => a.UnitId == UnitId && a.Enabled);
             else
-                return Stuff.Packages.SingleOrDefault(a => a.Coefficient == 1);
+                return Stuff.Packages.SingleOrDefault(a => a.Coefficient == 1 && a.Enabled);
         }
 
         private decimal ArticleQuantityInAUnit(ArticleModel Article, Guid UnitId)
         {
-            var ArticleUnit = Article.Stuff.Packages.Any(a => a.UnitId == UnitId) ? Article.Stuff.Packages.Single(a => a.UnitId == UnitId) : null;
+            var ArticleUnit = Article.Stuff.Packages.SingleOrDefault(a => a.UnitId == UnitId && a.Enabled);
             if (ArticleUnit != null)
                 return ArticleUnit.Coefficient == 0 ? 0 : Article.StuffQuantity / ArticleUnit.Coefficient;
             return 0;

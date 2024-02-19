@@ -913,6 +913,9 @@ namespace Kara
 
                         if (!AllRowsAreUnitPackage)
                         {
+                            var eqPackage = _SaleOrderStuffs[i].Package.Stuff.Packages.SingleOrDefault(a => a.Coefficient == 1 && !a.IsTpUnit.GetValueOrDefault(false) && a.Enabled) ??
+                                         _SaleOrderStuffs[i].Package.Stuff.Packages.SingleOrDefault(a => a.Coefficient == 1 && !a.IsTpUnit.GetValueOrDefault(false));
+
                             var ArticlesBody_Equivalent = new MyLabel()
                             {
                                 Padding = new Thickness(10, 0),
@@ -923,7 +926,7 @@ namespace Kara
                                 HorizontalTextAlignment = TextAlignment.End,
                                 VerticalTextAlignment = TextAlignment.Center,
                                 LineBreakMode = LineBreakMode.NoWrap,
-                                Text = (_SaleOrderStuffs[i].StuffQuantity.ToString("###,###,###,##0.###").Replace(".", "/") + (AllEquivalnetPackageNames.Count() == 1 ? "" : (" " + _SaleOrderStuffs[i].Package.Stuff.Packages.Single(a => a.Coefficient == 1 && !a.IsTpUnit.GetValueOrDefault(false) && a.Enabled).Name))).ToPersianDigits()
+                                Text = (_SaleOrderStuffs[i].StuffQuantity.ToString("###,###,###,##0.###").Replace(".", "/") + (AllEquivalnetPackageNames.Count() == 1 ? "" : (" " + eqPackage))).ToPersianDigits()
                             };
                             LabelFontSizes.Add(new KeyValuePair<Label, double>(ArticlesBody_Equivalent, 1));
                             ArticlesGrid.Children.Add(ArticlesBody_Equivalent, col, row + 1);

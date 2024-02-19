@@ -201,76 +201,86 @@ namespace Kara
 
         protected override async void OnAppearing()
         {
-            base.OnAppearing();
-
-            if (_firstTime)
+            try
             {
-                try
+
+
+                base.OnAppearing();
+
+                if (_firstTime)
                 {
-                    //BusyIndicatorContainder.IsVisible = true;
-
-                    _firstTime = false;
-                    MessagingCenter.Send(this, "MainMenuOpened");
-
-                    var result = await Kara.Assets.Connectivity.CheckLicense(DependencyService.Get<IDevice>().GetIdentifier(),App.Username.Value,App.Password.Value);
-
-                    await Task.Delay(10);
-
-                    if (!string.IsNullOrWhiteSpace(result.ErrorMessage))
+                    try
                     {
-                        App.ShowError("خطا", result.ErrorMessage, "بستن");
-                        return;
-                    }
+                        //BusyIndicatorContainder.IsVisible = true;
 
-                    result.HasVisitorLic = true;
+                        _firstTime = false;
+                        MessagingCenter.Send(this, "MainMenuOpened");
 
-                    if (!result.HasVisitorLic && !result.HasTahsildarLic && !result.HasDistributerLic)
-                    {
-                        App.ShowError("خطا", "شما هیچ یک از مجوزهای استفاده از برنامه اندروید را ندارید", "بستن");
-                        App.UserId.Value = Guid.Empty;
-                        var LoginForm = new LoginForm()
+                        var result = await Kara.Assets.Connectivity.CheckLicense(DependencyService.Get<IDevice>().GetIdentifier(), App.Username.Value, App.Password.Value);
+
+                        await Task.Delay(10);
+
+                        if (!string.IsNullOrWhiteSpace(result.ErrorMessage))
                         {
-                            StartColor = Color.FromHex("E6EBEF"),
-                            EndColor = Color.FromHex("A6CFED")
-                        };
-                        await Navigation.PushAsync(LoginForm);
-                        this.Navigation.RemovePage(this);
-                    }
+                            App.ShowError("خطا", result.ErrorMessage, "بستن");
+                            return;
+                        }
 
-                    if (App.UseVisitorsNadroidApplication.Value != result.HasVisitorLic ||
-                        App.UseCollectorAndroidApplication.Value != result.HasTahsildarLic ||
-                        App.UseDistributerAndroidApplication.Value != result.HasDistributerLic)
-                    {
-                        App.UserId.Value = Guid.Empty;
-                        var LoginForm = new LoginForm()
+                        result.HasVisitorLic = true;
+
+                        if (!result.HasVisitorLic && !result.HasTahsildarLic && !result.HasDistributerLic)
                         {
-                            StartColor = Color.FromHex("E6EBEF"),
-                            EndColor = Color.FromHex("A6CFED")
-                        };
-                        await Navigation.PushAsync(LoginForm);
-                        this.Navigation.RemovePage(this);
+                            App.ShowError("خطا", "شما هیچ یک از مجوزهای استفاده از برنامه اندروید را ندارید", "بستن");
+                            App.UserId.Value = Guid.Empty;
+                            var LoginForm = new LoginForm()
+                            {
+                                StartColor = Color.FromHex("E6EBEF"),
+                                EndColor = Color.FromHex("A6CFED")
+                            };
+                            await Navigation.PushAsync(LoginForm);
+                            this.Navigation.RemovePage(this);
+                        }
+
+                        if (App.UseVisitorsNadroidApplication.Value != result.HasVisitorLic ||
+                            App.UseCollectorAndroidApplication.Value != result.HasTahsildarLic ||
+                            App.UseDistributerAndroidApplication.Value != result.HasDistributerLic)
+                        {
+                            App.UserId.Value = Guid.Empty;
+                            var LoginForm = new LoginForm()
+                            {
+                                StartColor = Color.FromHex("E6EBEF"),
+                                EndColor = Color.FromHex("A6CFED")
+                            };
+                            await Navigation.PushAsync(LoginForm);
+                            this.Navigation.RemovePage(this);
+                        }
+                    }
+                    finally
+                    {
+                        //BusyIndicatorContainder.IsVisible = true;
                     }
                 }
-                finally
+
+                if (App.FirstGpsDetecting)
                 {
-                    //BusyIndicatorContainder.IsVisible = true;
+                    App.FirstGpsDetecting = false;
+                    App.GpsEnabled = true;
+                    var task = Task.Run(async
+                        () =>
+                    {
+                        var loc = await App.CheckGps();
+                        if (loc == null)
+                        {
+                            await Navigation.PushAsync(new MessageForm());
+                        }
+                    }
+                    );
                 }
             }
-
-            if (App.FirstGpsDetecting)
+            catch (Exception e)
             {
-                App.FirstGpsDetecting = false;
-                App.GpsEnabled = true;
-                var task = Task.Run(async
-                    () =>
-                {
-                    var loc = await App.CheckGps();
-                    if (loc == null)
-                    {
-                        await Navigation.PushAsync(new MessageForm());
-                    }
-                }
-                );
+                _firstTime = true;
+                App.FirstGpsDetecting = true;
             }
         }
 

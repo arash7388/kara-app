@@ -36,7 +36,7 @@ namespace Kara
                 UpdateItems.Add(new UpdateItemModel("Stuffs", "کالاها", new PartialUpdateDB_Stuffs(), 100));
                 UpdateItems.Add(new UpdateItemModel("StuffGallary", "گالری کالا", new PartialUpdateDB_StuffImages(), 1));
                 UpdateItems.Add(new UpdateItemModel("Stocks", "موجودی", new PartialUpdateDB_Stocks(), 100));
-                UpdateItems.Add(new UpdateItemModel("Partners", "مشتریان", new PartialUpdateDB_Partners(), 100));
+                UpdateItems.Add(new UpdateItemModel("Partners", "مشتریان", new PartialUpdateDB_Partners(), 200));
                 UpdateItems.Add(new UpdateItemModel("PriceLists", "لیست قیمت", new PartialUpdateDB_PriceLists(), 100));
                 UpdateItems.Add(new UpdateItemModel("DiscountRules", "فرمول تخفیفات", new PartialUpdateDB_DiscountRules(), 100));
             }
